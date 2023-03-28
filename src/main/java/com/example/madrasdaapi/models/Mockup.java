@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "mockup", schema = "madrasda")
+@Table(name = "mockup", schema = "spring-madrasda")
 public class Mockup {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)

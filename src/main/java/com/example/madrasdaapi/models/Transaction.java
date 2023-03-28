@@ -11,7 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction", schema = "madrasda", indexes = {
+@Table(name = "transaction", schema = "spring-madrasda", indexes = {
         @Index(name = "address_id", columnList = "address_id"),
         @Index(name = "client_id", columnList = "client_id")
 })

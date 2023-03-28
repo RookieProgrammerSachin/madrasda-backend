@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "vendor", schema = "madrasda", indexes = {
+@Table(name = "vendor", schema = "spring-madrasda", indexes = {
         @Index(name = "mail_id", columnList = "mail_id", unique = true)
 })
 public class Vendor {

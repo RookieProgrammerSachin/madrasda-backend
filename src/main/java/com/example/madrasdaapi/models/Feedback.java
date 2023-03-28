@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "feedback", schema = "madrasda", indexes = {
+@Table(name = "feedback", schema = "spring-madrasda", indexes = {
         @Index(name = "vendor_id", columnList = "vendor_id")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "id", columnNames = {"id"})

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "image", schema = "madrasda", indexes = {
+@Table(name = "image", schema = "spring-madrasda", indexes = {
         @Index(name = "product_id", columnList = "product_id")
 })
 public class Image {

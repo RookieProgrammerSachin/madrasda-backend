@@ -11,7 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "address", schema = "madrasda", indexes = {
+@Table(name = "address", schema = "spring-madrasda", indexes = {
         @Index(name = "client_id", columnList = "client_id")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "id", columnNames = {"id"})
