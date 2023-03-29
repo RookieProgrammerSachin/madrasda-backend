@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "orders", schema = "spring-madrasda", indexes = {
+@Table(name = "orders", schema = "madrasda", indexes = {
         @Index(name = "transaction_id", columnList = "transaction_id")
 })
 public class Order {

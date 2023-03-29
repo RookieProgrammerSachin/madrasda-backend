@@ -10,7 +10,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "mockup", schema = "spring-madrasda")
+@Table(name = "mockup", schema = "madrasda", indexes = {
+        @Index(name = "fk_mockup_vendor1_idx", columnList = "vendor_id")
+})
 public class Mockup {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +42,10 @@ public class Mockup {
 
      @Column(name = "category", nullable = false, length = 200)
      private String category;
+
+     @ManyToOne
+     @JoinColumn(name = "vendor_id", nullable = false)
+     private Vendor vendor;
 
      @OneToMany(mappedBy = "mockup")
      private Set<Product> products = new HashSet<>();

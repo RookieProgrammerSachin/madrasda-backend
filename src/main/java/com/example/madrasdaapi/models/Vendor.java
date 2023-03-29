@@ -10,34 +10,37 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "vendor", schema = "spring-madrasda", indexes = {
-        @Index(name = "mail_id", columnList = "mail_id", unique = true)
-})
+@Table(name = "vendor", schema = "madrasda")
 public class Vendor {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "name", nullable = false, length = 55)
-     private String name;
-
-     @Column(name = "phone", nullable = false, length = 55)
-     private String phone;
-
-     @Column(name = "mail_id", nullable = false, length = 55)
-     private String mailId;
-
-     @Column(name = "pswd", nullable = false, length = 2000)
-     private String password;
+     @MapsId
+     @OneToOne(fetch = FetchType.EAGER, optional = false)
+     @JoinColumn(name = "id", nullable = false)
+     private User user;
 
      @Column(name = "profile_pic", nullable = false, length = 1000)
      private String profilePic;
 
-     @OneToMany(mappedBy = "vendor")
+     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
      private Set<Design> designs = new HashSet<>();
 
-     @OneToMany(mappedBy = "vendor")
+     @ManyToMany
+     @JoinTable(name = "transaction_vendor",
+             joinColumns = @JoinColumn(name = "vendor_id"),
+             inverseJoinColumns = @JoinColumn(name = "transaction_id"))
+     private Set<Transaction> transactions = new HashSet<>();
+
+     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
+     private Set<Product> products = new HashSet<>();
+
+     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
+     private Set<Mockup> mockups = new HashSet<>();
+
+     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
      private Set<Feedback> feedbacks = new HashSet<>();
 
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "carousel", schema = "spring-madrasda")
+@Table(name = "carousel", schema = "madrasda")
 public class Carousel {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)

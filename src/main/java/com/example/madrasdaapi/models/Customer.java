@@ -5,22 +5,30 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "address", schema = "spring-madrasda", indexes = {
-        @Index(name = "client_id", columnList = "client_id")
-}, uniqueConstraints = {
+@Table(name = "customer", schema = "madrasda", uniqueConstraints = {
         @UniqueConstraint(name = "id", columnNames = {"id"})
 })
-public class Address {
+public class Customer {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
+
+     @MapsId
+     @OneToOne(fetch = FetchType.EAGER, optional = false)
+     @JoinColumn(name = "id", nullable = false)
+     private User user;
+
+     @Column(name = "first_name", length = 60)
+     private String firstName;
+
+     @Column(name = "last_name", length = 60)
+     private String lastName;
 
      @Column(name = "address_line1", nullable = false, length = 50)
      private String addressLine1;
@@ -34,23 +42,13 @@ public class Address {
      @Column(name = "state", nullable = false, length = 40)
      private String state;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "client_id", nullable = false)
-     private Client client;
-
      @Column(name = "postal_code", nullable = false, length = 40)
      private String postalCode;
 
      @Column(name = "country", nullable = false, length = 100)
      private String country;
 
-     @Column(name = "fname", length = 60)
-     private String fname;
-
-     @Column(name = "lname", length = 60)
-     private String lname;
-
-     @OneToMany(mappedBy = "address")
+     @OneToMany(mappedBy = "customer")
      private Set<Transaction> transactions = new HashSet<>();
 
 }

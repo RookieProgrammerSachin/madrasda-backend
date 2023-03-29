@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "feedback", schema = "spring-madrasda", indexes = {
+@Table(name = "feedback", schema = "madrasda", indexes = {
         @Index(name = "vendor_id", columnList = "vendor_id")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "id", columnNames = {"id"})
@@ -19,10 +19,9 @@ public class Feedback {
      private Long id;
 
      @Column(name = "feedback", nullable = false, length = 2000)
-     private String feedback;
-
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "vendor_id", nullable = false)
+     private String query;
+     private Boolean resolution;
+     @ManyToOne
      private Vendor vendor;
 
 }

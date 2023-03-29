@@ -11,19 +11,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction", schema = "spring-madrasda", indexes = {
-        @Index(name = "address_id", columnList = "address_id"),
-        @Index(name = "client_id", columnList = "client_id")
+@Table(name = "transaction", schema = "madrasda", indexes = {
+        @Index(name = "address_id", columnList = "customer_id")
 })
 public class Transaction {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
-
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "client_id", nullable = false)
-     private Client client;
 
      @Column(name = "order_date", nullable = false)
      private LocalDate orderDate;
@@ -35,22 +30,25 @@ public class Transaction {
      private Integer orderTotal;
 
      @Column(name = "delivered", nullable = false)
-     private Boolean delivered = false;
+     private Byte delivered;
 
      @Column(name = "transaction_success", nullable = false)
-     private Boolean transactionSuccess = false;
+     private Byte transactionSuccess;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "address_id")
-     private Address address;
+     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @JoinColumn(name = "customer_id", nullable = false)
+     private Customer customer;
+
+     @ManyToMany
+     @JoinTable(name = "transaction_vendor",
+             joinColumns = @JoinColumn(name = "transaction_id"),
+             inverseJoinColumns = @JoinColumn(name = "vendor_id"))
+     private Set<Vendor> vendors = new HashSet<>();
+
+     @ManyToOne
+     private Product product;
 
      @OneToMany(mappedBy = "transaction")
      private Set<Order> orders = new HashSet<>();
-
-     @ManyToMany
-     @JoinTable(name = "transaction_product",
-             joinColumns = @JoinColumn(name = "transaction_id"),
-             inverseJoinColumns = @JoinColumn(name = "product_id"))
-     private Set<Product> products = new HashSet<>();
 
 }

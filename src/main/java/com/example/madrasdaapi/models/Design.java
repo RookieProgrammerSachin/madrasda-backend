@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "design", schema = "spring-madrasda", indexes = {
+@Table(name = "design", schema = "madrasda", indexes = {
         @Index(name = "vendor_id", columnList = "vendor_id")
 })
 public class Design {
@@ -19,7 +19,7 @@ public class Design {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
 
