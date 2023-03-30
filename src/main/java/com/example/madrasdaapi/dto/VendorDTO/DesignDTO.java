@@ -1,16 +1,14 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * A DTO for the {@link com.example.madrasdaapi.models.Design} entity
  */
-@Data
+@Getter
+@Setter
 public class DesignDTO implements Serializable {
      private Long id;
      private String theme;

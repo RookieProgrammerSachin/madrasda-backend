@@ -3,6 +3,9 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -21,6 +24,8 @@ public class Feedback {
      @Column(name = "feedback", nullable = false, length = 2000)
      private String query;
      private Boolean resolution;
+     @CreationTimestamp
+     private Date timestamp;
      @ManyToOne
      private Vendor vendor;
 

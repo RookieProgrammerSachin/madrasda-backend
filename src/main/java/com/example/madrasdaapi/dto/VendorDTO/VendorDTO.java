@@ -14,10 +14,4 @@ public class VendorDTO implements Serializable {
      private Long id;
      private String name;
      private String imgUrl;
-
-     private SalesAnalysis salesAnalysis;
-     private List<ProductLadderItem> productLadder;
-
-     private Set<DesignDTO> designs;
-     private Set<FeedbackDTO> feedbacks;
 }
