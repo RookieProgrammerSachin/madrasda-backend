@@ -45,7 +45,10 @@ public class Transaction {
              inverseJoinColumns = @JoinColumn(name = "vendor_id"))
      private Vendor vendors;
 
-     @OneToMany
+     @ManyToMany // Multiple transactions can have the same set of products
+     @JoinTable(name = "transaction_product",
+             joinColumns = @JoinColumn(name = "transaction_id"),
+             inverseJoinColumns = @JoinColumn(name = "product_id"))
      private Set<Product> products;
 
      @OneToMany(mappedBy = "transaction")

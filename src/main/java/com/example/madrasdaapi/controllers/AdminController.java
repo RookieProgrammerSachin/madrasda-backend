@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping("/api/admin/")
 @Tag(name = "Admin Resource Controller")
 @RequiredArgsConstructor
+
 public class AdminController {
      private final VendorService vendorService;
 

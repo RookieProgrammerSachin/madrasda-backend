@@ -15,11 +15,7 @@ import java.util.Set;
 
 })
 public class Product {
-     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-     @JoinTable(name="product_image_mapping", joinColumns = @JoinColumn(referencedColumnName = "id"),
-     inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
 
-     Set<ProductImage> productImages;
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
@@ -50,10 +46,11 @@ public class Product {
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
 
-     @ManyToOne
-     @JoinTable(name = "transaction_product",
-             joinColumns = @JoinColumn(name = "transaction_id"),
-             inverseJoinColumns = @JoinColumn(name = "product_id"))
-     private Transaction transaction;
+     @ManyToMany(mappedBy = "products")
+     private Set<Transaction> transaction;
 
+     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+     @JoinTable(name="product_image_mapping", joinColumns = @JoinColumn(referencedColumnName = "id"),
+     inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
+     Set<ProductImage> productImages;
 }

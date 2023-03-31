@@ -12,7 +12,8 @@ import java.io.Serializable;
 public class TemplateDTO implements Serializable {
      private Long id;
      private VendorDTO vendor;
-     private DesignDTO design;
+     private DesignDTO frontDesign;
+     private DesignDTO backDesign;
      private MockupDTO mockup;
 
 }

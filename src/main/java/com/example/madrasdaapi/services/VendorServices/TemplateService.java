@@ -30,12 +30,14 @@ public class TemplateService {
 
 
      public TemplateDTO saveOrUpdateTemplate(TemplateDTO templateDTO) {
-          Design detachedDesign = designMapper.mapToEntity(templateDTO.getDesign());
+          Design detachedFrontDesign = designMapper.mapToEntity(templateDTO.getFrontDesign());
+          Design detachedBackDesign = designMapper.mapToEntity(templateDTO.getBackDesign());
           Mockup detachedMockup = mockupMapper.mapToEntity(templateDTO.getMockup());
           Vendor detachedVendor = vendorMapper.mapToEntity(templateDTO.getVendor());
           Template detachedTemplate = new Template();
           detachedTemplate.setId(templateDTO.getId());
-          detachedTemplate.setDesign(detachedDesign);
+          detachedTemplate.setFrontDesign(detachedFrontDesign);
+          detachedTemplate.setBackDesign(detachedBackDesign);
           detachedTemplate.setMockup(detachedMockup);
           detachedTemplate.setVendor(detachedVendor);
           Template template = templateRepository.save(detachedTemplate);

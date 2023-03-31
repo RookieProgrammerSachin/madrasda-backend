@@ -33,7 +33,7 @@ public class VendorMapper {
           VendorDetails vendorDetails = new VendorDetails();
           VendorDTO vendorDTO = mapToDTO(vendor);
           vendorDetails.setVendorDTO(vendorDTO);
-          vendorDetails.setSalesAnalysis(new SalesAnalysis());
+          vendorDetails.setSalesAnalysis(vendorRepository.getSalesAnalysisByVendorId(vendor.getId()));
           vendorDetails.setProductLadder(List.of(new ProductLadderItem(), new ProductLadderItem(), new ProductLadderItem()));
           return vendorDetails;
      }

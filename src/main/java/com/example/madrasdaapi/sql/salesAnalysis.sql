@@ -1,3 +1,4 @@
+
 CREATE PROCEDURE vendor_sales(IN vendor_id BIGINT)
 BEGIN
     DECLARE total_products INT DEFAULT 0;

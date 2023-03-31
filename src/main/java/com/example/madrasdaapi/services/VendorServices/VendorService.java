@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VendorService {
      private final VendorMapper vendorMapper;
+     private final TemplateMapper templateMapper;
      private final VendorRepository vendorRepository;
      private final TemplateRepository templateRepository;
-     private final TemplateMapper templateMapper;
 
 
      public VendorDetails getVendorById(Long id) {

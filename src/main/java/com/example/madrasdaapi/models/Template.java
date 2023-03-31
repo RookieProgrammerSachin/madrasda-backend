@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,11 +17,6 @@ public class Template {
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
 
-     @MapsId("designId")
-     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-     @JoinColumn(name = "design_id", nullable = false)
-     private Design design;
-
      @MapsId("mockupId")
      @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "mockup_id", nullable = false)
@@ -30,5 +26,15 @@ public class Template {
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
+
+     @NotNull
+     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @JoinColumn(name = "front_design_id", nullable = false)
+     private Design frontDesign;
+
+     @NotNull
+     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @JoinColumn(name = "back_design_id", nullable = false)
+     private Design backDesign;
 
 }

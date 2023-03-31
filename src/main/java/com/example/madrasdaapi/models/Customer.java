@@ -24,12 +24,6 @@ public class Customer {
      @JoinColumn(name = "id", nullable = false)
      private User user;
 
-     @Column(name = "first_name", length = 60)
-     private String firstName;
-
-     @Column(name = "last_name", length = 60)
-     private String lastName;
-
      @Column(name = "address_line1", nullable = false, length = 50)
      private String addressLine1;
 
