@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.dto.VendorDTO;
+package com.example.madrasdaapi.dto.commons;
 
 import lombok.Data;
 

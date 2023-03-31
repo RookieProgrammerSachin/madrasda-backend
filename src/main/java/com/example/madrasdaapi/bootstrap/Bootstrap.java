@@ -1,13 +1,11 @@
 package com.example.madrasdaapi.bootstrap;
 
 import com.example.madrasdaapi.models.Feedback;
-import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.FeedbackRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

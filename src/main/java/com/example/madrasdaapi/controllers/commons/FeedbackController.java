@@ -1,11 +1,9 @@
-package com.example.madrasdaapi.controllers;
+package com.example.madrasdaapi.controllers.commons;
 
 import com.example.madrasdaapi.dto.commons.FeedbackDTO;
 import com.example.madrasdaapi.dto.commons.FeedbackPage;
 import com.example.madrasdaapi.services.commons.FeedbackService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +20,7 @@ public class FeedbackController {
      @PostMapping("postFeedback")
      @ResponseStatus(HttpStatus.CREATED)
      public FeedbackDTO postFeedback(@RequestBody FeedbackDTO feedbackDTO) {
-          return feedbackService.createQuery(feedbackDTO);
+          return feedbackService.saveOrUpdate(feedbackDTO);
      }
 
      @GetMapping("getAllQueries")

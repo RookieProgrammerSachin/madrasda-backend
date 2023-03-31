@@ -4,15 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @Entity
-@Table(name = "design", schema = "madrasda", indexes = {
-        @Index(name = "vendor_id", columnList = "vendor_id")
-})
+@Table(name = "Design", schema = "madrasda")
 public class Design {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +30,5 @@ public class Design {
      @Column(name = "print_type", nullable = false, length = 55)
      private String printType;
 
-     @OneToMany(mappedBy = "design")
-     private Set<Product> products = new HashSet<>();
 
 }

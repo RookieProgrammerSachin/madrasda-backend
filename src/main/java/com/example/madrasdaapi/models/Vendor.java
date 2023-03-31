@@ -28,7 +28,7 @@ public class Vendor {
      @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
      private Set<Design> designs = new HashSet<>();
 
-     @ManyToMany
+     @OneToMany
      @JoinTable(name = "transaction_vendor",
              joinColumns = @JoinColumn(name = "vendor_id"),
              inverseJoinColumns = @JoinColumn(name = "transaction_id"))
@@ -37,10 +37,11 @@ public class Vendor {
      @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
      private Set<Product> products = new HashSet<>();
 
-     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
-     private Set<Mockup> mockups = new HashSet<>();
 
      @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
      private Set<Feedback> feedbacks = new HashSet<>();
+
+     @OneToMany(mappedBy = "vendor")
+     private Set<Template> templates = new HashSet<>();
 
 }

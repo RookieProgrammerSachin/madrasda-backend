@@ -39,14 +39,14 @@ public class Transaction {
      @JoinColumn(name = "customer_id", nullable = false)
      private Customer customer;
 
-     @ManyToMany
+     @ManyToOne
      @JoinTable(name = "transaction_vendor",
              joinColumns = @JoinColumn(name = "transaction_id"),
              inverseJoinColumns = @JoinColumn(name = "vendor_id"))
-     private Set<Vendor> vendors = new HashSet<>();
+     private Vendor vendors;
 
-     @ManyToOne
-     private Product product;
+     @OneToMany
+     private Set<Product> products;
 
      @OneToMany(mappedBy = "transaction")
      private Set<Order> orders = new HashSet<>();

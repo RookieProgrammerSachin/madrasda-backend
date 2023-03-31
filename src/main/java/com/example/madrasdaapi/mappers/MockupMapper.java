@@ -1,7 +1,7 @@
 package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.models.Mockup;
-import com.example.madrasdaapi.models.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 

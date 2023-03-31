@@ -1,11 +1,12 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
+import com.example.madrasdaapi.models.Design;
 import lombok.*;
 
 import java.io.Serializable;
 
 /**
- * A DTO for the {@link com.example.madrasdaapi.models.Design} entity
+ * A DTO for the {@link Design} entity
  */
 @Getter
 @Setter

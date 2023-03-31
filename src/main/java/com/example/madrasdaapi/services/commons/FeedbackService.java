@@ -7,23 +7,17 @@ import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Feedback;
 import com.example.madrasdaapi.repositories.FeedbackRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class FeedbackService {
      private final FeedbackRepository feedbackRepository;
-     private final VendorRepository vendorRepository;
-     private final VendorMapper vendorMapper;
      private final FeedbackMapper feedbackMapper;
-     public FeedbackService(FeedbackRepository feedbackRepository, VendorRepository vendorRepository, VendorMapper vendorMapper, FeedbackMapper feedbackMapper) {
-          this.feedbackRepository = feedbackRepository;
-          this.vendorRepository = vendorRepository;
-          this.vendorMapper = vendorMapper;
-          this.feedbackMapper = feedbackMapper;
-     }
 
      public FeedbackPage getAllQueries(int pageNo, int pageSize){
           Sort sort = Sort.by("timestamp").descending();
@@ -35,7 +29,7 @@ public class FeedbackService {
 
      }
 
-     public FeedbackDTO createQuery(FeedbackDTO feedbackDTO) {
+     public FeedbackDTO saveOrUpdate(FeedbackDTO feedbackDTO) {
           Feedback detachedFeedback = feedbackMapper.mapToEntity(feedbackDTO);
           return feedbackMapper.mapToDTO(feedbackRepository.save(detachedFeedback));
      }
