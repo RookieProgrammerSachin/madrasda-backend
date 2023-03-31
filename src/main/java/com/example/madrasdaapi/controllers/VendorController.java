@@ -22,7 +22,10 @@ public class VendorController {
      private final FeedbackService feedbackService;
      private final TemplateService templateService;
 
-
+     @GetMapping("test")
+     public String vendor(){
+          return "Hello there vendor";
+     }
      @GetMapping("{id}")
      public VendorDetails getVendorDetails(@PathVariable Long id) {
           return vendorService.getVendorById(id);

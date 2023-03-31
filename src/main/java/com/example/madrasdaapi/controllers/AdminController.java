@@ -20,7 +20,10 @@ public class AdminController {
           return vendorService.getVendors();
      }
 
-
+     @GetMapping("test")
+     public String admin(){
+          return "Hello there admin";
+     }
 
 }
 
