@@ -39,17 +39,8 @@ public class Transaction {
      @JoinColumn(name = "customer_id", nullable = false)
      private Customer customer;
 
-     @ManyToOne
-     @JoinTable(name = "transaction_vendor",
-             joinColumns = @JoinColumn(name = "transaction_id"),
-             inverseJoinColumns = @JoinColumn(name = "vendor_id"))
-     private Vendor vendors;
-
-     @ManyToMany // Multiple transactions can have the same set of products
-     @JoinTable(name = "transaction_product",
-             joinColumns = @JoinColumn(name = "transaction_id"),
-             inverseJoinColumns = @JoinColumn(name = "product_id"))
-     private Set<Product> products;
+     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
+     private Set<OrderItem> orderItems = new HashSet<>();
 
      @OneToMany(mappedBy = "transaction")
      private Set<Order> orders = new HashSet<>();

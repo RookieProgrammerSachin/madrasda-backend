@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.security;
+package com.example.madrasdaapi.dto.AuthDTO;
 
 
 import com.example.madrasdaapi.models.Role;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class RegisterDTO {
     private String name;
     private String email;
     private String phone;

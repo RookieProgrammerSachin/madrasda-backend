@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/feedback/")
 @Tag(name = "Feedback Resource Controller")
+@CrossOrigin
+
 public class FeedbackController {
      private final FeedbackService feedbackService;
 
@@ -17,8 +19,8 @@ public class FeedbackController {
           this.feedbackService = feedbackService;
      }
 
-     @PostMapping("postFeedback")
      @ResponseStatus(HttpStatus.CREATED)
+     @PostMapping("postFeedback")
      public FeedbackDTO postFeedback(@RequestBody FeedbackDTO feedbackDTO) {
           return feedbackService.saveOrUpdate(feedbackDTO);
      }

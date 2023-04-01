@@ -23,17 +23,17 @@ public class Template {
      private Mockup mockup;
 
      @MapsId("vendorId")
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
 
      @NotNull
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "front_design_id", nullable = false)
      private Design frontDesign;
 
      @NotNull
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "back_design_id", nullable = false)
      private Design backDesign;
 

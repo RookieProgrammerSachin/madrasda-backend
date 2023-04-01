@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +19,7 @@ public class Product {
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
-
+     private String name;
      @Column(name = "base_price", nullable = false)
      private Float basePrice;
 
@@ -46,11 +45,8 @@ public class Product {
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
 
-     @ManyToMany(mappedBy = "products")
-     private Set<Transaction> transaction;
-
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
      @JoinTable(name="product_image_mapping", joinColumns = @JoinColumn(referencedColumnName = "id"),
      inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
-     Set<ProductImage> productImages;
+     List<ProductImage> productImages;
 }

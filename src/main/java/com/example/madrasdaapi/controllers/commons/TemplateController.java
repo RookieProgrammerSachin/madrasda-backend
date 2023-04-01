@@ -1,7 +1,6 @@
 package com.example.madrasdaapi.controllers.commons;
 
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
-import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/templates/")
 @RequiredArgsConstructor
+@CrossOrigin
 public class TemplateController {
      private final TemplateService templateService;
      private final VendorService vendorService;
@@ -19,7 +19,7 @@ public class TemplateController {
      public Page<TemplateDTO> getTemplates(@PathVariable Long vendorId,
                                            @RequestParam(defaultValue = "0") int pageNo,
                                            @RequestParam(defaultValue = "10") int pageSize){
-          return vendorService.retriveAllTemplates(vendorId,pageNo, pageSize);
+          return vendorService.retrieveAllTemplates(vendorId,pageNo, pageSize);
      }
 
      @GetMapping("getTemplate/{templateId}")
