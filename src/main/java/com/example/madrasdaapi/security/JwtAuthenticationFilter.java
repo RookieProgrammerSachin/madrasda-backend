@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.security;
 
 
+import com.example.madrasdaapi.models.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-        final String userEmail;
+        final String userEmailOrPhone;
         if(authHeader == null || !authHeader. startsWith("Bearer ")){
             filterChain.doFilter(request,response);
             return;
@@ -46,9 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        userEmail = jwtService.extractUsername(jwt);
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+        userEmailOrPhone = jwtService.extractUsername(jwt);
+        if(userEmailOrPhone != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmailOrPhone);
+            String role = userDetails.getAuthorities().iterator().next().getAuthority();
+//            System.out.println(role);
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,

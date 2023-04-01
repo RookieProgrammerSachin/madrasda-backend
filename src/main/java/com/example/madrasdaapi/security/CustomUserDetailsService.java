@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.security;
 
 import com.example.madrasdaapi.repositories.UserRepository;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +20,8 @@ public class CustomUserDetailsService {
     private final UserRepository repository;
     @Bean
     public UserDetailsService userDetailsService() {
-        return ((username) ->{
-                return repository.findByEmail(username)
+        return ((EmailOrPhone) ->{
+                return repository.findByEmailOrPhone(EmailOrPhone, EmailOrPhone)
                         .orElseThrow(() -> new UsernameNotFoundException("Client not found"));
         });
     }
