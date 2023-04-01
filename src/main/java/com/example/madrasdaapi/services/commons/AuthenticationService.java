@@ -1,8 +1,12 @@
-package com.example.madrasdaapi.security;
+package com.example.madrasdaapi.services.commons;
 
 
+import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
+import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationResponse register(RegisterRequest request) throws Exception {
+    public JwtDTO register(RegisterDTO request) throws Exception {
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -25,24 +29,24 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         System.out.println(request.getRole().name());
-        repository.save(user);
-        var jwtToken = jwtService.generateToken((user));
-        return AuthenticationResponse.builder()
+        userRepository.save(user);
+        String jwtToken = jwtService.generateToken((user));
+        return JwtDTO.builder()
                 .token(jwtToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) throws Exception {
-        User user = null;
+    public JwtDTO authenticate(LoginDTO request) throws Exception {
+        User user;
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        user = repository.findByEmail(request.getEmail()).orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
+        user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
+        return JwtDTO.builder()
                 .token(jwtToken)
                 .build();
     }

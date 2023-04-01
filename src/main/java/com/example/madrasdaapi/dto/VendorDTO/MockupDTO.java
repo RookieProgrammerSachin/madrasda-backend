@@ -1,18 +1,10 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
-import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 
-/**
- *
- * A DTO for the {@link Mockup} entity
- */
-/** TODO
- * What is the use of quantity here
- */
 @Getter
 @Setter
 public class MockupDTO implements Serializable {
@@ -25,5 +17,4 @@ public class MockupDTO implements Serializable {
      private String model;
      private String type;
      private String category;
-     private VendorDTO vendor;
 }

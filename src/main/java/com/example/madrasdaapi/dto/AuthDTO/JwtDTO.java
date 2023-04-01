@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.security;
+package com.example.madrasdaapi.dto.AuthDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class JwtDTO {
     private String token;
 }

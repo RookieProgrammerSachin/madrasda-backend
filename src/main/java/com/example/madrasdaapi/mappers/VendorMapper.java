@@ -1,23 +1,17 @@
 package com.example.madrasdaapi.mappers;
 
-import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
-import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
-import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class VendorMapper {
      private final VendorRepository vendorRepository;
-     private final ModelMapper mapper;
 
 
      public VendorMenuItemDTO mapToMenuItemDTO(Vendor vendor) {
@@ -29,14 +23,6 @@ public class VendorMapper {
      }
 
 
-     public VendorDetails mapToVendorDetails(Vendor vendor) {
-          VendorDetails vendorDetails = new VendorDetails();
-          VendorDTO vendorDTO = mapToDTO(vendor);
-          vendorDetails.setVendorDTO(vendorDTO);
-          vendorDetails.setSalesAnalysis(vendorRepository.getSalesAnalysisByVendorId(vendor.getId()));
-          vendorDetails.setProductLadder(List.of(new ProductLadderItem(), new ProductLadderItem(), new ProductLadderItem()));
-          return vendorDetails;
-     }
 
      public VendorDTO mapToDTO(Vendor vendor) {
           VendorDTO vendorDTO = new VendorDTO();
