@@ -1,9 +1,15 @@
-package com.example.madrasdaapi.security;
+package com.example.madrasdaapi.services.commons;
 
 
+import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
+import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
+import com.example.madrasdaapi.models.Customer;
 import com.example.madrasdaapi.models.Role;
 import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.repositories.CustomerRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +25,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationResponse register(RegisterRequest request) throws Exception {
+    public JwtDTO register(RegisterDTO request) throws Exception {
         var user = User.builder()
                 .name(request.getName()!=null ? request.getName() : null)
                 .email(request.getEmail()!=null ? request.getEmail() : null)
@@ -29,12 +35,12 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken((user));
-        return AuthenticationResponse.builder()
+        return JwtDTO.builder()
                 .token(jwtToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) throws Exception {
+    public JwtDTO authenticate(LoginDTO request) throws Exception {
         Optional<User> user;
         String jwtToken;
         if(request.getPassword()!=null){
@@ -61,7 +67,7 @@ public class AuthenticationService {
         }else{
             jwtToken = jwtService.generateToken(user.get());
         }
-        return AuthenticationResponse.builder()
+        return JwtDTO.builder()
                 .token(jwtToken)
                 .build();
     }
