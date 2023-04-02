@@ -8,5 +8,8 @@ import java.io.Serializable;
 public class VendorDTO implements Serializable {
      private Long id;
      private String name;
+     private String email;
      private String imgUrl;
+     private String phone;
+
 }

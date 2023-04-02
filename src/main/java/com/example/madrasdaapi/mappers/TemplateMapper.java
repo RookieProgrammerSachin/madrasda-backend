@@ -13,6 +13,8 @@ public class TemplateMapper {
      private final DesignMapper designMapper;
 
      public TemplateDTO mapToTemplateDTO(Template template){
+          TemplateDTO templateDTO = new TemplateDTO();
+
           return modelMapper.map(template, TemplateDTO.class);
      }
 }

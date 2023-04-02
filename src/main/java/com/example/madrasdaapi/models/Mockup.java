@@ -3,39 +3,38 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "mockup", schema = "madrasda")
+@Table(name = "mockups", schema = "madrasda")
 public class Mockup {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "img_path", nullable = false, length = 2000)
-     private String imgPath;
+     @Column(nullable = false)
+     private String frontImage;
 
-     @Column(name = "name", nullable = false, length = 200)
-     private String name;
+     @Column(nullable = false)
+     private String backImage;
 
-     @Column(name = "color", nullable = false, length = 10)
-     private String color;
+     @Column(nullable = false)
+     private String productType;
 
-     @Column(name = "size", nullable = false, length = 10)
-     private String size;
-
-     @Column(name = "quantity", nullable = false)
-     private Integer quantity;
-
-     @Column(name = "model", nullable = false, length = 10)
-     private String model;
-
-     @Column(name = "type", nullable = false, length = 200)
-     private String type;
-
-     @Column(name = "category", nullable = false, length = 200)
      private String category;
 
+     @Column(name = "color")
+     @JdbcTypeCode(SqlTypes.JSON)
+     private List<String> color;
+
+     @Column(name = "size")
+     @JdbcTypeCode(SqlTypes.JSON)
+     private List<String> size;
+
+     private String additionalInformation;
 }

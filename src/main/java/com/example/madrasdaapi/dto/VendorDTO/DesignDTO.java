@@ -1,7 +1,8 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
 import com.example.madrasdaapi.models.Design;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -12,8 +13,9 @@ import java.io.Serializable;
 @Setter
 public class DesignDTO implements Serializable {
      private Long id;
+     private String imgUrl;
+     private String designType;
      private String theme;
-     private String img;
-     private String position;
-     private String printType;
+     private String additionalInformation;
+
 }

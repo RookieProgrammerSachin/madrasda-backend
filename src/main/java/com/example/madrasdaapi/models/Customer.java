@@ -24,22 +24,22 @@ public class Customer {
      @JoinColumn(name = "id", nullable = false)
      private User user;
 
-     @Column(name = "address_line1", nullable = false, length = 50)
+     @Column(name = "address_line1",  length = 50)
      private String addressLine1;
 
      @Column(name = "address_line2", length = 50)
      private String addressLine2;
 
-     @Column(name = "city", nullable = false, length = 40)
+     @Column(name = "city",  length = 40)
      private String city;
 
-     @Column(name = "state", nullable = false, length = 40)
+     @Column(name = "state",  length = 40)
      private String state;
 
-     @Column(name = "postal_code", nullable = false, length = 40)
+     @Column(name = "postal_code",  length = 40)
      private String postalCode;
 
-     @Column(name = "country", nullable = false, length = 100)
+     @Column(name = "country",  length = 100)
      private String country;
 
      @OneToMany(mappedBy = "customer")

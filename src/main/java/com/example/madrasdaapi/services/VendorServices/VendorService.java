@@ -10,9 +10,11 @@ import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.Template;
+import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
+import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +37,17 @@ public class VendorService {
      private final VendorRepository vendorRepository;
      private final TemplateRepository templateRepository;
      private final ProductRepository productRepository;
+     private final UserRepository userRepository;
 
      @Transactional
-     public VendorDetails getVendorById(Long id) {
-          Vendor vendor = vendorRepository.findById(id).orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+     public VendorDetails getVendorDetails(String email) {
+          User vendor = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Vendor does not exist"));
           VendorDetails vendorDetails = new VendorDetails();
-          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendor);
+          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).get());
           vendorDetails.setVendorDTO(vendorDTO);
           SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
           vendorDetails.setSalesAnalysis(salesAnalysis);
-          vendorDetails.setProductLadder(getTopSellingProductsForVendor(id));
+          vendorDetails.setProductLadder(getTopSellingProductsForVendor(vendor.getId()));
           return vendorDetails;
      }
 

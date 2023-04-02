@@ -2,11 +2,11 @@ package com.example.madrasdaapi.models;
 
 import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,30 +32,27 @@ import java.util.Set;
 
 @Table(name = "vendor", schema = "madrasda")
 public class Vendor {
-     String category;
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
+
      @MapsId
-     @OneToOne(fetch = FetchType.EAGER, optional = false)
+     @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
      @JoinColumn(name = "id", nullable = false)
      private User user;
-     @Column(name = "profile_pic", nullable = false, length = 1000)
+
+     @Size(max = 1000)
+     @NotNull
+     @Column(name = "profile_pic",  length = 1000)
      private String profilePic;
-     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
-     private Set<Design> designs = new HashSet<>();
 
+     @Size(max = 255)
+     @Column(name = "category")
+     private String category;
 
+     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
+     private List<Design> designs;
 
-     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
-     private Set<Product> products = new HashSet<>();
-
-
-     @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
-     private Set<Feedback> feedbacks = new HashSet<>();
-
-     @OneToMany(mappedBy = "vendor")
-     private Set<Template> templates = new HashSet<>();
 
 }

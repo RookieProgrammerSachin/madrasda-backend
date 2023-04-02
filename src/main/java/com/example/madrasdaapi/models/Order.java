@@ -20,7 +20,7 @@ public class Order {
      @JoinColumn(name = "transaction_id", nullable = false)
      private Transaction transaction;
 
-     @Column(name = "status", nullable = false, length = 55)
+     @Column(name = "status",  length = 55)
      private String status;
 
 }

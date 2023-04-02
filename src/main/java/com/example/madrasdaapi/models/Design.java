@@ -7,28 +7,25 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Design", schema = "madrasda")
+@Table(name = "Designs", schema = "madrasda")
 public class Design {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     @Column(name = "id", nullable = false)
      private Long id;
 
-     @ManyToOne
-     @JoinColumn(name = "vendor_id", nullable = false)
-     private Vendor vendor;
+     @Column(nullable = false)
+     private String imgUrl;
 
-     @Column(name = "theme", length = 100)
+     @Column(nullable = false)
+     private String designType;
+
      private String theme;
 
-     @Column(name = "img", nullable = false, length = 3000)
-     private String img;
+     private String additionalInformation;
 
-     @Column(name = "position", nullable = false, length = 55)
-     private String position;
-
-     @Column(name = "print_type", nullable = false, length = 55)
-     private String printType;
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "vendorID", nullable = false)
+     private Vendor vendor;
 
 
 }

@@ -1,73 +1,40 @@
 package com.example.madrasdaapi.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 @Getter
-@Builder
 @Setter
 @Entity
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user", schema = "madrasda")
-public class User implements UserDetails {
+public class User {
      @Id
-     @Column(name = "id", nullable = false)
      @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @Column(name = "id")
      private Long id;
 
+     @Size(max = 255)
+     @Column(name = "email")
+     private String email;
+
+     @Size(max = 255)
      @Column(name = "name")
      private String name;
 
-     @Column(name = "email", unique = true)
-     private String email;
-
-     @Column(name = "phone",unique = true, length = 11)
+     @Size(max = 15)
+     @Column(name = "phone", length = 15)
      private String phone;
 
-     @Column(name = "password")
+     @Size(max = 1500)
+     @Column(name = "password", length = 1500)
      private String password;
-     @Enumerated(EnumType.STRING)
-     private Role role;
-     @OneToOne(mappedBy = "user")
-     private Vendor vendor;
 
-     @OneToOne(mappedBy = "user")
-     private Customer customer;
+     @Size(max = 255)
+     @Column(name = "role")
+     private String role;
 
-     @Override
-     public Collection<? extends GrantedAuthority> getAuthorities() {
-          return List.of(new SimpleGrantedAuthority(role.name()));
-     }
-
-     @Override
-     public String getUsername() {
-          return email;
-     }
-
-     @Override
-     public boolean isAccountNonExpired() {
-          return true;
-     }
-
-     @Override
-     public boolean isAccountNonLocked() {
-          return true;
-     }
-
-     @Override
-     public boolean isCredentialsNonExpired() {
-          return true;
-     }
-
-     @Override
-     public boolean isEnabled() {
-          return true;
-     }
 }

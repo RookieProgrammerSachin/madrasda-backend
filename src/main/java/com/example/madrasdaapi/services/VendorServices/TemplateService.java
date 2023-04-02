@@ -30,16 +30,22 @@ public class TemplateService {
 
 
      public TemplateDTO saveOrUpdateTemplate(TemplateDTO templateDTO) {
-          Design detachedFrontDesign = designMapper.mapToEntity(templateDTO.getFrontDesign());
-          Design detachedBackDesign = designMapper.mapToEntity(templateDTO.getBackDesign());
-          Mockup detachedMockup = mockupMapper.mapToEntity(templateDTO.getMockup());
-          Vendor detachedVendor = vendorMapper.mapToEntity(templateDTO.getVendor());
+          Design detachedFrontDesign = designRepository.findById(templateDTO.getFrontDesign().getId()).get();
+          Design detachedBackDesign = designRepository.findById(templateDTO.getBackDesign().getId()).get();
+          Mockup detachedMockup = mockupRepository.findById(templateDTO.getMockup().getId()).get();
+          Vendor detachedVendor = vendorRepository.findById(templateDTO.getVendorId()).get();
+          detachedBackDesign.setVendor(detachedVendor);
+          detachedFrontDesign.setVendor(detachedVendor);
+
           Template detachedTemplate = new Template();
           detachedTemplate.setId(templateDTO.getId());
           detachedTemplate.setFrontDesign(detachedFrontDesign);
           detachedTemplate.setBackDesign(detachedBackDesign);
           detachedTemplate.setMockup(detachedMockup);
           detachedTemplate.setVendor(detachedVendor);
+          detachedTemplate.setFrontDesignPlacement(templateDTO.getFrontDesignPlacement());
+          detachedTemplate.setBackDesignPlacement(templateDTO.getBackDesignPlacement());
+
           Template template = templateRepository.save(detachedTemplate);
           return templateMapper.mapToTemplateDTO(template);
      }
@@ -52,3 +58,4 @@ public class TemplateService {
           templateRepository.deleteById(id);
      }
 }
+//https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ7IryN086-2xO9kANHTceq_lWWljufT0K4z26rPWd-fK_gmy25

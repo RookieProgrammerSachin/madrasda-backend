@@ -27,10 +27,16 @@ public class TemplateController {
           return templateService.retrieveTemplate(templateId);
      }
 
-     @PostMapping("saveOrUpdateTemplate")
-     public TemplateDTO createTemplate(@RequestBody TemplateDTO productTemplateDTO){
+     @PostMapping("saveTemplate")
+     public TemplateDTO saveTemplate(@RequestBody TemplateDTO productTemplateDTO){
           return templateService.saveOrUpdateTemplate(productTemplateDTO);
      }
+     @GetMapping("getTemplate/{id}")
+     public TemplateDTO getTemplateById(@PathVariable Long id) {
+
+          return templateService.retrieveTemplate(id);
+     }
+
      @DeleteMapping("deleteTemplate/{id}")
      public void deleteTemplate(@PathVariable Long id){
           templateService.deleteTemplate(id);

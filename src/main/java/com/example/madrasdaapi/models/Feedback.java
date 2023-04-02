@@ -21,7 +21,7 @@ public class Feedback {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "feedback", nullable = false, length = 2000)
+     @Column(name = "feedback",  length = 2000)
      private String query;
      private Boolean resolution;
      @CreationTimestamp

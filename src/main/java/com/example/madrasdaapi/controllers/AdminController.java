@@ -1,13 +1,17 @@
 package com.example.madrasdaapi.controllers;
 
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
+import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.services.AdminServices.AdminService;
+import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,19 +20,46 @@ import java.util.List;
 @Tag(name = "Admin Resource Controller")
 @CrossOrigin
 @RequiredArgsConstructor
-
 public class AdminController {
      private final VendorService vendorService;
+     private final AdminService adminService;
+     private final MockupService mockupService;
+     private final UserRepository userRepository;
 
+     @PreAuthorize("hasRole('ADMIN')")
      @GetMapping("getVendors")
      public List<VendorMenuItemDTO> getVendorList() {
+
           return vendorService.getVendors();
      }
 
-//     @GetMapping("addVendor")
-//     public VendorDTO admin(){
-//
-//     }
+//     @PreAuthorize("hasRole('ADMIN')")
+     @PostMapping("addVendor")
+     public VendorDTO addVendor(@RequestBody RegisterDTO vendorDTO) {
+          if(userRepository.existsByEmail(vendorDTO.getPhoneOrEmail())) throw new RuntimeException("Vendor already exists");
+          return adminService.saveOrUpdateVendor(vendorDTO);
+     }
+
+//     @PreAuthorize("hasRole('ADMIN')")
+     @DeleteMapping("deleteVendor/{id}")
+     public void deleteVendor(@PathVariable Long id) {
+
+          adminService.deleteVendor(id);
+     }
+     @PostMapping("addMockup")
+     public MockupDTO saveOrUpdateMockup(@RequestBody MockupDTO mockupDTO){
+          return mockupService.addMockup(mockupDTO);
+     }
+
+     @PutMapping("updateMockup")
+     public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
+          return mockupService.updateMockup(mockupDTO);
+     }
+
+     @DeleteMapping("deleteMockup/{id}")
+     public void deleteMockup(@PathVariable Long id) {
+          mockupService.deleteMockup(id);
+     }
 
 }
 
