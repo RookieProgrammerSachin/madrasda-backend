@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.controllers.commons;
+package com.example.madrasdaapi.controllers.common;
 
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
@@ -30,11 +30,6 @@ public class TemplateController {
      @PostMapping("saveTemplate")
      public TemplateDTO saveTemplate(@RequestBody TemplateDTO productTemplateDTO){
           return templateService.saveOrUpdateTemplate(productTemplateDTO);
-     }
-     @GetMapping("getTemplate/{id}")
-     public TemplateDTO getTemplateById(@PathVariable Long id) {
-
-          return templateService.retrieveTemplate(id);
      }
 
      @DeleteMapping("deleteTemplate/{id}")

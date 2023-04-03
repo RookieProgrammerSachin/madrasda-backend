@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.controllers.commons;
+package com.example.madrasdaapi.controllers.common;
 
 import com.example.madrasdaapi.dto.commons.FeedbackDTO;
 import com.example.madrasdaapi.dto.commons.FeedbackPage;

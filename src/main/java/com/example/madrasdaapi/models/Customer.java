@@ -3,8 +3,11 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -44,5 +47,9 @@ public class Customer {
 
      @OneToMany(mappedBy = "customer")
      private Set<Transaction> transactions = new HashSet<>();
+
+     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+     private Cart cart;
+
 
 }

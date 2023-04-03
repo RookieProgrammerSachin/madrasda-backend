@@ -7,31 +7,27 @@ import com.example.madrasdaapi.services.VendorServices.VendorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @Tag(name = "Customer Resource Controller")
-@RequestMapping("/api/client/")
+@RequestMapping("/api/client")
 @CrossOrigin
 @RequiredArgsConstructor
 public class ClientController {
     private final CustomerService customerService;
     private final VendorService vendorService;
-    @GetMapping("test")
-    public String hello(){
-        return "This is working";
-    }
+
     @GetMapping("/products")
-    public List<ProductDTO> getAllProducts(){
-        return customerService.getAllProducts();
+    public Page<ProductDTO> getAllProducts(@RequestParam(defaultValue = "0") int pageNo,
+                                           @RequestParam(defaultValue = "10") int pageSize){
+        return customerService.getAllProducts(pageNo, pageSize);
     }
-    @GetMapping("/vendorproducts")
+    @GetMapping("/vendorProducts")
     @Transactional
     public List<List<ProductLadderItem>> getProductsForEachVendor() {
         List<List<ProductLadderItem>> items = new ArrayList<>();
