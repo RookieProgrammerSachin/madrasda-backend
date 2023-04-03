@@ -9,7 +9,6 @@ import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @CrossOrigin
 @Tag(name = "Vendor Resource Controller")
-@RefreshScope
 public class VendorController {
      private final VendorService vendorService;
      private final AdminService adminService;
