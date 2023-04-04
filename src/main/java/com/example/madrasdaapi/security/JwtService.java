@@ -8,6 +8,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
+import com.example.madrasdaapi.models.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,6 @@ public class JwtService {
     public String generateToken(Authentication authentication) throws Exception {
         String usernameOrEmail = authentication.getName();
         Date currentDate = new Date();
-
         Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 24);
 
         String token = Jwts.builder()
@@ -44,6 +44,19 @@ public class JwtService {
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
                 .signWith(key())
+                .compact();
+        return encrypt(token);
+    }
+    public String generateToken(User user) throws Exception {
+        Claims claims = Jwts.claims();
+        claims.put("role", user.getRole());
+        claims.setSubject(user.getPhone());
+        String token =  Jwts
+                .builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 24))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
         return encrypt(token);
     }

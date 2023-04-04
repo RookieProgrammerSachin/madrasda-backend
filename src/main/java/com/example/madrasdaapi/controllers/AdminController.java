@@ -1,7 +1,6 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
-import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -10,7 +9,6 @@ import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +34,7 @@ public class AdminController {
 //     @PreAuthorize("hasRole('ADMIN')")
      @PostMapping("addVendor")
      public VendorDTO addVendor(@RequestBody RegisterDTO vendorDTO) {
-          if(userRepository.existsByEmail(vendorDTO.getPhoneOrEmail())) throw new RuntimeException("Vendor already exists");
+          if(userRepository.existsByEmail(vendorDTO.getEmail())) throw new RuntimeException("Vendor already exists");
           return adminService.saveOrUpdateVendor(vendorDTO);
      }
 
