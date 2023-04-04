@@ -28,15 +28,17 @@ BEGIN
 SELECT
     p.id,
     SUM(tp.quantity) AS total_sales
-
 FROM
-    (select * from vendor where id = vendor_id) as v
-        INNER JOIN product p ON p.vendor_id = v.id
+    product p
         INNER JOIN transaction_product tp ON tp.product_id = p.id
-where p.publish_status = 1
-GROUP BY product_id
+WHERE
+        p.publish_status = 1
+  AND p.vendor_id = 3
+GROUP BY
+    p.id
 ORDER BY
     total_sales DESC
 LIMIT 10;
+
 END;
 

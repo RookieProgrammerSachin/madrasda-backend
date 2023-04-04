@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,7 @@ public class VendorService {
           VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).get());
           vendorDetails.setVendorDTO(vendorDTO);
           SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
+          salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
           vendorDetails.setSalesAnalysis(salesAnalysis);
           vendorDetails.setProductLadder(getTopSellingProductsForVendor(vendor.getId()));
           return vendorDetails;
@@ -62,7 +64,14 @@ public class VendorService {
           Page<Template> page = templateRepository.findByVendor_Id(vendorId, pageRequest);
           return page.map(templateMapper::mapToTemplateDTO);
      }
-
+     public List<Double> getMonthlySalesByVendorId(Long vendorId) {
+          Object[][] results = vendorRepository.monthly_sales_by_id(vendorId);
+          List<Double> monthlySales = new ArrayList<>();
+          for (Object result : results[0]) {
+               monthlySales.add(((Double) result));
+          }
+          return monthlySales;
+     }
      public List<ProductLadderItem> getTopSellingProductsForVendor(Long vendorId) {
           List<Object[]> results = vendorRepository.TOP_SELLERS_FOR_VENDOR(vendorId);
           List<ProductLadderItem> products = new ArrayList<>();

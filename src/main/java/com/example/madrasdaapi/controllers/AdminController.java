@@ -26,7 +26,7 @@ public class AdminController {
      private final MockupService mockupService;
      private final UserRepository userRepository;
 
-     @PreAuthorize("hasRole('ADMIN')")
+//     @PreAuthorize("hasRole('ADMIN')")
      @GetMapping("getVendors")
      public List<VendorMenuItemDTO> getVendorList() {
 
@@ -45,20 +45,6 @@ public class AdminController {
      public void deleteVendor(@PathVariable Long id) {
 
           adminService.deleteVendor(id);
-     }
-     @PostMapping("addMockup")
-     public MockupDTO saveOrUpdateMockup(@RequestBody MockupDTO mockupDTO){
-          return mockupService.addMockup(mockupDTO);
-     }
-
-     @PutMapping("updateMockup")
-     public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
-          return mockupService.updateMockup(mockupDTO);
-     }
-
-     @DeleteMapping("deleteMockup/{id}")
-     public void deleteMockup(@PathVariable Long id) {
-          mockupService.deleteMockup(id);
      }
 
 }

@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
      private final CartService cartService;
 
-     @GetMapping("{id}")
-     public void getCartItemsForCustomer(@PathVariable Long id) {
-//          return cartService.getCartForCustomer(id);
+     @GetMapping("{customerId}")
+     public CartDTO getCartItemsForCustomer(@PathVariable Long customerId) {
+          return cartService.getCartForCustomer(customerId);
      }
 
-     @DeleteMapping("{customerId}&{productId}")
-     public void removeFromCart(@PathVariable Long customerId, @PathVariable Long productId) {
-
+     @PutMapping("changeQuantity/{cartItemId}&&{quantity}")
+     public void changeCartItemQuantity(@PathVariable Long cartItemId, @PathVariable Integer quantity) {
+          cartService.changeQuantity(cartItemId, quantity);
+     }
+     @PostMapping("addToCart/{customerId}&&{productId}")
+     public void addToCart(@PathVariable Long customerId, @PathVariable Long productId) {
+          cartService.addToCart(customerId, productId);
      }
 }

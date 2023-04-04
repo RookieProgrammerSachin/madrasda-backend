@@ -6,13 +6,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NamedStoredProcedureQuery(
-        name = "getSalesAnalysisByVendorId",
+        name = "GET_SALES_ANALYSIS_BY_VENDOR_ID",
         procedureName = "VENDOR_SALES",
         parameters = {
                 @StoredProcedureParameter(name = "vendorId", mode = ParameterMode.IN, type = Long.class),
@@ -28,7 +30,8 @@ import java.util.List;
                                 @ColumnResult(name = "totalOrders", type = Long.class),
                                 @ColumnResult(name = "totalProfit", type = Long.class)
                         })
-        })
+        }
+)
 
 @Table(name = "vendor", schema = "madrasda")
 public class Vendor {
@@ -44,7 +47,7 @@ public class Vendor {
 
      @Size(max = 1000)
      @NotNull
-     @Column(name = "profile_pic",  length = 1000)
+     @Column(name = "profile_pic", length = 1000)
      private String profilePic;
 
      @Size(max = 255)

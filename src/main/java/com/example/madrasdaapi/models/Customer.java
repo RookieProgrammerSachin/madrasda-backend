@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,8 +49,7 @@ public class Customer {
      @OneToMany(mappedBy = "customer")
      private Set<Transaction> transactions = new HashSet<>();
 
-     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-     private Cart cart;
-
+     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+     private List<CartItem> cart = new ArrayList<>();
 
 }
