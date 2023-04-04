@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+
 @RestController
 @RequestMapping("/api/vendor/")
 @RequiredArgsConstructor
@@ -23,8 +25,9 @@ public class VendorController {
      private final MockupService mockupService;
      private final TemplateService templateService;
      private final DesignService designService;
+
      @GetMapping
-     public VendorDetails getVendorDetails() {
+     public VendorDetails getVendorDetails() throws SQLException {
           String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
           return vendorService.getVendorDetails(email);
      }
@@ -36,10 +39,6 @@ public class VendorController {
           return adminService.updateVendor(registerDTO);
      }
 
-     @GetMapping("getMockup/{id}")
-     public MockupDTO retrieveMockup(@PathVariable Long id){
-          return mockupService.getMockupById(id);
-     }
 
      @GetMapping("getDesign/{id}")
      public DesignDTO getDesignById(@PathVariable Long id) {
@@ -50,10 +49,14 @@ public class VendorController {
      public DesignDTO addDesign(@RequestBody DesignDTO designDTO) {
           return designService.save(designDTO);
      }
+
      @PutMapping("updateDesign")
      public DesignDTO updateDesign(@RequestBody DesignDTO designDTO) {
           return designService.update(designDTO);
      }
 
-
+     @DeleteMapping("deleteDesign/{designId}")
+     public void deleteDesignById(@PathVariable Long designId) {
+          designService.deleteById(designId);
+     }
 }

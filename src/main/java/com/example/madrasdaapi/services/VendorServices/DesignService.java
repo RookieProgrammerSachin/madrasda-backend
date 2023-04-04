@@ -32,4 +32,7 @@ public class DesignService {
           return designMapper.mapToDTO(savedDesign);
      }
 
+     public void deleteById(Long designId) {
+          designRepository.deleteById(designId);
+     }
 }
