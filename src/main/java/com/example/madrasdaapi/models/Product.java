@@ -49,4 +49,10 @@ public class Product {
      @JoinTable(name="product_image_mapping", joinColumns = @JoinColumn(referencedColumnName = "id"),
      inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
      List<ProductImage> productImages;
+
+     @OneToMany
+     private List<Color> colors;
+
+     @OneToMany
+     private List<Size> sizes;
 }

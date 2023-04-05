@@ -2,7 +2,6 @@ package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
-import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;

@@ -36,4 +36,5 @@ public class TemplateController {
      public void deleteTemplate(@PathVariable Long id){
           templateService.deleteTemplate(id);
      }
+
 }

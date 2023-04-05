@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
-import jakarta.annotation.security.DenyAll;
+import com.example.madrasdaapi.models.Color;
+import com.example.madrasdaapi.models.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class MockupDTO implements Serializable {
      private String frontImage;
      private String backImage;
      private String productType;
-     private List<String> color;
-     private List<String> size;
+     private List<Color> colors;
+     private List<Size> sizes;
      private String additionalInformation;
 }

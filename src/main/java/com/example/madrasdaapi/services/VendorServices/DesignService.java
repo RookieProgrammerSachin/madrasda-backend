@@ -1,7 +1,6 @@
 package com.example.madrasdaapi.services.VendorServices;
 
 import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
-import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.mappers.DesignMapper;
 import com.example.madrasdaapi.models.Design;
 import com.example.madrasdaapi.repositories.DesignRepository;

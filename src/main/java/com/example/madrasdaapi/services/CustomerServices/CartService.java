@@ -4,13 +4,12 @@ import com.example.madrasdaapi.dto.CartDTO;
 import com.example.madrasdaapi.mappers.CartItemMapper;
 import com.example.madrasdaapi.models.CartItem;
 import com.example.madrasdaapi.models.Customer;
-import com.example.madrasdaapi.repositories.*;
+import com.example.madrasdaapi.repositories.CartItemRepository;
+import com.example.madrasdaapi.repositories.CustomerRepository;
+import com.example.madrasdaapi.repositories.ProductRepository;
+import com.example.madrasdaapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.Optional;
 import java.util.stream.Collectors;

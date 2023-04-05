@@ -23,17 +23,7 @@ public class Transaction {
      @Column(name = "order_date", nullable = false)
      private LocalDate orderDate;
 
-     @Column(name = "expected_date")
-     private LocalDate expectedDate;
-
-     @Column(name = "order_total", nullable = false)
      private Integer orderTotal;
-
-     @Column(name = "delivered", nullable = false)
-     private Byte delivered;
-
-     @Column(name = "transaction_success", nullable = false)
-     private Byte transactionSuccess;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "customer_id", nullable = false)
@@ -42,7 +32,7 @@ public class Transaction {
      @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
      private Set<OrderItem> orderItems = new HashSet<>();
 
-     @OneToMany(mappedBy = "transaction")
-     private Set<Order> orders = new HashSet<>();
+     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
+     private Shipment shipment;
 
 }

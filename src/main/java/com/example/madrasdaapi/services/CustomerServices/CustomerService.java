@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -24,7 +22,7 @@ public class CustomerService {
      private final ProductMapper productMapper;
 
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
-          return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapProduct);
+          return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
 
 }

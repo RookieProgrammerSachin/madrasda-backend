@@ -1,7 +1,8 @@
 package com.example.madrasdaapi.controllers;
 
-import com.example.madrasdaapi.dto.VendorDTO.*;
-import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
+import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
+import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
+import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
 import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.DesignService;

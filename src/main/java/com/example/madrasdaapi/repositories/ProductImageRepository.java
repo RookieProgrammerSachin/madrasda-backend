@@ -3,8 +3,9 @@ package com.example.madrasdaapi.repositories;
 import com.example.madrasdaapi.models.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
-        Optional<ProductImage> findProductImageByProductId(Long id);
+        List<ProductImage> findByProductId(Long id);
+
 }
