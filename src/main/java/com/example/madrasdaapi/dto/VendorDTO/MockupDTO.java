@@ -21,6 +21,7 @@ public class MockupDTO implements Serializable {
      private String frontImage;
      private String backImage;
      private String productType;
+     private String category;
      private List<String> color;
      private List<String> size;
      private String additionalInformation;

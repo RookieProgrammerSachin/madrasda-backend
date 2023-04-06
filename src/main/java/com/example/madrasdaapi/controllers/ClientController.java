@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,19 +25,34 @@ public class ClientController {
     private final CustomerService customerService;
     private final VendorService vendorService;
 
-    @GetMapping("/products")
-    public Page<ProductDTO> getAllProducts(@RequestParam(defaultValue = "0") int pageNo,
-                                           @RequestParam(defaultValue = "10") int pageSize){
+    @GetMapping("/allProducts")
+    public Page<ProductDTO> getAllProducts(
+            @RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize
+    ){
         return customerService.getAllProducts(pageNo, pageSize);
     }
     @GetMapping("/vendorProducts")
     @Transactional
-    public List<List<ProductLadderItem>> getProductsForEachVendor() {
-        List<List<ProductLadderItem>> items = new ArrayList<>();
-        items.add(vendorService.getTopSellingProductsForVendor(1L));
-        items.add(vendorService.getTopSellingProductsForVendor(4L));
-        items.add(vendorService.getTopSellingProductsForVendor(2L));
-        items.add(vendorService.getTopSellingProductsForVendor(3L));
-        return items;
+    public List<List<ProductLadderItem>> getProductsForEachVendor(
+    ) {
+        return customerService.getAllVendorId().stream()
+                .map(vendorService::getTopSellingProductsForVendor).toList();
+    }
+    @GetMapping("/vendorProducts/{id}")
+    public Page<ProductLadderItem> getProductsForVendor(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize
+    ) {
+        List<ProductLadderItem> items = vendorService.getTopSellingProductsForVendor(id);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), items.size());
+        return new PageImpl<>(items.subList(start, end), pageable, items.size());
+    }
+    @GetMapping("/products/{category}")
+    public List<List<ProductDTO>> getProductsByCategory(@PathVariable String category) {
+        return customerService.getProductsByCategory(category);
     }
 }

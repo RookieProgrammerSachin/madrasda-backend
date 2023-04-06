@@ -9,7 +9,9 @@ import com.example.madrasdaapi.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +20,8 @@ public class ProductMapper {
     private final ProductImageRepository productImageRepository;
     private final ProductImageMapper productImageMapper;
     public ProductDTO mapProduct(Product product){
-
-        List<ProductImageDTO> images = productImageRepository
-                .findProductImageByProductId(product.getId())
-                .map(productImageMapper::getImagePath)
-                .stream().toList();
+        List<ProductImage> images = productImageRepository
+                .findAllByProductId(product.getId()).orElseThrow();
         ProductDTO item = new ProductDTO();
         item.setId(product.getId());
         item.setName(product.getName());
@@ -32,7 +31,7 @@ public class ProductMapper {
         item.setTotal(product.getTotal());
         item.setTax(product.getTax());
         item.setProfit(product.getProfit());
-        item.setImages(images);
+        item.setImages(images.stream().map(productImageMapper::getImagePath).toList());
         return item;
     }
 }

@@ -27,6 +27,7 @@ public class Mockup {
      private String productType;
 
      private String category;
+     private String model;
 
      @Column(name = "color")
      @JdbcTypeCode(SqlTypes.JSON)

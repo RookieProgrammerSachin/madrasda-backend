@@ -20,6 +20,8 @@ public class Product {
      @Column(name = "id", nullable = false)
      private Long id;
      private String name;
+     @Column(name = "audience")
+     private String audience;
      @Column(name = "base_price", nullable = false)
      private Float basePrice;
 
