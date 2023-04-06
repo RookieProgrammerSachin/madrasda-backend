@@ -8,7 +8,11 @@ import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,4 +33,12 @@ public class ProductService {
           return productMapper.mapToDTO(productRepository.save(product));
 
      }
+
+     public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
+          Page<Product> products = productRepository.findByVendor_Id(vendorId, PageRequest.of(pageNo, pageSize));
+          return products.map(productMapper::mapToDTO);
+
+
+     }
+
 }

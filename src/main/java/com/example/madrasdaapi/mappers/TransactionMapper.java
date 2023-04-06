@@ -33,8 +33,8 @@ public class TransactionMapper {
           TransactionDTO transactionDTO = mapper.createTypeMap(Transaction.class, TransactionDTO.class)
                   .addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems)
                   .map(transaction);
-          transactionDTO.setShipmentActivity(transaction.getShipment().getShipmentActivities());
-          transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatus()));
+          transactionDTO.setShipmentActivity(transaction.getShipment().getScans());
+          transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
           return transactionDTO;
      }
 }

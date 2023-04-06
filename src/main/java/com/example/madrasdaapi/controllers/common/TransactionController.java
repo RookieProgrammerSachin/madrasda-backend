@@ -1,7 +1,9 @@
 package com.example.madrasdaapi.controllers.common;
 
+import com.example.madrasdaapi.dto.ShipmentDTO;
+import com.example.madrasdaapi.dto.TrackingDataDTO.TrackingData;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
-import com.example.madrasdaapi.models.ShipmentTracking.TrackingData;
+import com.example.madrasdaapi.models.Shipment;
 import com.example.madrasdaapi.services.commons.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +21,13 @@ public class TransactionController {
           return transactionService.initiateTransaction(transactionDTO);
      }
 
+     @GetMapping("getOrderDetails/{transactionId}")
+     public ShipmentDTO getOrderDetails(@PathVariable Long transactionId) {
+          return transactionService.getOrderDetails(transactionId);
+     }
      @PostMapping("updateShipment")
      public void updateStatus(@RequestBody TrackingData trackingDetails) {
+
           transactionService.updateStatus(trackingDetails);
 
      }

@@ -13,56 +13,54 @@ import java.util.List;
 @Setter
 @Entity
 @ToString
-@Table(name = "shipment", schema = "madrasda")
+@Table(name = "shipment_tracking", indexes = {
+        @Index(name = "idx_shipment_transaction_id", columnList = "transaction_id")
+})
 public class Shipment {
+
      @Id
-     @Column(name = "shipment_id")
-     private Long shipmentId;
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private Long id;
 
-     @Column(name = "awb_code")
-     private String awbCode;
-
-     @Column(name = "courier_company_id")
-     private Integer courierCompanyId;
-
-     @Column(name = "pickup_date")
-     private Date pickupDate;
-
-     @Column(name = "delivered_date")
-     private Date deliveredDate;
-
-     @Column(name = "weight")
-     private Double weight;
-
-     @Column(name = "packages")
-     private Integer packages;
+     @Column(name = "awb")
+     private Long awb;
 
      @Column(name = "current_status")
-     private Integer currentStatus;
+     private String currentStatus;
 
-     @Column(name = "delivered_to")
-     private String deliveredTo;
+     @Column(name = "order_id")
+     private String orderId;
 
-     @Column(name = "destination")
-     private String destination;
-
-     @Column(name = "consignee_name")
-     private String consigneeName;
-
-     @Column(name = "origin")
-     private String origin;
-
-     @Column(name = "courier_agent_details")
-     private String courierAgentDetails;
+     @Column(name = "curr_time")
+     private String currentTimestamp;
 
      @Column(name = "etd")
-     private Date edd;
+     private String etd;
 
-     @OneToMany(cascade = CascadeType.ALL, mappedBy = "shipments")
-     private List<ShipmentTrackActivity> shipmentActivities = new ArrayList<>();
+     @Column(name = "current_status_id")
+     private Integer currentStatusId;
+
+     @Column(name = "shipment_status")
+     private String shipmentStatus;
+
+     @Column(name = "shipment_status_id")
+     private Integer shipmentStatusId;
+
+     @Column(name = "channel_order_id")
+     private String channelOrderId;
+
+     @Column(name = "channel")
+     private String channel;
+
+     @Column(name = "courier_name")
+     private String courierName;
+
+     @OneToMany(cascade = CascadeType.ALL)
+     @JoinColumn(name = "tracking_id")
+     private List<ShipmentTrackActivity> scans = new ArrayList<>();
 
      @OneToOne
      @ToString.Exclude
-     @JoinColumn(name = "transaction_id")
+     @JoinColumn(referencedColumnName = "id")
      private Transaction transaction;
 }

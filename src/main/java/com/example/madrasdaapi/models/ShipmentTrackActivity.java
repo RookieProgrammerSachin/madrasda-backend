@@ -10,19 +10,25 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "shipment_scan")
 @ToString
 public class ShipmentTrackActivity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
-	private Date date;
+	private Long id;
+
+	@Column(name = "date")
+	private String date;
+
+	@Column(name = "activity")
 	private String activity;
-	private String srStatusLabel;
+
+	@Column(name = "location")
 	private String location;
-	private String srStatus;
-	private String status;
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tracking_id")
 	@ToString.Exclude
-	@ManyToOne
-	@JoinColumn(name = "shipment_id")
-	private Shipment shipments;
+	private Shipment shipment;
 }
