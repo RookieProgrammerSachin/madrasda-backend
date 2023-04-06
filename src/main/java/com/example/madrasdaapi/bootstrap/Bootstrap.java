@@ -2,6 +2,7 @@ package com.example.madrasdaapi.bootstrap;
 
 import com.example.madrasdaapi.models.Feedback;
 import com.example.madrasdaapi.models.Vendor;
+import com.example.madrasdaapi.models.sku.SKU;
 import com.example.madrasdaapi.repositories.FeedbackRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
@@ -32,7 +33,10 @@ public class Bootstrap implements CommandLineRunner {
                feedback.setResolution(resolution = !resolution);
                feedbackRepository.save(feedback);
           }
+     }
 
-
+     public static void main(String[] args) {
+          SKU sku = SKU.PWRNWH2XL_001M;
+          System.out.println(sku.getColor());
      }
 }
