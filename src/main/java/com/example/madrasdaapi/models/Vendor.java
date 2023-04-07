@@ -49,6 +49,15 @@ public class Vendor {
      @Column(name = "profile_pic", length = 1000)
      private String profilePic;
 
+     @Size(max = 500)
+     private String companyName;
+
+     @Size(max = 500)
+     private String companyUrl;
+
+     @Size(max = 16)
+     private String GSTIN;
+
      @Size(max = 255)
      @Column(name = "category")
      private String category;

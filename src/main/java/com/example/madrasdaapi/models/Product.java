@@ -57,4 +57,8 @@ public class Product {
 
      @OneToMany
      private List<Size> sizes;
+
+     @ManyToOne
+     @JoinColumn(referencedColumnName = "id")
+     private Mockup mockup;
 }

@@ -32,14 +32,6 @@ public class User {
      @Size(max = 1500)
      private String password;
 
-     @Size(max = 500)
-     private String companyName;
-
-     @Size(max = 500)
-     private String companyUrl;
-
-     @Size(max = 16)
-     private String GSTIN;
 
      @Size(max = 255)
      @Column(name = "role")

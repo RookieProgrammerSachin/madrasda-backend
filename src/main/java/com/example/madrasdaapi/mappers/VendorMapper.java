@@ -6,6 +6,9 @@ import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class VendorMapper {
      private final VendorRepository vendorRepository;
      private final UserRepository userRepository;
-
+     private final ModelMapper mapper;
 
      public VendorMenuItemDTO mapToMenuItemDTO(Vendor vendor) {
           VendorMenuItemDTO item = new VendorMenuItemDTO();
@@ -31,15 +34,16 @@ public class VendorMapper {
           vendorDTO.setName(vendor.getUser().getName());
           vendorDTO.setEmail(vendor.getUser().getEmail());
           vendorDTO.setImgUrl(vendor.getProfilePic());
-          vendorDTO.setCompanyName(vendor.getUser().getCompanyName());
-          vendorDTO.setCompanyUrl(vendor.getUser().getCompanyUrl());
-
+          vendorDTO.setCompanyName(vendor.getCompanyName());
+          vendorDTO.setCompanyUrl(vendor.getCompanyUrl());
+          vendorDTO.setGSTIN(vendor.getGSTIN());
           return vendorDTO;
      }
 
      public Vendor mapToEntity(VendorDTO vendorDTO) {
           String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
           Vendor vendor = vendorRepository.findByUser_Email(email);
+
           if (vendorDTO.getName() != null) {
                vendor.getUser().setName(vendorDTO.getName());
           }
