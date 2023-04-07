@@ -29,6 +29,7 @@ public class AdminService {
           detachedUser.setPassword(encoder.encode(detachedUser.getPassword()));
           detachedVendor.setProfilePic(registerDTO.getImgUrl());
           detachedVendor.setUser(detachedUser);
+          detachedUser.setEmail(registerDTO.getEmail());
           detachedVendor.getUser().setRole("ROLE_VENDOR");
           VendorDTO vendor = vendorMapper.mapToDTO(vendorRepository.save(detachedVendor));
           return vendor;

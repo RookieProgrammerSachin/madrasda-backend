@@ -29,7 +29,7 @@ public class VendorMapper {
           VendorDTO vendorDTO = new VendorDTO();
           vendorDTO.setId(vendor.getId());
           vendorDTO.setName(vendor.getUser().getName());
-          vendorDTO.setEmail(vendorDTO.getEmail());
+          vendorDTO.setEmail(vendor.getUser().getEmail());
           vendorDTO.setImgUrl(vendor.getProfilePic());
           return vendorDTO;
      }

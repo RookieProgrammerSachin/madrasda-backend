@@ -32,14 +32,14 @@ public class ClientController {
     ){
         return customerService.getAllProducts(pageNo, pageSize);
     }
-    @GetMapping("/vendorProducts")
-    @Transactional
-    public List<List<ProductLadderItem>> getProductsForEachVendor(
-    ) {
-        return customerService.getAllVendorId().stream()
-                .map(vendorService::getTopSellingProductsForVendor).toList();
-    }
-    @GetMapping("/vendorProducts/{id}")
+//    @GetMapping("/vendorProducts")
+//    @Transactional
+//    public List<List<ProductLadderItem>> getProductsForEachVendor(
+//    ) {
+//        return customerService.getAllVendorId().stream()
+//                .map(vendorService::getTopSellingProductsForVendor).toList();
+//    }
+    @GetMapping("/topSellingVendorProducts/{id}")
     public Page<ProductLadderItem> getProductsForVendor(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
@@ -51,8 +51,8 @@ public class ClientController {
         int end = Math.min((start + pageable.getPageSize()), items.size());
         return new PageImpl<>(items.subList(start, end), pageable, items.size());
     }
-    @GetMapping("/products/{category}")
-    public List<List<ProductDTO>> getProductsByCategory(@PathVariable String category) {
-        return customerService.getProductsByCategory(category);
-    }
+//    @GetMapping("/products/{category}")
+//    public List<List<ProductDTO>> getProductsByCategory(@PathVariable String category) {
+//        return customerService.getProductsByCategory(category);
+//    }
 }

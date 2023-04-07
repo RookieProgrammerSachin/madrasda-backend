@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class AuthController {
     private final AuthenticationService authService;
-    @PostMapping("/register")
-    public ResponseEntity<JwtDTO> register(@RequestBody RegisterDTO request) throws Exception {
-        return ResponseEntity.ok(authService.register(request));
-    }
+    
     @PostMapping("/login")
     public ResponseEntity<JwtDTO> authenticate(@RequestBody LoginDTO request) throws Exception {
         return ResponseEntity.ok(authService.authenticate(request));
