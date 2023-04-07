@@ -31,6 +31,9 @@ public class VendorMapper {
           vendorDTO.setName(vendor.getUser().getName());
           vendorDTO.setEmail(vendor.getUser().getEmail());
           vendorDTO.setImgUrl(vendor.getProfilePic());
+          vendorDTO.setCompanyName(vendor.getUser().getCompanyName());
+          vendorDTO.setCompanyUrl(vendor.getUser().getCompanyUrl());
+
           return vendorDTO;
      }
 

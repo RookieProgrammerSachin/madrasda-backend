@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class VendorDetails {
-     private VendorDTO vendorDTO;
+     private VendorDTO vendor;
      private SalesAnalysis salesAnalysis;
      private List<ProductLadderItem> productLadder;
 }

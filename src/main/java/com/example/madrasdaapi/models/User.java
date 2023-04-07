@@ -17,7 +17,7 @@ public class User {
      @Column(name = "id")
      private Long id;
 
-     @Size(max = 255)
+     @Size(max = 500)
      @Column(name = "email")
      private String email;
 
@@ -26,12 +26,20 @@ public class User {
      private String name;
 
      @Size(max = 15)
-     @Column(name = "phone", length = 15)
+     @Column(length = 15)
      private String phone;
 
      @Size(max = 1500)
-     @Column(name = "password", length = 1500)
      private String password;
+
+     @Size(max = 500)
+     private String companyName;
+
+     @Size(max = 500)
+     private String companyUrl;
+
+     @Size(max = 16)
+     private String GSTIN;
 
      @Size(max = 255)
      @Column(name = "role")

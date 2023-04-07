@@ -43,7 +43,7 @@ public class VendorService {
           User vendor = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Vendor does not exist"));
           VendorDetails vendorDetails = new VendorDetails();
           VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).get());
-          vendorDetails.setVendorDTO(vendorDTO);
+          vendorDetails.setVendor(vendorDTO);
           SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
           salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
           vendorDetails.setSalesAnalysis(salesAnalysis);
