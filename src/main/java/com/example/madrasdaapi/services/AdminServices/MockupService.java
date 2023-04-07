@@ -6,8 +6,6 @@ import com.example.madrasdaapi.models.Mockup;
 import com.example.madrasdaapi.repositories.MockupRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,8 +27,8 @@ public class MockupService {
           Mockup detachedMockup = mockupRepository.findById(mockupDTO.getId()).get();
           mapper.getConfiguration().setSkipNullEnabled(true);
           mapper.map(mockupDTO, detachedMockup);
-          if(mockupDTO.getColor() != null) detachedMockup.setColor(mockupDTO.getColor());
-          if(mockupDTO.getSize() != null) detachedMockup.setSize(mockupDTO.getSize());
+          if(mockupDTO.getColors() != null) detachedMockup.setColors(mockupDTO.getColors());
+          if(mockupDTO.getSizes() != null) detachedMockup.setSizes(mockupDTO.getSizes());
           return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
      }
 

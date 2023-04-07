@@ -11,7 +11,6 @@ import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.Template;
 import com.example.madrasdaapi.models.User;
-import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

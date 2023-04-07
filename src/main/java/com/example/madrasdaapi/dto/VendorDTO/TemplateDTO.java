@@ -1,7 +1,5 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
-import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
-import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MockupController {
      private final MockupService mockupService;
+
+
      @GetMapping("getMockup/{id}")
-     public MockupDTO retrieveMockup(@PathVariable Long id){
+     public MockupDTO retrieveMockup(@PathVariable Long id) {
           return mockupService.getMockupById(id);
      }
 
      @PostMapping("addMockup")
-     public MockupDTO saveOrUpdateMockup(@RequestBody MockupDTO mockupDTO){
+     public MockupDTO saveOrUpdateMockup(@RequestBody MockupDTO mockupDTO) {
           return mockupService.addMockup(mockupDTO);
      }
 
@@ -29,5 +31,6 @@ public class MockupController {
      public void deleteMockup(@PathVariable Long id) {
           mockupService.deleteMockup(id);
      }
+
 
 }
