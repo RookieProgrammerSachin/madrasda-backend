@@ -34,7 +34,6 @@ public class Product {
 
      private Float total;
 
-     @Column(name = "profit")
      private Float profit;
 
      private Float tax;
@@ -44,6 +43,11 @@ public class Product {
      @ManyToOne(optional = false)
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
+
+     @OneToOne
+     @JoinColumn(referencedColumnName = "id")
+     private Mockup mockup;
+
 
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
      List<ProductImage> productImages;
