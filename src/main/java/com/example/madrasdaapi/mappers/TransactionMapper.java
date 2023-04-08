@@ -3,7 +3,7 @@ package com.example.madrasdaapi.mappers;
 import com.example.madrasdaapi.dto.commons.OrderItemDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.OrderItem;
-import com.example.madrasdaapi.models.ShipmentStatus;
+import com.example.madrasdaapi.models.enums.ShipmentStatus;
 import com.example.madrasdaapi.models.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

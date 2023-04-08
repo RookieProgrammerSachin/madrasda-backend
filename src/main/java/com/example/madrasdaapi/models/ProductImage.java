@@ -11,9 +11,14 @@ import lombok.Setter;
 public class ProductImage {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long id;
-     String imgUrl;
+     private Long id;
+
+     private String imgUrl;
+
+     @ManyToOne
+     private Color color;
+
      @ManyToOne
      @JoinColumn(referencedColumnName = "id")
-     Product product;
+     private Product product;
 }

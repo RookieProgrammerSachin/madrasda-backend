@@ -12,7 +12,7 @@ public class ProductImageMapper {
     private final ProductImageRepository productImageRepository;
     public ProductImageDTO getImagePath(ProductImage productImage){
         ProductImageDTO item = new ProductImageDTO();
-        item.setImagePath(productImage.getImgUrl());
+        item.setImageUrl(productImage.getImgUrl());
         return item;
     }
 }

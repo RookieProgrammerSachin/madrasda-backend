@@ -3,6 +3,8 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -19,28 +21,24 @@ public class Product {
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
      private Long id;
+
      private String name;
-     @Column(name = "audience")
+
      private String audience;
-     @Column(name = "base_price", nullable = false)
+
      private Float basePrice;
 
-     @Column(name = "shipping", nullable = false)
      private Float shipping;
 
-     @Column(name = "discount")
      private Float discount;
 
-     @Column(name = "total", nullable = false)
      private Float total;
 
      @Column(name = "profit")
      private Float profit;
 
-     @Column(name = "tax", nullable = false)
      private Float tax;
 
-     @Column(name = "publish_status", nullable = false)
      private Boolean publishStatus;
 
      @ManyToOne(optional = false)
@@ -48,17 +46,18 @@ public class Product {
      private Vendor vendor;
 
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-     @JoinTable(name="product_image_mapping", joinColumns = @JoinColumn(referencedColumnName = "id"),
-     inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
      List<ProductImage> productImages;
 
-     @OneToMany
-     private List<Color> colors;
+     private String frontDesignUrl;
+
+     @JdbcTypeCode(SqlTypes.JSON)
+     private String frontDesignPlacement;
+
+     private String backDesignUrl;
+
+     @JdbcTypeCode(SqlTypes.JSON)
+     private String backDesignPlacement;
 
      @OneToMany
-     private List<Size> sizes;
-
-     @ManyToOne
-     @JoinColumn(referencedColumnName = "id")
-     private Mockup mockup;
+     private List<ProductSKUMapping> skuMappings;
 }

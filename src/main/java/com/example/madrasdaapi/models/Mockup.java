@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,11 +28,8 @@ public class Mockup {
 
      private String model;
 
-     @OneToMany
-     private List<Color> colors;
-
-     @OneToMany
-     private List<Size> sizes;
-
      private String additionalInformation;
+
+     @OneToMany(mappedBy = "mockup")
+     private List<ProductSKUMapping> skuMapping = new ArrayList<>();
 }

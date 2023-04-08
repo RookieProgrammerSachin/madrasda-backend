@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.models.sku;
+package com.example.madrasdaapi.models.enums;
 
 import lombok.Getter;
 

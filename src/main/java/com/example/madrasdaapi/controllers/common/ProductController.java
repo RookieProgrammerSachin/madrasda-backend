@@ -1,9 +1,13 @@
 package com.example.madrasdaapi.controllers.common;
 
+import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.services.commons.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,14 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
      private final ProductService productService;
-
+     private final ProductSKUMappingRepository productSKUMappingRepository;
      @PutMapping("togglePublishState/{productId}")
      public void togglePublishState(@PathVariable Long productId) {
           productService.togglePublishState(productId);
      }
 
      @PostMapping("createProduct")
-     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
+     public ProductDTO createProduct(@RequestBody NewProductDTO productDTO) {
           return productService.createProduct(productDTO);
      }
 
@@ -29,5 +33,11 @@ public class ProductController {
                                                   @RequestParam Integer pageNo,
                                                  @RequestParam Integer pageSize) {
           return productService.getProductsByVendor(vendorId, pageNo, pageSize);
+     }
+
+     @GetMapping("getAllSKU")
+     public Page<ProductSKUMapping> productSKUMapping(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                      @RequestParam(defaultValue = "25") Integer pageSize){
+          return productSKUMappingRepository.findAll(PageRequest.of(pageNo, pageSize));
      }
 }

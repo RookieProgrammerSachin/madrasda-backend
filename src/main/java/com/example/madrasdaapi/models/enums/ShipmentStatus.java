@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.models;
+package com.example.madrasdaapi.models.enums;
 
 public enum ShipmentStatus {
      Order_Placed(5, "Order Placed"),

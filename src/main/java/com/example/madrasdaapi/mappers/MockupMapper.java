@@ -1,23 +1,32 @@
 package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
 import com.example.madrasdaapi.models.Mockup;
+import com.example.madrasdaapi.models.ProductSKUMapping;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
+@RequiredArgsConstructor
 public class MockupMapper {
-     private final ModelMapper mapper;
+    private final ModelMapper mapper;
 
-     public MockupMapper(ModelMapper mapper) {
-          this.mapper = mapper;
-     }
 
-     public MockupDTO mapToDTO(Mockup mockup) {
-          return mapper.map(mockup, MockupDTO.class);
-     }
+    public MockupDTO mapToDTO(Mockup mockup) {
 
-     public Mockup mapToEntity(MockupDTO mockupDTO) {
-          return mapper.map(mockupDTO, Mockup.class);
-     }
+        MockupDTO mockupDTO = mapper.map(mockup, MockupDTO.class);
+        mockupDTO.setSkuMapping(mockup.getSkuMapping()
+                .stream()
+                .map(sku -> new MockupSkuDTO(sku.getId(),sku.getSku(), sku.getSize(), sku.getColor()))
+                .collect(Collectors.toList()));
+        return mockupDTO;
+    }
+
+    public Mockup mapToEntity(MockupDTO mockupDTO) {
+        return mapper.map(mockupDTO, Mockup.class);
+    }
 }

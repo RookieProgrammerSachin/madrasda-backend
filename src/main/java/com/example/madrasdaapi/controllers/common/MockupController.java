@@ -22,10 +22,10 @@ public class MockupController {
           return mockupService.addMockup(mockupDTO);
      }
 
-     @PutMapping("updateMockup")
+     /*@PutMapping("updateMockup")
      public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
           return mockupService.updateMockup(mockupDTO);
-     }
+     }*/
 
      @DeleteMapping("deleteMockup/{id}")
      public void deleteMockup(@PathVariable Long id) {

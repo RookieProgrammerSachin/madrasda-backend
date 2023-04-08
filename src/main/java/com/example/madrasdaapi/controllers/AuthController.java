@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationService authService;
     
-    @PostMapping("/login")
-    public ResponseEntity<JwtDTO> authenticate(@RequestBody LoginDTO request) throws Exception {
-        return ResponseEntity.ok(authService.authenticate(request));
+    @PostMapping("/loginVendor")
+    public ResponseEntity<JwtDTO> authenticateVendor(@RequestBody LoginDTO request) throws Exception {
+        return ResponseEntity.ok(authService.authenticateVendor(request));
     }
-
+    @PostMapping("/loginAdmin")
+    public ResponseEntity<JwtDTO> authenticateAdmin(@RequestBody LoginDTO request) throws Exception {
+        return ResponseEntity.ok(authService.authenticateAdmin(request));
+    }
     @GetMapping("/loginClient")
     public ResponseEntity<String> loginClient(@RequestParam("phone") String phone) throws Exception {
         return ResponseEntity.ok(authService.generateOTP(phone));

@@ -5,7 +5,7 @@ import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
 import com.example.madrasdaapi.models.Shipment;
-import com.example.madrasdaapi.models.ShipmentStatus;
+import com.example.madrasdaapi.models.enums.ShipmentStatus;
 import com.example.madrasdaapi.dto.TrackingDataDTO.TrackingData;
 import com.example.madrasdaapi.models.Transaction;
 import com.example.madrasdaapi.repositories.OrderRepository;

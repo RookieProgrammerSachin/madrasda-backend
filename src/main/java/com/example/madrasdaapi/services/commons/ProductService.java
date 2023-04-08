@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.services.commons;
 
+import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
@@ -27,8 +28,8 @@ public class ProductService {
           productRepository.updatePublishStatusById(productId);
      }
 
-     public ProductDTO createProduct(ProductDTO productDTO) {
-          Product product = productMapper.mapToEntity(productDTO);
+     public ProductDTO createProduct(NewProductDTO newProduct) {
+          Product product = productMapper.mapToEntity(newProduct);
           product.setPublishStatus(false);
           return productMapper.mapToDTO(productRepository.save(product));
 

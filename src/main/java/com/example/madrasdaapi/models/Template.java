@@ -20,29 +20,19 @@ public class Template {
      @ManyToOne
      private Mockup mockup;
 
-     @ManyToOne(cascade = CascadeType.ALL)
+     @ManyToOne
      private Design frontDesign;
 
      private String frontDesignPlacement;
 
-     @ManyToOne(cascade = CascadeType.ALL)
+     @ManyToOne
      private Design backDesign;
 
      private String backDesignPlacement;
 
-     @Column(name = "color")
-     @JdbcTypeCode(SqlTypes.JSON)
-     private List<String> colorPalette;
-
-     @Column(name = "size")
-     @JdbcTypeCode(SqlTypes.JSON)
-     private List<String> sizes;
-
      @ManyToOne
      private Vendor vendor;
 
-     @Column(name = "AdditionalInstructions")
      private String additionalInstructions;
 
-     // Constructors, getters and setters
 }

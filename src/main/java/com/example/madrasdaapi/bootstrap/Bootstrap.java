@@ -2,7 +2,7 @@ package com.example.madrasdaapi.bootstrap;
 
 import com.example.madrasdaapi.models.Feedback;
 import com.example.madrasdaapi.models.Vendor;
-import com.example.madrasdaapi.models.sku.SKU;
+import com.example.madrasdaapi.models.enums.SKU;
 import com.example.madrasdaapi.repositories.FeedbackRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
