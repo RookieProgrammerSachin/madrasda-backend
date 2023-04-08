@@ -37,5 +37,5 @@ public class MockupDTO implements Serializable {
 
     private String additionalInformation;
 
-    private List<MockupSkuDTO> skuMapping;
+//    private List<MockupSkuDTO> skuMapping;
 }

@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.mappers;
 
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.commons.ColorDTO;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
@@ -68,5 +69,15 @@ public class ProductMapper {
         product.setSkuMappings(skus);
         return product;
 
+    }
+
+    public ProductSKUMappingDTO mapSKUToDTO(ProductSKUMapping productSKUMapping) {
+        ProductSKUMappingDTO dto = new ProductSKUMappingDTO();
+        dto.setId(productSKUMapping.getId());
+        dto.setSku(productSKUMapping.getSku());
+        dto.setSize(productSKUMapping.getSize());
+        dto.setColor(productSKUMapping.getColor());
+        dto.setMockup(mapper.map(productSKUMapping.getMockup(), MockupDTO.class));
+        return dto;
     }
 }

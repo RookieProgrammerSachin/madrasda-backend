@@ -19,10 +19,7 @@ public class MockupMapper {
     public MockupDTO mapToDTO(Mockup mockup) {
 
         MockupDTO mockupDTO = mapper.map(mockup, MockupDTO.class);
-        mockupDTO.setSkuMapping(mockup.getSkuMapping()
-                .stream()
-                .map(sku -> new MockupSkuDTO(sku.getId(),sku.getSku(), sku.getSize(), sku.getColor()))
-                .collect(Collectors.toList()));
+
         return mockupDTO;
     }
 

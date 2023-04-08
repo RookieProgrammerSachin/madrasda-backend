@@ -2,7 +2,9 @@ package com.example.madrasdaapi.controllers.common;
 
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.models.ProductSKUMappingDTO;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.services.commons.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ProductController {
      private final ProductService productService;
      private final ProductSKUMappingRepository productSKUMappingRepository;
+     private final ProductMapper productMapper;
      @PutMapping("togglePublishState/{productId}")
      public void togglePublishState(@PathVariable Long productId) {
           productService.togglePublishState(productId);
@@ -36,8 +39,8 @@ public class ProductController {
      }
 
      @GetMapping("getAllSKU")
-     public Page<ProductSKUMapping> productSKUMapping(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                      @RequestParam(defaultValue = "25") Integer pageSize){
-          return productSKUMappingRepository.findAll(PageRequest.of(pageNo, pageSize));
+     public Page<ProductSKUMappingDTO> productSKUMapping(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                         @RequestParam(defaultValue = "25") Integer pageSize){
+          return productSKUMappingRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapSKUToDTO);
      }
 }

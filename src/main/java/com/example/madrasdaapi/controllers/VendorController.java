@@ -68,10 +68,9 @@ public class VendorController {
           return vendorService.getMonthlySalesByVendorId(vendorId);
      }
 
-     @GetMapping("dashboard")
+     @GetMapping("vendorDetailsById/{id}")
      public VendorDetails viewDashboard(
-             @RequestParam(name = "email") String email
-     ){
-          return vendorService.getVendorDetails(email);
+             @PathVariable String id){
+          return vendorService.getVendorDetails(id);
      }
 }

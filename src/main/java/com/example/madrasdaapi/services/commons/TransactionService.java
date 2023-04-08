@@ -1,7 +1,9 @@
 package com.example.madrasdaapi.services.commons;
 
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentResult;
 import com.example.madrasdaapi.dto.ShipmentDTO;
-import com.example.madrasdaapi.dto.commons.TransactionDTO;
+import com.example.madrasdaapi.exception.ResourceNotFoundException;
+import com.example.madrasdaapi.models.TransactionDTO;
 import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
 import com.example.madrasdaapi.models.Shipment;
@@ -35,17 +37,26 @@ public class TransactionService {
           return transactionMapper.mapToDTO(transactionRepository.save(transaction));
 
      }
+     public void updateTransactionStatus(PaymentResult result) {
+          Transaction transaction = transactionRepository.findById(Long.parseLong(result.getOrderId()))
+                  .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", Long.parseLong(result.getOrderId())));
+          if (result.getEvent().equals("payment.captured"))
+               transaction.setPaymentStatus(result.getEvent());
+          if (result.getEvent().equals("payment.failed"))
+               transaction.setPaymentStatus(result.getEvent());
+          transactionRepository.save(transaction);
 
-     public void updateStatus(TrackingData trackingData) {
+     }
+     public void updateShipmentStatus(TrackingData trackingData) {
           Transaction transaction = transactionRepository.findById(Long.parseLong(trackingData.getOrderId())).get();
           Shipment shipment = shipmentMapper.mapToShipment(trackingData);
           transaction.setShipment(shipment);
           shipment.setTransaction(transaction);
-//          // Save the transaction entity to the database using JPA
+          // Save the transaction entity to the database using JPA
           transactionRepository.save(transaction);
      }
 
-     public List<TransactionDTO> getHistoryOfOrdersById(Long id) {
+     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
           List<Transaction> transactions = transactionRepository.findByCustomer_Id(id);
           List<TransactionDTO> historyOfOrders = transactions.stream()
                   .map(transactionMapper::mapToDTO)
@@ -58,4 +69,6 @@ public class TransactionService {
           ShipmentDTO shipmentDetails = shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
           return shipmentDetails;
      }
+
+
 }
