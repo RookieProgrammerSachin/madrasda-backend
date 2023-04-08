@@ -1,13 +1,17 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.services.CustomerServices.CustomerService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Tag(name = "Customer Resource Controller")
@@ -15,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequiredArgsConstructor
 public class ClientController {
-    private final CustomerService customerService;
     private final VendorService vendorService;
     private final ProductService productService;
 
@@ -24,20 +27,19 @@ public class ClientController {
             @RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
             @RequestParam(defaultValue = "10", name = "pageSize") int pageSize
     ) {
-        return customerService.getAllProducts(pageNo, pageSize);
+        return productService.getAllProducts(pageNo, pageSize);
     }
 
-    //    @GetMapping("/vendorProducts")
-//    @Transactional
-//    public List<List<ProductLadderItem>> getProductsForEachVendor(
-//    ) {
-//        return customerService.getAllVendorId().stream()
-//                .map(vendorService::getTopSellingProductsForVendor).toList();
-//    }
+    @Transactional
+    @GetMapping("/topSellers/{vendorId}")
+    public List<ProductLadderItem> getTopSellers(@PathVariable Long vendorId) {
+        return vendorService.getTopSellingProductsForVendor(vendorId);
+    }
+
     @GetMapping("getProductsByVendor/{vendorId}")
     public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,
-                                                @RequestParam Integer pageNo,
-                                                @RequestParam Integer pageSize) {
+                                                @RequestParam(defaultValue = "0") Integer pageNo,
+                                                @RequestParam(defaultValue = "10") Integer pageSize) {
         return productService.getProductsByVendor(vendorId, pageNo, pageSize);
     }
 //    @GetMapping("/products/{category}")

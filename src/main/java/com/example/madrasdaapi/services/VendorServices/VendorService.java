@@ -47,7 +47,12 @@ public class VendorService {
           SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
           salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
           vendorDetails.setSalesAnalysis(salesAnalysis);
-          vendorDetails.setProductLadder(getTopSellingProductsForVendor(vendor.getId()));
+          Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
+          List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
+          for(ProductLadderItem p : pLadder){
+               p.setReturnsContribution(Math.round((p.getProfitAmount()/profit) * 100.0 * 100.0)/100.0F);
+          }
+          vendorDetails.setProductLadder(pLadder);
           return vendorDetails;
      }
 

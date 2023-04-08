@@ -36,7 +36,10 @@ public class Bootstrap implements CommandLineRunner {
      }
 
      public static void main(String[] args) {
-          SKU sku = SKU.PWRNWH2XL_001M;
-          System.out.println(sku.getColor());
+//          SKU sku = SKU.PWRNWH2XL_001M;
+          String color = "WHITE-WH";
+          String model = "MENS RN";
+          String size = "XL";
+          System.out.println(SKU.getNameByCombination(color,model,size));
      }
 }

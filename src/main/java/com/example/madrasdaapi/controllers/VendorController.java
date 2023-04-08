@@ -9,11 +9,13 @@ import com.example.madrasdaapi.services.VendorServices.DesignService;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendor/")
@@ -36,7 +38,6 @@ public class VendorController {
 
      @PutMapping("updateVendor")
      public VendorDTO saveOrUpdateVendor(@RequestBody VendorDTO registerDTO) {
-
           return adminService.updateVendor(registerDTO);
      }
 
@@ -59,5 +60,18 @@ public class VendorController {
      @DeleteMapping("deleteDesign/{designId}")
      public void deleteDesignById(@PathVariable Long designId) {
           designService.deleteById(designId);
+     }
+
+     @Transactional
+     @GetMapping("monthlySales/{vendorId}")
+     public List<Double> getMonthlySales(@PathVariable Long vendorId) {
+          return vendorService.getMonthlySalesByVendorId(vendorId);
+     }
+
+     @GetMapping("dashboard")
+     public VendorDetails viewDashboard(
+             @RequestParam(name = "email") String email
+     ){
+          return vendorService.getVendorDetails(email);
      }
 }

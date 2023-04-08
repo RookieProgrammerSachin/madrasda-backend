@@ -14,5 +14,5 @@ public class ProductLadderItem implements Serializable {
      private Float profitAmount;
      private Long stocksSold;
      private Float profit;
-     private Integer returnsContribution;
+     private Float returnsContribution;
 }
