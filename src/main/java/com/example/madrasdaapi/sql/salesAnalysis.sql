@@ -21,7 +21,6 @@ BEGIN
 
     SELECT total_products, total_orders, total_profit;
 END
-
 create
 definer = root@`%` procedure TOP_SELLERS_FOR_VENDOR(IN vendor_id bigint)
 BEGIN
@@ -33,12 +32,11 @@ FROM
         INNER JOIN transaction_product tp ON tp.product_id = p.id
 WHERE
         p.publish_status = 1
-  AND p.vendor_id = 3
+        AND p.vendor_id = vendor_id
 GROUP BY
     p.id
 ORDER BY
     total_sales DESC
-LIMIT 10;
-
+    LIMIT 10;
 END;
 

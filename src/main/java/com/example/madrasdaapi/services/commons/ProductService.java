@@ -37,8 +37,8 @@ public class ProductService {
      public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
           Page<Product> products = productRepository.findByVendor_Id(vendorId, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
-
-
      }
-
+     public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
+          return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
+     }
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum SKU {
-    PWRNWHXS_001M("WHITE-WH", "MENS RN", "XS", "PWRNWHXS_001M"), //White
+    PWRNWHXS_001M("WHITE-WH", "MENS RN", "XS", "PWRNWHXS_001M"), //Men Round Neck White
     PWRNWHS_001M("WHITE-WH", "MENS RN", "S", "PWRNWHS_001M"),
     PWRNWHM_001M("WHITE-WH", "MENS RN", "M", "PWRNWHM_001M"),
     PWRNWHL_001M("WHITE-WH", "MENS RN", "L", "PWRNWHL_001M"),
@@ -13,15 +13,15 @@ public enum SKU {
     PWRNWH3XL_001M("WHITE-WH", "MENS RN", "3XL", "PWRNWH3XL_001M"),
     PWRNWH4XL_001M("WHITE-WH", "MENS RN", "4XL", "PWRNWH4XL_001M"),
     PWRNWH5XL_001M("WHITE-WH", "MENS RN", "5XL", "PWRNWH5XL_001M"),
-    PWRNBKXS_001M("WHITE-WH", "MENS RN", "XS", "PWRNWHXS_001M"), //Black
-    PWRNBKS_001M("WHITE-WH", "MENS RN", "S", "PWRNWHS_001M"),
-    PWRNBKM_001M("WHITE-WH", "MENS RN", "M", "PWRNWHM_001M"),
-    PWRNBKL_001M("WHITE-WH", "MENS RN", "L", "PWRNWHL_001M"),
-    PWRNBKXL_001M("WHITE-WH", "MENS RN", "XL", "PWRNWHXL_001M"),
-    PWRNBK2XL_001M("WHITE-WH", "MENS RN", "2XL", "PWRNWH2XL_001M"),
-    PWRNBK3XL_001M("WHITE-WH", "MENS RN", "3XL", "PWRNWH3XL_001M"),
-    PWRNBK4XL_001M("WHITE-WH", "MENS RN", "4XL", "PWRNWH4XL_001M"),
-    PWRNBK5XL_001M("WHITE-WH", "MENS RN", "5XL", "PWRNWH5XL_001M"),
+    PWRNBKXS_001M("BLACK-BK", "MENS RN", "XS", "PWRNBKXS_001M"), //Men Round Neck Black
+    PWRNBKS_001M("BLACK-BK", "MENS RN", "S", "PWRNBKS_001M"),
+    PWRNBKM_001M("BLACK-BK", "MENS RN", "M", "PWRNBKM_001M"),
+    PWRNBKL_001M("BLACK-BK", "MENS RN", "L", "PWRNBKL_001M"),
+    PWRNBKXL_001M("BLACK-BK", "MENS RN", "XL", "PWRNBKXL_001M"),
+    PWRNBK2XL_001M("BLACK-BK", "MENS RN", "2XL", "PWRNBK2XL_001M"),
+    PWRNBK3XL_001M("BLACK-BK", "MENS RN", "3XL", "PWRNBK3XL_001M"),
+    PWRNBK4XL_001M("BLACK-BK", "MENS RN", "4XL", "PWRNBK4XL_001M"),
+    PWRNBK5XL_001M("BLACK-BK", "MENS RN", "5XL", "PWRNBK5XL_001M"),
     PWRNYLXS_003M("YELLOW-YL", "MENS RN", "XS", "PWRNYLXS_003M"), //Yellow
     PWRNYLS_003M("YELLOW-YL", "MENS RN", "S", "PWRNYLS_003M"),
     PWRNYLM_003M("YELLOW-YL", "MENS RN", "M", "PWRNYLM_003M"),
@@ -176,5 +176,15 @@ public enum SKU {
         this.model = model;
         this.size = size;
         this.sku = sku;
+    }
+    public static String getNameByCombination(String color, String model, String size) {
+        String skuName = "";
+        for(SKU sku : SKU.values()){
+            if(sku.color.equals(color) && sku.model.equals(model) && sku.size.equals(size)){
+                skuName = sku.name();
+                break;
+            }
+        }
+        return skuName;
     }
 }
