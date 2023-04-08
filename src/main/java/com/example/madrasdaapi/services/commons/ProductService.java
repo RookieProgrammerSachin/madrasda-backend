@@ -42,4 +42,16 @@ public class ProductService {
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
           return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
+     public Page<ProductDTO> getByAudience(int pageNo, int pageSize, String audience) {
+          return productRepository.findAllByAudience(audience, PageRequest.of(pageNo, pageSize))
+                  .map(productMapper::mapToDTO);
+     }
+     public Page<ProductDTO> searchProducts(int pageNo, int pageSize, String searchTerm) {
+          return productRepository.findByNameOrAudienceOrMockup_name(
+                  searchTerm,
+                  searchTerm,
+                  searchTerm,
+                  PageRequest.of(pageNo, pageSize)
+          ).map(productMapper::mapToDTO);
+     }
 }

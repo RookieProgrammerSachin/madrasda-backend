@@ -59,8 +59,11 @@ public class ProductMapper {
                 .setSkipNullEnabled(true);
         Product product = productRepository.findById(detachedProduct.getId()).orElse(new Product());
         Vendor vendor = vendorRepository.findById(detachedProduct.getVendor().getId()).get();
-        List<ProductSKUMapping> skus = productSKUMappingRepository.findByMockup_IdAndColor_IdIn(detachedProduct.getMockupId(),
-                                                                                                detachedProduct.getColors());
+        List<ProductSKUMapping> skus = productSKUMappingRepository.findByMockup_IdAndColor_IdIn(
+                detachedProduct.getMockupId(),
+                detachedProduct.getColors()
+        );
+        product.setMockup(skus.get(0).getMockup());
         mapper.createTypeMap(NewProductDTO.class, Product.class)
                 .addMapping(NewProductDTO::getProductImages, Product::setProductImages)
                 .map(detachedProduct, product);

@@ -3,6 +3,7 @@ package com.example.madrasdaapi.services.commons;
 
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.models.enums.Role;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -13,6 +14,7 @@ import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,8 +43,10 @@ public class AuthenticationService {
     private final CustomUserDetailsService customUserDetailsService;
 
     public JwtDTO authenticateAdmin(LoginDTO loginDTO) throws Exception {
-        User admin = userRepository.findByEmail(loginDTO.getEmail()).get();
-        if (!admin.getRole().equals("ROLE_ADMIN")) throw new BadCredentialsException("Invalid Email or Password");
+        User admin = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
+                () -> new APIException("Bad credentials", HttpStatus.UNAUTHORIZED)
+        );
+        if (!admin.getRole().equals("ROLE_ADMIN")) throw new APIException("Bad credentials", HttpStatus.UNAUTHORIZED);
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(),
                         (loginDTO.getPassword())));

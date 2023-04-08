@@ -42,8 +42,20 @@ public class ClientController {
                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
         return productService.getProductsByVendor(vendorId, pageNo, pageSize);
     }
-//    @GetMapping("/products/{category}")
-//    public List<List<ProductDTO>> getProductsByCategory(@PathVariable String category) {
-//        return customerService.getProductsByCategory(category);
-//    }
+    @GetMapping("products/{audience}")
+    public Page<ProductDTO> getProductsByCategory(
+            @PathVariable String audience,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return productService.getByAudience(pageNo, pageSize, audience);
+    }
+
+    @GetMapping("searchProduct/{searchTerm}")
+    public Page<ProductDTO> searchProduct(
+            @PathVariable String searchTerm,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ) {
+        return productService.searchProducts(pageNo, pageSize, searchTerm);
+    }
 }

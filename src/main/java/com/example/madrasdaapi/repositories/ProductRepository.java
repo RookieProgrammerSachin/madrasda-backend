@@ -15,4 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      void updatePublishStatusById(Long id);
 
      Page<Product> findByVendor_Id(Long vendorId, Pageable pageable);
+     Page<Product> findAllByAudience(String audience, Pageable pageable);
+
+     Page<Product> findByNameOrAudienceOrMockup_name(String name,String audience,String mockupName, Pageable pageable);
 }

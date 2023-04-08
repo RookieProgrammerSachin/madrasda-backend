@@ -2,6 +2,7 @@ package com.example.madrasdaapi.services.AdminServices;
 
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
@@ -9,6 +10,7 @@ import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,36 @@ public class AdminService {
      }
 
      public VendorDTO updateVendor(VendorDTO vendorDTO) {
-          Vendor vendor = vendorMapper.mapToEntity(vendorDTO);
+          Vendor vendor = vendorRepository.findById(vendorDTO.getId()).orElseThrow(
+                  () -> new APIException("Vendor not found", HttpStatus.BAD_REQUEST)
+          );
+          if(vendorDTO.getName()!=null){
+               User user = vendor.getUser();
+               user.setName(vendorDTO.getName());
+               vendor.setUser(user);
+          }
+          if(vendorDTO.getEmail()!=null){
+               User user = vendor.getUser();
+               user.setEmail(vendorDTO.getEmail());
+               vendor.setUser(user);
+          }
+          if(vendorDTO.getImgUrl()!=null){
+               vendor.setProfilePic(vendorDTO.getImgUrl());
+          }
+          if(vendorDTO.getPhone()!=null){
+               User user = vendor.getUser();
+               user.setPhone(vendorDTO.getPhone());
+               vendor.setUser(user);
+          }
+          if(vendorDTO.getCompanyUrl()!=null){
+               vendor.setCompanyUrl(vendorDTO.getCompanyUrl());
+          }
+          if(vendorDTO.getCompanyName()!=null){
+               vendor.setCompanyName(vendorDTO.getCompanyName());
+          }
+          if(vendorDTO.getGSTIN()!=null){
+               vendor.setGSTIN(vendorDTO.getGSTIN());
+          }
           return vendorMapper.mapToDTO(vendorRepository.save(vendor));
      }
 }
