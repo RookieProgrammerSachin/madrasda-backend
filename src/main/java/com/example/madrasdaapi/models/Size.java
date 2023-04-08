@@ -14,23 +14,9 @@ public class Size {
           private Long id;
 
           @Column(name = "size_type")
-          private String sizeType;
+          private String size;
 
-          @Column
-          private int chest;
 
-          @Column
-          private int length;
-
-          @Column
-          private int shoulder;
-
-          @Column
-          private int sleeve;
-
-          @ManyToOne
-          @JoinColumn(name = "mockup_id")
-          private Mockup mockup;
 
      }
 

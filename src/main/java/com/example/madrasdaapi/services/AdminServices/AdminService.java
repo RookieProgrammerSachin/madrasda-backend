@@ -25,12 +25,16 @@ public class AdminService {
           User detachedUser = new User();
           Vendor detachedVendor = new Vendor();
           mapper.map(registerDTO, detachedUser);
-          detachedUser.setPhone(null);
+
           detachedUser.setPassword(encoder.encode(detachedUser.getPassword()));
-          detachedVendor.setProfilePic(registerDTO.getImgUrl());
           detachedVendor.setUser(detachedUser);
-          detachedUser.setEmail(registerDTO.getEmail());
+
+          detachedVendor.setProfilePic(registerDTO.getImgUrl());
+          detachedVendor.setCompanyName(registerDTO.getCompanyName());
+          detachedVendor.setCompanyUrl(registerDTO.getCompanyUrl());
+          detachedVendor.setGSTIN(registerDTO.getGSTIN());
           detachedVendor.getUser().setRole("ROLE_VENDOR");
+
           VendorDTO vendor = vendorMapper.mapToDTO(vendorRepository.save(detachedVendor));
           return vendor;
 //          return vendorMapper.mapToDTO(newUser.getVendor());

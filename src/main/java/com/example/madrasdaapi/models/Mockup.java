@@ -15,16 +15,16 @@ public class Mockup {
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
 
-     @Column(nullable = false)
+     private String name;
+
      private String frontImage;
 
-     @Column(nullable = false)
      private String backImage;
 
-     @Column(nullable = false)
      private String productType;
 
      private String category;
+
      private String model;
 
      @OneToMany
