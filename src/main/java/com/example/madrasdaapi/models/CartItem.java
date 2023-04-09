@@ -7,6 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(schema = "spring-madrasda")
 public class CartItem {
 
      @Id
@@ -17,9 +18,15 @@ public class CartItem {
      @JoinColumn(name = "product_id")
      private Product product;
 
+     @OneToOne
+     private Size size;
+
+     @OneToOne
+     private Color color;
+
      @ManyToOne
-     @JoinColumn(name = "customer_id")
-     private Customer customer;
+     @JoinColumn(referencedColumnName = "id")
+     private User customer;
 
      private Integer quantity;
 }

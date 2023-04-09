@@ -1,11 +1,11 @@
 package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
-import com.example.madrasdaapi.dto.commons.ColorDTO;
-import com.example.madrasdaapi.dto.commons.NewProductDTO;
-import com.example.madrasdaapi.dto.commons.ProductDTO;
-import com.example.madrasdaapi.dto.commons.SizeDTO;
-import com.example.madrasdaapi.models.*;
+import com.example.madrasdaapi.dto.commons.*;
+import com.example.madrasdaapi.models.Product;
+import com.example.madrasdaapi.models.ProductImage;
+import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductImageRepository;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,9 +46,11 @@ public class ProductMapper {
             colorDTO.getSizes().add(sizeDTO);
             colors.put(color, colorDTO);
         }
+
         for (ProductImage image : product.getProductImages()) {
             colors.get(image.getColor().getColor()).getImages().add(image.getImgUrl());
         }
+        productDTO.setColors(new ArrayList<>(colors.values()));
         return productDTO;
     }
 

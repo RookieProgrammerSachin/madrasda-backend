@@ -2,7 +2,6 @@ package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductLadderItem;
-import com.example.madrasdaapi.services.CustomerServices.CustomerService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;

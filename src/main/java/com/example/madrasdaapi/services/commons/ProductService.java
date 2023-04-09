@@ -2,11 +2,11 @@ package com.example.madrasdaapi.services.commons;
 
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.ProductSKUMappingDTO;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

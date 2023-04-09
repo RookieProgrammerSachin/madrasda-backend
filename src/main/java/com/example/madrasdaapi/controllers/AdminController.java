@@ -44,7 +44,7 @@ public class AdminController {
 //     @PreAuthorize("hasRole('ADMIN')")
      @DeleteMapping("deleteVendor/{id}")
      public void deleteVendor(@PathVariable Long id) {
-          if(!vendorRepository.existsById(id)) throw new ResourceNotFoundException("Vendor", "id", id);
+          if(!vendorRepository.existsById(id)) throw new ResourceNotFoundException("Vendor", "id", id.toString());
           adminService.deleteVendor(id);
      }
 

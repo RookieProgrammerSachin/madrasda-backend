@@ -1,14 +1,10 @@
 package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
-import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
 import com.example.madrasdaapi.models.Mockup;
-import com.example.madrasdaapi.models.ProductSKUMapping;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

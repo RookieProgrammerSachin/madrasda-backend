@@ -171,7 +171,7 @@ public enum SKU {
     private final String model;
     private final String size;
     private final String sku;
-    private SKU(String color, String model, String size, String sku) {
+    SKU(String color, String model, String size, String sku) {
         this.color = color;
         this.model = model;
         this.size = size;

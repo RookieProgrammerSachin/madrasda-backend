@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.dto;
+package com.example.madrasdaapi.dto.ShipRocketDTO;
 
 import lombok.Getter;
 import lombok.Setter;

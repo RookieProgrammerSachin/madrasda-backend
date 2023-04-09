@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.dto;
+package com.example.madrasdaapi.dto.ClientDTO;
 
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import lombok.Getter;

@@ -4,15 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Getter
 @Setter
 @Entity
-@Table(name = "customer", schema = "madrasda", uniqueConstraints = {
+@Table(name = "customer", schema = "spring-madrasda", uniqueConstraints = {
         @UniqueConstraint(name = "id", columnNames = {"id"})
 })
 public class Customer {
@@ -21,10 +16,11 @@ public class Customer {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @MapsId
-     @OneToOne(fetch = FetchType.EAGER, optional = false)
-     @JoinColumn(name = "id", nullable = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+     @JoinColumn(referencedColumnName = "id", nullable = false)
      private User user;
+
+     private String name;
 
      @Column(name = "address_line1",  length = 50)
      private String addressLine1;
@@ -44,10 +40,9 @@ public class Customer {
      @Column(name = "country",  length = 100)
      private String country;
 
-     @OneToMany(mappedBy = "customer")
-     private Set<Transaction> transactions = new HashSet<>();
+     private String phone;
 
-     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-     private List<CartItem> cart = new ArrayList<>();
+     private String email;
+
 
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,5 +16,5 @@ public class ProductDTO implements Serializable {
     private String name;
     private Float discount;
     private Float total;
-    private HashMap<String, ColorDTO> colors;
+    private List<ColorDTO> colors;
 }

@@ -3,8 +3,9 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,31 +13,41 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction", schema = "madrasda", indexes = {
+@Table(name = "transaction", schema = "spring-madrasda", indexes = {
         @Index(name = "address_id", columnList = "customer_id")
 })
 public class Transaction {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Column(name = "id", nullable = false)
-     private Long id;
+     private Long id;//
 
-     private Date orderDate;
+     @CreationTimestamp
+     private Date orderDate;//
 
-     private Integer orderTotal;
+     private BigDecimal orderTotal;//
 
-     private String paymentStatus;
+     private String paymentStatus;//
 
-     private Integer paymentId;
+     private String paymentId;//
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     private String orderId;//
+
+     private Boolean billingIsShipping;//
+
+     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
      @JoinColumn(name = "customer_id", nullable = false)
-     private Customer customer;
+     private Customer shippingAddress;//
+
+     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+     @JoinColumn(referencedColumnName = "id")
+     private User billingUser;//
 
      @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
-     private Shipment shipment;
+     private Shipment shipment;//
 
      @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
-     private Set<OrderItem> orderItems = new HashSet<>();
+     private Set<OrderItem> orderItems = new HashSet<>();//
+
 
 }

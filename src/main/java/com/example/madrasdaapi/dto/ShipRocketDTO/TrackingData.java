@@ -1,9 +1,9 @@
-package com.example.madrasdaapi.dto.TrackingDataDTO;
-
-import java.util.List;
+package com.example.madrasdaapi.dto.ShipRocketDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class TrackingData{

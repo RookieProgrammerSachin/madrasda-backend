@@ -1,16 +1,11 @@
 package com.example.madrasdaapi.dto.VendorDTO;
 
-import com.example.madrasdaapi.models.Color;
-import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Size;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,5 +32,5 @@ public class MockupDTO implements Serializable {
 
     private String additionalInformation;
 
-//    private List<MockupSkuDTO> skuMapping;
+    private List<MockupSkuDTO> skuMapping;
 }

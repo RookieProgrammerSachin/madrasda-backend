@@ -1,74 +1,181 @@
 package com.example.madrasdaapi.services.commons;
 
-import com.example.madrasdaapi.dto.RazorPayDTO.PaymentResult;
-import com.example.madrasdaapi.dto.ShipmentDTO;
+import com.example.madrasdaapi.config.ShipRocketProperties;
+import com.example.madrasdaapi.dto.RazorPayDTO.OrderResponse;
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
+import com.example.madrasdaapi.dto.ShipRocketDTO.ShipRocketLogin;
+import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
+import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
+import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
-import com.example.madrasdaapi.models.TransactionDTO;
+import com.example.madrasdaapi.mappers.CustomerMapper;
 import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
-import com.example.madrasdaapi.models.Shipment;
-import com.example.madrasdaapi.models.enums.ShipmentStatus;
-import com.example.madrasdaapi.dto.TrackingDataDTO.TrackingData;
-import com.example.madrasdaapi.models.Transaction;
-import com.example.madrasdaapi.repositories.OrderRepository;
-import com.example.madrasdaapi.repositories.ShipmentRepository;
-import com.example.madrasdaapi.repositories.TransactionRepository;
-import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.models.*;
+import com.example.madrasdaapi.models.ShiprocketModels.NewOrder;
+import com.example.madrasdaapi.models.ShiprocketModels.ShipRocketOrderItem;
+import com.example.madrasdaapi.repositories.*;
+import com.google.gson.Gson;
+import com.razorpay.Order;
+import com.razorpay.Payment;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
+import okhttp3.*;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
-     private final TransactionRepository transactionRepository;
-     private final OrderRepository orderRepository;
-     private final TransactionMapper transactionMapper;
-     private final UserRepository userRepository;
-     private final ShipmentMapper shipmentMapper;
-     private final ShipmentRepository shipmentRepository;
+    private final TransactionRepository transactionRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final ShipmentRepository shipmentRepository;
+    private final ProductRepository productRepository;
+    private final TransactionMapper transactionMapper;
+    private final ShipmentMapper shipmentMapper;
+    private final CustomerMapper customerMapper;
+    private final RazorpayClient razorpayClient;
+    private final Gson gson;
+    private final OkHttpClient okHttpClient;
+    private final ShipRocketProperties shiprocket;
 
-     public TransactionDTO initiateTransaction(TransactionDTO transactionDTO) {
-          Transaction transaction = transactionMapper.mapToEntity(transactionDTO);
-          Shipment shipmentDetails = new Shipment();
-          shipmentDetails.setCurrentStatus(ShipmentStatus.Order_Placed.name());
-          transaction.setShipment(shipmentDetails);
-          return transactionMapper.mapToDTO(transactionRepository.save(transaction));
+    @Value("${razorpay.keySecret}")
+    private String SECRET_KEY;
 
-     }
-     public void updateTransactionStatus(PaymentResult result) {
-          Transaction transaction = transactionRepository.findById(Long.parseLong(result.getOrderId()))
-                  .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", Long.parseLong(result.getOrderId())));
-          if (result.getEvent().equals("payment.captured"))
-               transaction.setPaymentStatus(result.getEvent());
-          if (result.getEvent().equals("payment.failed"))
-               transaction.setPaymentStatus(result.getEvent());
-          transactionRepository.save(transaction);
+    @Value("${razorpay.keyId}")
+    private String SECRET_ID;
 
-     }
-     public void updateShipmentStatus(TrackingData trackingData) {
-          Transaction transaction = transactionRepository.findById(Long.parseLong(trackingData.getOrderId())).get();
-          Shipment shipment = shipmentMapper.mapToShipment(trackingData);
-          transaction.setShipment(shipment);
-          shipment.setTransaction(transaction);
-          // Save the transaction entity to the database using JPA
-          transactionRepository.save(transaction);
-     }
+    public OrderResponse initiateTransaction(TransactionDTO orderRequest) {
 
-     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
-          List<Transaction> transactions = transactionRepository.findByCustomer_Id(id);
-          List<TransactionDTO> historyOfOrders = transactions.stream()
-                  .map(transactionMapper::mapToDTO)
-                  .toList();
+        Transaction transaction = transactionMapper.mapToEntity(orderRequest);
+        transaction.setShippingAddress(customerMapper.mapToEntity(orderRequest.getShippingAddress()));
+        OrderResponse response = new OrderResponse();
+        try {
+            Order order = createRazorPayOrder(orderRequest.getOrderTotal());
+            transaction.setOrderId(order.get("id"));
+            transactionRepository.save(transaction);
+            response.setRazorpayOrderId(order.get("id"));
+            response.setApplicationFee(String.valueOf(orderRequest.getOrderTotal()));
+            response.setSecretKey(SECRET_KEY);
+            response.setSecretId(SECRET_ID);
+            response.setPgName("RazorPay");
+            return response;
+        } catch (RazorpayException exception) {
+            exception.printStackTrace();
+        }
+        return response;
+    }
 
-          return historyOfOrders;
-     }
+    private Order createRazorPayOrder(BigDecimal amount) throws RazorpayException {
+        JSONObject options = new JSONObject();
+        options.put("amount", amount.multiply(new BigDecimal(100)));
+        options.put("currency", "INR");
+        options.put("payment_capture", 1); // You can enable this if you want to do Auto Capture.
+        return razorpayClient.orders.create(options);
+    }
 
-     public ShipmentDTO getOrderDetails(Long transactionId) {
-          ShipmentDTO shipmentDetails = shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
-          return shipmentDetails;
-     }
+    public void updateTransactionStatus(PaymentRequest result) throws RazorpayException, IOException {
+        String orderId = result.getPayload().getPayment().getEntity().getOrderId();
+        Transaction transaction = transactionRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", orderId));
+        transaction.setPaymentId(result.getPayload().getPayment().getEntity().getId());
+
+        if (result.getEvent().equals("payment.captured")) {
+            transaction.setPaymentStatus(result.getEvent());
+            NewOrder order = createShiprocketOrder(transaction);
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(gson.toJson(order), mediaType);
+            Request request = new Request.Builder()
+                    .url("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer " + shiprocket.getToken())
+                    .build();
+            Response response = okHttpClient.newCall(request).execute();
+            System.out.println(response.body().string());
+            response.close();
+
+
+        }
+        if (result.getEvent().equals("payment.failed"))
+            transaction.setPaymentStatus(result.getEvent());
+        transactionRepository.save(transaction);
+
+    }
+
+    private NewOrder createShiprocketOrder(Transaction transaction) throws RazorpayException {
+        NewOrder order = new NewOrder();
+
+        order.setOrderId(transaction.getOrderId());
+        order.setOrderDate(transaction.getOrderDate().toString());
+        order.setPickupLocation("No 33 Jai garden Jai nagar 3rd street Valasaravakkam Chennai - 600087");
+        List<ShipRocketOrderItem> orderItems = new ArrayList<>();
+        for (OrderItem item : transaction.getOrderItems()) {
+            ShipRocketOrderItem orderItem = new ShipRocketOrderItem();
+            Product product = item.getProduct();
+            Mockup mockup = product.getMockup();
+            orderItem.setName(product.getName());
+            orderItem.setDiscount(product.getDiscount().toString());
+            orderItem.setTax(product.getTax().toString());
+            orderItem.setHsn(product.getHsn());
+            orderItem.setUnits(item.getQuantity());
+            orderItem.setSku(item.getSku() + "-" + product.getVendor().getId() + "-" + product.getId());
+            orderItems.add(orderItem);
+        }
+        Payment payment = razorpayClient.payments.fetch(transaction.getPaymentId());
+
+        order.setBillingAddress(payment.get("billing_address"));
+        order.setBillingCustomerName(payment.get("billing_customer_name"));
+        order.setBillingCity(payment.get("billing_city"));
+        order.setBillingCountry(payment.get("billing_country"));
+        order.setBillingEmail(payment.get("billing_email"));
+        order.setBillingPhone(payment.get("billing_phone"));
+        order.setBillingPincode(payment.get("billing_pincode"));
+        if (transaction.getBillingIsShipping()) {
+            Customer shippingAddress = transaction.getShippingAddress();
+            order.setShippingAddress(shippingAddress.getAddressLine1() + shippingAddress.getAddressLine2());
+            order.setShippingCustomerName(shippingAddress.getName());
+            order.setShippingCity(shippingAddress.getCity());
+            order.setShippingCountry(shippingAddress.getCountry());
+            order.setShippingEmail(shippingAddress.getEmail());
+            order.setShippingPhone(shippingAddress.getPhone());
+            order.setShippingPincode(shippingAddress.getPostalCode());
+        }
+        order.setSubTotal(transaction.getOrderTotal().toString());
+        order.setOrderItems(orderItems);
+        return order;
+    }
+
+    public void updateShipmentStatus(TrackingData trackingData) {
+        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
+        Shipment shipment = shipmentMapper.mapToShipment(trackingData);
+        transaction.setShipment(shipment);
+        shipment.setTransaction(transaction);
+        transactionRepository.save(transaction);
+    }
+
+    public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
+        List<Transaction> transactions = transactionRepository.findByBillingUser_Id(id);
+        List<TransactionDTO> historyOfOrders = transactions.stream()
+                .map(transactionMapper::mapToDTO)
+                .toList();
+
+        return historyOfOrders;
+    }
+
+    public ShipmentDTO getOrderDetails(Long transactionId) {
+        ShipmentDTO shipmentDetails = shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
+        return shipmentDetails;
+    }
 
 
 }

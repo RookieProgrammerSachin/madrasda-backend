@@ -16,8 +16,6 @@ public class Size {
           @Column(name = "size_type")
           private String size;
 
-
-
      }
 
 

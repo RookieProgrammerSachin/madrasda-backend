@@ -4,8 +4,8 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
 import com.example.madrasdaapi.exception.APIException;
-import com.example.madrasdaapi.models.enums.Role;
 import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.models.enums.Role;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.security.CustomUserDetailsService;
 import com.example.madrasdaapi.security.JwtService;
@@ -20,7 +20,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

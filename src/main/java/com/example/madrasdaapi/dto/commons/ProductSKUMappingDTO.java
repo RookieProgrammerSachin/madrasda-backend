@@ -1,6 +1,9 @@
-package com.example.madrasdaapi.models;
+package com.example.madrasdaapi.dto.commons;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.models.Color;
+import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.models.Size;
 import lombok.Getter;
 import lombok.Setter;
 

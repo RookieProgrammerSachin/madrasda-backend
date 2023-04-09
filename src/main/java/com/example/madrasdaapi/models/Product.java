@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "product", schema = "madrasda", indexes = {
+@Table(name = "product",schema = "spring-madrasda", indexes = {
         @Index(name = "fk_product_vendor1_idx", columnList = "vendor_id"),
 
 })
@@ -37,6 +37,8 @@ public class Product {
      private Float profit;
 
      private Float tax;
+
+     private Integer hsn;
 
      private Boolean publishStatus;
 

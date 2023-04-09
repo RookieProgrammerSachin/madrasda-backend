@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.controllers;
 
-import com.example.madrasdaapi.dto.CartDTO;
+import com.example.madrasdaapi.dto.ClientDTO.CartDTO;
+import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.services.CustomerServices.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,8 @@ public class CartController {
      public void changeCartItemQuantity(@PathVariable Long cartItemId, @PathVariable Integer quantity) {
           cartService.changeQuantity(cartItemId, quantity);
      }
-     @PostMapping("addToCart/{customerId}&&{productId}")
-     public void addToCart(@PathVariable Long customerId, @PathVariable Long productId) {
-          cartService.addToCart(customerId, productId);
+     @PostMapping("addToCart/{customerId}")
+     public void addToCart(@PathVariable Long customerId, @RequestBody ProductDTO productDTO) {
+          cartService.addToCart(customerId, productDTO);
      }
 }

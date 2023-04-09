@@ -1,9 +1,8 @@
 package com.example.madrasdaapi.mappers;
 
-import com.example.madrasdaapi.dto.ShipmentDTO;
-import com.example.madrasdaapi.dto.ShipmentTrackActivityDTO;
-import com.example.madrasdaapi.dto.TrackingDataDTO.ScansItem;
-import com.example.madrasdaapi.dto.TrackingDataDTO.TrackingData;
+import com.example.madrasdaapi.dto.ShipRocketDTO.ScansItem;
+import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
+import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.models.Shipment;
 import com.example.madrasdaapi.models.ShipmentTrackActivity;
 import lombok.RequiredArgsConstructor;
