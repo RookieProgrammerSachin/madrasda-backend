@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "mockups", schema = "madrasda")
+@Table(name = "mockups", schema = "spring-madrasda")
 public class Mockup {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,6 @@ public class Mockup {
 
      private String additionalInformation;
 
-     @OneToMany(mappedBy = "mockup")
+     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
      private List<ProductSKUMapping> skuMapping = new ArrayList<>();
 }

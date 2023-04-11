@@ -6,15 +6,13 @@ import com.example.madrasdaapi.repositories.TransactionRepository;
 import com.example.madrasdaapi.services.commons.TransactionService;
 import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/api/webhook/")
 public class WebhookController {
     private final TransactionRepository transactionRepository;

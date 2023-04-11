@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/colorsAndSizes/")
+@CrossOrigin
 public class ColorAndSizeController {
      private final ColorRepository colorRepository;
      private final SizeRepository sizeRepository;

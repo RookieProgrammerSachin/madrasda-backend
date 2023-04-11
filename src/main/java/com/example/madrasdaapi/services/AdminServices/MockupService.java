@@ -6,6 +6,8 @@ import com.example.madrasdaapi.models.Mockup;
 import com.example.madrasdaapi.repositories.MockupRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -38,5 +40,9 @@ public class MockupService {
 
      public MockupDTO getMockupById(Long id) {
           return mockupMapper.mapToDTO(mockupRepository.findById(id).get());
+     }
+
+     public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
+          return mockupRepository.findAll(PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
      }
 }

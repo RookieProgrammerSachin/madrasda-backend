@@ -8,6 +8,7 @@ import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.DesignService;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
+import com.example.madrasdaapi.services.commons.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class VendorController {
      private final MockupService mockupService;
      private final TemplateService templateService;
      private final DesignService designService;
-
+     private final PaymentService paymentService;
      @GetMapping
      public VendorDetails getVendorDetails() throws SQLException {
           String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
@@ -68,9 +69,17 @@ public class VendorController {
           return vendorService.getMonthlySalesByVendorId(vendorId);
      }
 
+     @PostMapping("requestPayout")
+     public void requestPayout() {
+          String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
+          paymentService.requestPayout(email);
+
+     }
      @GetMapping("vendorDetailsById/{id}")
      public VendorDetails viewDashboard(
-             @PathVariable String id){
+             @PathVariable String id) {
+
           return vendorService.getVendorDetails(id);
      }
+
 }

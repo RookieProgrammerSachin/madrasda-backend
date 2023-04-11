@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -61,6 +62,8 @@ public class Vendor {
      @Size(max = 255)
      @Column(name = "category")
      private String category;
+
+     private BigDecimal outstandingProfit;
 
      @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Design> designs;

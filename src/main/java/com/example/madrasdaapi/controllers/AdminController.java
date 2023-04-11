@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/")
 @Tag(name = "Admin Resource Controller")
+
 @CrossOrigin
 @RequiredArgsConstructor
 public class AdminController {
