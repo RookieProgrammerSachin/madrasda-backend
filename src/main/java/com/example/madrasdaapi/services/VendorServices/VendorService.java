@@ -39,10 +39,12 @@ public class VendorService {
      private final UserRepository userRepository;
 
      @Transactional
-     public VendorDetails getVendorDetails(String emailOrId) {
-          User vendor = userRepository.findByEmailOrId(emailOrId, emailOrId).orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+     public VendorDetails getVendorDetails(String email) {
+          User vendor = userRepository.findByEmail(email)
+                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+          System.out.println(vendor.getName());
           VendorDetails vendorDetails = new VendorDetails();
-          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).get());
+          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
           vendorDetails.setVendor(vendorDTO);
           SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
           salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));

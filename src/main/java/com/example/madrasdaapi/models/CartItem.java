@@ -18,11 +18,9 @@ public class CartItem {
      @JoinColumn(name = "product_id")
      private Product product;
 
-     @OneToOne
-     private Size size;
-
-     @OneToOne
-     private Color color;
+     @ManyToOne()
+     @JoinColumn(referencedColumnName = "id")
+     private ProductSKUMapping sku;
 
      @ManyToOne
      @JoinColumn(referencedColumnName = "id")

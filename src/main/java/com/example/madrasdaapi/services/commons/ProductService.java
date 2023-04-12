@@ -3,6 +3,7 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.models.Product;
@@ -13,6 +14,7 @@ import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,7 +34,6 @@ public class ProductService {
           Product product = productMapper.mapToEntity(newProduct);
           product.setPublishStatus(false);
           return productMapper.mapToDTO(productRepository.save(product));
-
      }
 
      public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
@@ -53,6 +54,11 @@ public class ProductService {
                   searchTerm,
                   PageRequest.of(pageNo, pageSize)
           ).map(productMapper::mapToDTO);
+     }
+     public ProductDTO getProductDetails(Long id) {
+          return productMapper.mapToDTO(productRepository.findById(id).orElseThrow(
+                  () -> new APIException("Product not found", HttpStatus.BAD_REQUEST)
+          ));
      }
 
      public ProductSKUMappingDTO mapSKUToDTO(ProductSKUMapping productSKUMapping) {

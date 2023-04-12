@@ -6,11 +6,10 @@ import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.SizeDTO;
 import com.example.madrasdaapi.mappers.CartItemMapper;
 import com.example.madrasdaapi.models.CartItem;
+import com.example.madrasdaapi.models.Product;
+import com.example.madrasdaapi.models.ProductSKUMapping;
 import com.example.madrasdaapi.models.User;
-import com.example.madrasdaapi.repositories.CartItemRepository;
-import com.example.madrasdaapi.repositories.CustomerRepository;
-import com.example.madrasdaapi.repositories.ProductRepository;
-import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +26,14 @@ public class CartService {
      private final CustomerRepository customerRepository;
      private final ProductRepository productRepository;
 
+     private final ProductSKUMappingRepository productSKUMappingRepository;
+
      public CartDTO getCartForCustomer(Long customerId) {
           User user = userRepository.findById(customerId).get();
 
           return new CartDTO(user.getId(), user.getCart()
                   .stream()
-                  .map(cartItemMapper::mapToDTO)
+                  .map(cartItemMapper::mapToCartItemDTO)
                   .collect(Collectors.toList()));
      }
 
@@ -55,16 +56,15 @@ public class CartService {
                cartItem.setQuantity(cartItem.getQuantity() + 1);
           }
           else {
+               Product product = productRepository.findById(productDTO.getId()).get();
+               ColorDTO colorDTO = productDTO.getColors().get(0);
                cartItem = new CartItem();
                cartItem.setCustomer(customer);
-               cartItem.setProduct(productRepository.findById(productDTO.getId()).get());
-               ColorDTO colorDTO = productDTO.getColors().get(0);
-               SizeDTO sizeDTO = colorDTO.getSizes().get(0);
-
-               cartItem.setColor(cartItemMapper.mapToEntity(colorDTO));
-               cartItem.setSize(cartItemMapper.mapToEntity(sizeDTO));
-
+               cartItem.setProduct(product);
                cartItem.setQuantity(1);
+               cartItem.setSku(productSKUMappingRepository.findBySku(
+                       colorDTO.getSizes().get(0).getSku()
+               ));
           }
           cartItemRepository.save(cartItem);
      }

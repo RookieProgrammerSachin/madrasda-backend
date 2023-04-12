@@ -51,7 +51,7 @@ public class Product {
      private Mockup mockup;
 
 
-     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
      List<ProductImage> productImages;
 
      private String frontDesignUrl;

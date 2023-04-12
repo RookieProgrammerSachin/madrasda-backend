@@ -75,11 +75,11 @@ public class VendorController {
           paymentService.requestPayout(email);
 
      }
-     @GetMapping("vendorDetailsById/{id}")
+     @GetMapping("vendorDetails")
      public VendorDetails viewDashboard(
-             @PathVariable String id) {
+             @RequestParam(name = "email") String email) {
 
-          return vendorService.getVendorDetails(id);
+          return vendorService.getVendorDetails(email);
      }
 
 }

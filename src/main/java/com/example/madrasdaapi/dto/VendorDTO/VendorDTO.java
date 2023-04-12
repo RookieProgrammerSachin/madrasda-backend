@@ -11,6 +11,7 @@ public class VendorDTO implements Serializable {
      private String email;
      private String imgUrl;
      private String phone;
+     private String category;
      private String companyName;
      private String companyUrl;
      private String GSTIN;

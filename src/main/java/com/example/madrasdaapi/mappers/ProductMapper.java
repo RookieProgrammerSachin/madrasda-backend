@@ -2,14 +2,8 @@ package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.commons.*;
-import com.example.madrasdaapi.models.Product;
-import com.example.madrasdaapi.models.ProductImage;
-import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Vendor;
-import com.example.madrasdaapi.repositories.ProductImageRepository;
-import com.example.madrasdaapi.repositories.ProductRepository;
-import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
-import com.example.madrasdaapi.repositories.VendorRepository;
+import com.example.madrasdaapi.models.*;
+import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

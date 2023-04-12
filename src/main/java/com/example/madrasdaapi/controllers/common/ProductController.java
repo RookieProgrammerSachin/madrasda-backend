@@ -28,6 +28,12 @@ public class ProductController {
      public ProductDTO createProduct(@RequestBody NewProductDTO productDTO) {
           return productService.createProduct(productDTO);
      }
+     @GetMapping("getProductDetails/{prodId}")
+     public ProductDTO getProductDetails(
+             @PathVariable Long prodId
+     ) {
+          return productService.getProductDetails(prodId);
+     }
 
      @GetMapping("getProductsByVendor/{vendorId}")
      public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,

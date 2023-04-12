@@ -77,6 +77,9 @@ public class AdminService {
         if (vendorDTO.getGSTIN() != null) {
             vendor.setGSTIN(vendorDTO.getGSTIN());
         }
+        if(vendorDTO.getCategory() != null) {
+            vendor.setCategory(vendorDTO.getCategory());
+        }
         return vendorMapper.mapToDTO(vendorRepository.save(vendor));
     }
 }
