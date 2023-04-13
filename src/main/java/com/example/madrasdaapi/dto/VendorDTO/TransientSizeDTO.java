@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SizeDTO implements Serializable {
+public class TransientSizeDTO implements Serializable {
     private Long id;
     private String size;
 }

@@ -2,7 +2,11 @@ package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.commons.*;
-import com.example.madrasdaapi.models.*;
+import com.example.madrasdaapi.exception.ResourceNotFoundException;
+import com.example.madrasdaapi.models.Product;
+import com.example.madrasdaapi.models.ProductImage;
+import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +26,7 @@ public class ProductMapper {
     private final ModelMapper mapper;
     private final VendorRepository vendorRepository;
     private final ProductSKUMappingRepository productSKUMappingRepository;
+    private final ColorRepository colorRepository;
 
     public ProductDTO mapToDTO(Product product) {
 
@@ -30,7 +35,6 @@ public class ProductMapper {
         HashMap<String, ColorDTO> colors = new HashMap<>();
         for (ProductSKUMapping sku : product.getSkuMappings()) {
             String color = sku.getColor().getColor();
-
             ColorDTO colorDTO = colors.getOrDefault(color, new ColorDTO());
             SizeDTO sizeDTO = mapper.map(sku.getSize(), SizeDTO.class);
 
@@ -39,6 +43,7 @@ public class ProductMapper {
 
             colorDTO.getSizes().add(sizeDTO);
             colors.put(color, colorDTO);
+
         }
 
         for (ProductImage image : product.getProductImages()) {
@@ -50,20 +55,31 @@ public class ProductMapper {
 
     public Product mapToEntity(NewProductDTO detachedProduct) {
         mapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
-        Product product = productRepository.findById(detachedProduct.getId()).orElse(new Product());
+        Product product = new Product();
+        if (detachedProduct.getId() != null)
+            product = productRepository.findById(detachedProduct.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", "id", detachedProduct.getId().toString()));
+
         Vendor vendor = vendorRepository.findById(detachedProduct.getVendor().getId()).get();
         List<ProductSKUMapping> skus = productSKUMappingRepository.findByMockup_IdAndColor_IdIn(
                 detachedProduct.getMockupId(),
                 detachedProduct.getColors()
         );
-        product.setMockup(skus.get(0).getMockup());
-        mapper.createTypeMap(NewProductDTO.class, Product.class)
-                .addMapping(NewProductDTO::getProductImages, Product::setProductImages)
-                .map(detachedProduct, product);
+        mapper.map(detachedProduct, product);
         product.setVendor(vendor);
         product.setSkuMappings(skus);
+        product.setProductImages(new ArrayList<>());
+        for (ProductImageDTO img : detachedProduct.getProductImages()) {
+            ProductImage productImage = new ProductImage();
+            productImage.setId(img.getId());
+            productImage.setProduct(product);
+            productImage.setColor(colorRepository.findById(img.getColor())
+                    .orElseThrow(() -> new ResourceNotFoundException("Color", "id", img.getColor().toString())));
+            productImage.setImgUrl(img.getImageUrl());
+            product.getProductImages().add(productImage);
+        }
+
         return product;
 
     }

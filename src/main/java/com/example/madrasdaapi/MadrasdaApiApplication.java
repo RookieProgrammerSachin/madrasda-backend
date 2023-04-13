@@ -2,11 +2,14 @@ package com.example.madrasdaapi;
 
 import com.example.madrasdaapi.config.ShipRocketProperties;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipRocketLoginResponse;
+import com.example.madrasdaapi.dto.commons.NewProductDTO;
+import com.example.madrasdaapi.models.Product;
 import com.google.gson.Gson;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import okhttp3.OkHttpClient;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +30,15 @@ public class MadrasdaApiApplication {
 
     @Bean
     ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper mapper = new ModelMapper();
+        mapper.createTypeMap(NewProductDTO.class, Product.class)
+                .addMappings(new PropertyMap<NewProductDTO, Product>() {
+                    @Override
+                    protected void configure() {
+                        skip(destination.getProductImages());
+                    }
+                });
+        return mapper;
     }
 
     @Bean

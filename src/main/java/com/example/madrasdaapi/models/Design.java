@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Designs", schema = "madrasda")
+@Table(name = "Designs", schema = "spring-madrasda")
 public class Design {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
 
-     @Column(nullable = false)
+     @Column(nullable = false, length = 2000)
      private String imgUrl;
 
      @Column(nullable = false)

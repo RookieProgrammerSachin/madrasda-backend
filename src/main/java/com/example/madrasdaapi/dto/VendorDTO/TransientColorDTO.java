@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class ColorDTO implements Serializable {
+public class TransientColorDTO implements Serializable {
     private Long id;
     private String color;
     private String hexValue;

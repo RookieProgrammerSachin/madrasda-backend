@@ -52,7 +52,7 @@ public class VendorService {
           Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
           List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
           for(ProductLadderItem p : pLadder){
-               p.setReturnsContribution(Math.round((p.getProfitAmount()/profit) * 100.0 * 100.0)/100.0F);
+               p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
           }
           vendorDetails.setProductLadder(pLadder);
           return vendorDetails;
@@ -87,7 +87,7 @@ public class VendorService {
                Product p = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
                ProductLadderItem item = new ProductLadderItem();
                modelMapper.map(p, item);
-               item.setProfitAmount(p.getProfit() * totalSales.floatValue());
+               item.setProfitAmount(p.getProfit().multiply(totalSales));
                item.setStocksSold(totalSales.longValue());
                products.add(item);
           }

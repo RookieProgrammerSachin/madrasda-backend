@@ -13,6 +13,6 @@ import java.io.Serializable;
 @Setter
 public class CartItemDTO implements Serializable {
      private Long id;
-     private ProductDTO product;
+     private CartItemProduct product;
      private Integer quantity;
 }

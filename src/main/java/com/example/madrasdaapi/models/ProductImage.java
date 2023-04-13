@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "product_images", schema = "madrasda")
+@Table(name = "product_images", schema = "spring-madrasda")
 @Getter
 @Setter
 public class ProductImage {
@@ -13,6 +13,7 @@ public class ProductImage {
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
 
+     @Column(length = 1000)
      private String imgUrl;
 
      @ManyToOne

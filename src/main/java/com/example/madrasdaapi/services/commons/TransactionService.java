@@ -3,7 +3,6 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.config.ShipRocketProperties;
 import com.example.madrasdaapi.dto.RazorPayDTO.OrderResponse;
 import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
-import com.example.madrasdaapi.dto.ShipRocketDTO.ShipRocketLogin;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
@@ -21,7 +20,10 @@ import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -46,18 +49,31 @@ public class TransactionService {
     private final Gson gson;
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
-
+    private final VendorRepository vendorRepository;
     @Value("${razorpay.keySecret}")
     private String SECRET_KEY;
-
     @Value("${razorpay.keyId}")
     private String SECRET_ID;
 
     public OrderResponse initiateTransaction(TransactionDTO orderRequest) {
-
+        //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
-        transaction.setShippingAddress(customerMapper.mapToEntity(orderRequest.getShippingAddress()));
+        if (!orderRequest.getBillingIsShipping())
+            transaction.setShippingAddress(customerMapper.mapToEntity(orderRequest.getShippingAddress()));
+        else
+            transaction.setBillingIsShipping(true);
         OrderResponse response = new OrderResponse();
+        HashMap<Long, Vendor> vendors = new HashMap<>();
+        //Calculate Vendor profit
+        for (OrderItem item : transaction.getOrderItems()) {
+            Vendor vendor = item.getProduct().getVendor();
+            vendor.setOutstandingProfit(vendor.getOutstandingProfit()
+                    .add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
+            vendors.put(item.getProduct().getId(), vendor);
+        }
+        vendorRepository.saveAll(vendors.values());
+
+        //Create payment option
         try {
             Order order = createRazorPayOrder(orderRequest.getOrderTotal());
             transaction.setOrderId(order.get("id"));
@@ -99,9 +115,9 @@ public class TransactionService {
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Authorization", "Bearer " + shiprocket.getToken())
                     .build();
-            Response response = okHttpClient.newCall(request).execute();
-            System.out.println(response.body().string());
-            response.close();
+//            Response response = okHttpClient.newCall(request).execute();
+//            System.out.println(response.body().string());
+//            response.close();
 
 
         }
@@ -121,7 +137,6 @@ public class TransactionService {
         for (OrderItem item : transaction.getOrderItems()) {
             ShipRocketOrderItem orderItem = new ShipRocketOrderItem();
             Product product = item.getProduct();
-            Mockup mockup = product.getMockup();
             orderItem.setName(product.getName());
             orderItem.setDiscount(product.getDiscount().toString());
             orderItem.setTax(product.getTax().toString());
@@ -139,7 +154,7 @@ public class TransactionService {
         order.setBillingEmail(payment.get("billing_email"));
         order.setBillingPhone(payment.get("billing_phone"));
         order.setBillingPincode(payment.get("billing_pincode"));
-        if (transaction.getBillingIsShipping()) {
+        if (!transaction.getBillingIsShipping()) {
             Customer shippingAddress = transaction.getShippingAddress();
             order.setShippingAddress(shippingAddress.getAddressLine1() + shippingAddress.getAddressLine2());
             order.setShippingCustomerName(shippingAddress.getName());
@@ -149,6 +164,8 @@ public class TransactionService {
             order.setShippingPhone(shippingAddress.getPhone());
             order.setShippingPincode(shippingAddress.getPostalCode());
         }
+        order.setShippingIsBilling(transaction.getBillingIsShipping());
+
         order.setSubTotal(transaction.getOrderTotal().toString());
         order.setOrderItems(orderItems);
         return order;
@@ -165,16 +182,14 @@ public class TransactionService {
 
     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
         List<Transaction> transactions = transactionRepository.findByBillingUser_Id(id);
-        List<TransactionDTO> historyOfOrders = transactions.stream()
+
+        return transactions.stream()
                 .map(transactionMapper::mapToDTO)
                 .toList();
-
-        return historyOfOrders;
     }
 
     public ShipmentDTO getOrderDetails(Long transactionId) {
-        ShipmentDTO shipmentDetails = shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
-        return shipmentDetails;
+        return shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
     }
 
 

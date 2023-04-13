@@ -27,4 +27,5 @@ public class ProductSKUMapping {
     @JoinColumn(referencedColumnName = "id")
     private Color color;
 
+
 }

@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,17 +28,21 @@ public class Product {
 
      private String audience;
 
-     private Float basePrice;
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
+     private BigDecimal basePrice;
 
-     private Float shipping;
 
-     private Float discount;
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
+     private BigDecimal discount;
 
-     private Float total;
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
+     private BigDecimal total;
 
-     private Float profit;
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
+     private BigDecimal profit;
 
-     private Float tax;
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
+     private BigDecimal tax;
 
      private Integer hsn;
 
@@ -46,24 +52,28 @@ public class Product {
      @JoinColumn(name = "vendor_id", nullable = false)
      private Vendor vendor;
 
-     @OneToOne
-     @JoinColumn(referencedColumnName = "id")
-     private Mockup mockup;
-
 
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
-     List<ProductImage> productImages;
+     List<ProductImage> productImages = new ArrayList<>();
 
+     @Column(length = 1000)
      private String frontDesignUrl;
 
      @JdbcTypeCode(SqlTypes.JSON)
      private String frontDesignPlacement;
 
+     @Column(length = 1000)
      private String backDesignUrl;
 
      @JdbcTypeCode(SqlTypes.JSON)
      private String backDesignPlacement;
 
-     @OneToMany
+     @ManyToMany
+     @JoinTable(joinColumns = @JoinColumn(referencedColumnName = "id"),
+             inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
      private List<ProductSKUMapping> skuMappings;
+
+
+     @ManyToOne
+     private Mockup mockup;
 }

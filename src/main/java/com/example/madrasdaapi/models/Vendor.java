@@ -33,7 +33,7 @@ import java.util.List;
         }
 )
 
-@Table(name = "vendor", schema = "madrasda")
+@Table(name = "vendor", schema = "spring-madrasda")
 public class Vendor {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +63,7 @@ public class Vendor {
      @Column(name = "category")
      private String category;
 
+     @Column(columnDefinition = "decimal(10,3) default '0.000'")
      private BigDecimal outstandingProfit;
 
      @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)

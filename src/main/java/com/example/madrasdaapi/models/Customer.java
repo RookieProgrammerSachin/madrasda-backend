@@ -20,6 +20,8 @@ public class Customer {
      @JoinColumn(referencedColumnName = "id", nullable = false)
      private User user;
 
+     private Boolean isBillingUser;
+
      private String name;
 
      @Column(name = "address_line1",  length = 50)
