@@ -37,7 +37,7 @@ public class JwtService {
     public String generateToken(Authentication authentication) throws Exception {
         String usernameOrEmail = authentication.getName();
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 24);
+        Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 60 *  24);
 
         String token = Jwts.builder()
                 .setSubject(usernameOrEmail)

@@ -69,5 +69,6 @@ public class Vendor {
      @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Design> designs;
 
+     private Boolean payoutRequested = false;
 
 }

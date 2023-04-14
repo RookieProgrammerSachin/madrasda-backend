@@ -42,31 +42,25 @@ public class VendorController {
           return adminService.updateVendor(registerDTO);
      }
 
-
+     @GetMapping("getAllDesigns")
+     public List<DesignDTO> getAllDesigns(){
+          String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
+          return designService.getAllDesignsByVendor(email);
+     }
      @GetMapping("getDesign/{id}")
      public DesignDTO getDesignById(@PathVariable Long id) {
+
           return designService.getDesignById(id);
      }
 
-     @PostMapping("addDesign")
+     @PostMapping("saveOrUpdateDesign")
      public DesignDTO addDesign(@RequestBody DesignDTO designDTO) {
-          return designService.save(designDTO);
-     }
-
-     @PutMapping("updateDesign")
-     public DesignDTO updateDesign(@RequestBody DesignDTO designDTO) {
-          return designService.update(designDTO);
+          return designService.saveOrUpdate(designDTO);
      }
 
      @DeleteMapping("deleteDesign/{designId}")
      public void deleteDesignById(@PathVariable Long designId) {
           designService.deleteById(designId);
-     }
-
-     @Transactional
-     @GetMapping("monthlySales/{vendorId}")
-     public List<Double> getMonthlySales(@PathVariable Long vendorId) {
-          return vendorService.getMonthlySalesByVendorId(vendorId);
      }
 
      @PostMapping("requestPayout")
@@ -75,11 +69,6 @@ public class VendorController {
           paymentService.requestPayout(email);
 
      }
-     @GetMapping("vendorDetails")
-     public VendorDetails viewDashboard(
-             @RequestParam(name = "email") String email) {
 
-          return vendorService.getVendorDetails(email);
-     }
 
 }

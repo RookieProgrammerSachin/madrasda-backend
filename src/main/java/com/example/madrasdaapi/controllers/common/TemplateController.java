@@ -1,10 +1,13 @@
 package com.example.madrasdaapi.controllers.common;
 
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
+import com.example.madrasdaapi.models.Vendor;
+import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class TemplateController {
      private final TemplateService templateService;
      private final VendorService vendorService;
+     private final VendorRepository vendorRepository;
 
-     @GetMapping("getVendorTemplates/{vendorId}")
-     public Page<TemplateDTO> getTemplates(@PathVariable Long vendorId,
-                                           @RequestParam(defaultValue = "0") int pageNo,
+     @GetMapping("getTemplates")
+     public Page<TemplateDTO> getTemplates(@RequestParam(defaultValue = "0") int pageNo,
                                            @RequestParam(defaultValue = "10") int pageSize){
-          return vendorService.retrieveAllTemplates(vendorId,pageNo, pageSize);
+          Vendor vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
+                  .get().getAuthentication().getName());
+          return vendorService.retrieveAllTemplates(vendor.getId(),pageNo, pageSize);
      }
 
      @GetMapping("getTemplate/{templateId}")

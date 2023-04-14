@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
      @Transactional
      @Modifying
-     @Query(value = "update product p set p.publish_status = p.publish_status XOR true where p.id = ?1" ,nativeQuery = true)
-     void updatePublishStatusById(Long id);
+     @Query(value = "update product p set p.publish_status = p.publish_status XOR true where p.id = ?1 AND p.vendor_id = ?2" ,nativeQuery = true)
+     void updatePublishStatusByIdAAndVendor_Id(Long id, Long vendorId);
 
      Page<Product> findByVendor_Id(Long vendorId, Pageable pageable);
      Page<Product> findAllByAudience(String audience, Pageable pageable);
 
      Page<Product> findByNameOrAudienceOrMockup_name(String name,String audience,String mockupName, Pageable pageable);
+
 }

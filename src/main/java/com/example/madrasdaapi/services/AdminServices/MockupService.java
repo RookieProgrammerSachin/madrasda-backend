@@ -31,7 +31,7 @@ public class MockupService {
           mapper.map(mockupDTO, detachedMockup);
           if(mockupDTO.getColors() != null) detachedMockup.setColors(mockupDTO.getColors());
           if(mockupDTO.getSizes() != null) detachedMockup.setSizes(mockupDTO.getSizes());
-          return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
+          return mockupMapper.mapToDTO(mockupRepository.saveOrUpdate(detachedMockup));
      }*/
 
      public void deleteMockup(Long id) {

@@ -19,7 +19,7 @@ public class PayoutRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Vendor vendor;
 
     private BigDecimal amount;

@@ -11,6 +11,7 @@ import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +48,10 @@ public class AdminService {
     }
 
     public VendorDTO updateVendor(VendorDTO vendorDTO) {
-        Vendor vendor = vendorRepository.findById(vendorDTO.getId()).orElseThrow(
-                () -> new APIException("Vendor not found", HttpStatus.BAD_REQUEST)
-        );
+        Vendor vendor = vendorRepository.findByUser_Email(SecurityContextHolder.getDeferredContext()
+                .get()
+                .getAuthentication()
+                .getName());
         if (vendorDTO.getName() != null) {
             User user = vendor.getUser();
             user.setName(vendorDTO.getName());
