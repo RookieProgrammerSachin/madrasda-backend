@@ -48,12 +48,12 @@ public class VendorController {
 
      @PostMapping("addDesign")
      public DesignDTO addDesign(@RequestBody DesignDTO designDTO) {
-          return designService.save(designDTO);
+          return designService.saveOrUpdate(designDTO);
      }
 
      @PutMapping("updateDesign")
      public DesignDTO updateDesign(@RequestBody DesignDTO designDTO) {
-          return designService.update(designDTO);
+          return designService.saveOrUpdate(designDTO);
      }
 
      @DeleteMapping("deleteDesign/{designId}")

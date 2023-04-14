@@ -20,7 +20,6 @@ public class VendorMapper {
      public VendorMenuItemDTO mapToMenuItemDTO(Vendor vendor) {
           VendorMenuItemDTO item = new VendorMenuItemDTO();
           item.setId(vendor.getUser().getId());
-          item.setEmail(vendor.getUser().getEmail());
           item.setName(vendor.getUser().getName());
           item.setImgUrl(vendor.getProfilePic());
           return item;
