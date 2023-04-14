@@ -37,28 +37,25 @@ public class JwtService {
     public String generateToken(Authentication authentication) throws Exception {
         String usernameOrEmail = authentication.getName();
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 24);
-
-        String token = Jwts.builder()
+        Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 24 * 1000);
+        return Jwts.builder()
                 .setSubject(usernameOrEmail)
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
                 .signWith(key())
                 .compact();
-        return encrypt(token);
     }
     public String generateToken(User user) throws Exception {
         Claims claims = Jwts.claims();
         claims.put("role", user.getRole());
         claims.setSubject(user.getPhone());
-        String token =  Jwts
+        return Jwts
                 .builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30 * 1000))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-        return encrypt(token);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

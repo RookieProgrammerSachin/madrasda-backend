@@ -39,22 +39,45 @@ public class VendorService {
      private final UserRepository userRepository;
 
      @Transactional
-     public VendorDetails getVendorDetails(String email) {
-          User vendor = userRepository.findByEmail(email)
+     public VendorDetails getVendorDetails(Long id) {
+          User vendor = userRepository.findById(id)
                   .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
-          System.out.println(vendor.getName());
           VendorDetails vendorDetails = new VendorDetails();
           VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
           vendorDetails.setVendor(vendorDTO);
-          SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
-          salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
-          vendorDetails.setSalesAnalysis(salesAnalysis);
-          Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
-          List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
-          for(ProductLadderItem p : pLadder){
-               p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
+          if(getMonthlySalesByVendorId(vendor.getId()) != null){
+               SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
+               salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
+               vendorDetails.setSalesAnalysis(salesAnalysis);
+               Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
+               List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
+               for(ProductLadderItem p : pLadder){
+                    p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
+               }
+               vendorDetails.setProductLadder(pLadder);
+               salesAnalysis.setProductsSoldToday(getProductsSoldToday(vendor.getId()));
           }
-          vendorDetails.setProductLadder(pLadder);
+          return vendorDetails;
+     }
+     @Transactional
+     public VendorDetails getVendorDetails(String email) {
+          User vendor = userRepository.findByEmail(email)
+                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+          VendorDetails vendorDetails = new VendorDetails();
+          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
+          vendorDetails.setVendor(vendorDTO);
+          if(getMonthlySalesByVendorId(vendor.getId()) != null){
+               SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
+               salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
+               vendorDetails.setSalesAnalysis(salesAnalysis);
+               Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
+               List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
+               for(ProductLadderItem p : pLadder){
+                    p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
+               }
+               vendorDetails.setProductLadder(pLadder);
+               salesAnalysis.setProductsSoldToday(getProductsSoldToday(vendor.getId()));
+          }
           return vendorDetails;
      }
 
@@ -71,11 +94,17 @@ public class VendorService {
      }
      public List<Double> getMonthlySalesByVendorId(Long vendorId) {
           Object[][] results = vendorRepository.monthly_sales_by_id(vendorId);
-          List<Double> monthlySales = new ArrayList<>();
+          if(results.length == 0)
+               return null;
+          List<Double> monthlySales = new ArrayList<>(0);
           for (Object result : results[0]) {
                monthlySales.add(((Double) result));
           }
           return monthlySales;
+     }
+
+     public Integer getProductsSoldToday(Long vendorId){
+          return vendorRepository.products_sold_today(vendorId);
      }
      public List<ProductLadderItem> getTopSellingProductsForVendor(Long vendorId) {
           List<Object[]> results = vendorRepository.TOP_SELLERS_FOR_VENDOR(vendorId);

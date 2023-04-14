@@ -2,6 +2,7 @@ package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.security.JwtService;
 import com.example.madrasdaapi.services.commons.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class AuthController {
     private final AuthenticationService authService;
+    private final JwtService jwtService;
+    @GetMapping("/")
+    public ResponseEntity<String> checkTokenValidity(@RequestParam(name = "token") String token) {
+        if(jwtService.isTokenExpired(token))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok("verificationSuccess");
+    }
     
     @PostMapping("/loginVendor")
     public ResponseEntity<JwtDTO> authenticateVendor(@RequestBody LoginDTO request) throws Exception {

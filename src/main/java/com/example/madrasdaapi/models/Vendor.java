@@ -32,6 +32,23 @@ import java.util.List;
                         })
         }
 )
+@NamedStoredProcedureQuery(
+        name = "products_sold_today",
+        procedureName = "products_sold_today",
+        parameters = {
+                @StoredProcedureParameter(name = "vendor_id", mode = ParameterMode.IN, type = Long.class),
+        },
+        resultSetMappings = {"productsSoldMapping"})
+@SqlResultSetMapping(
+        name = "productsSoldMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = Integer.class,
+                        columns = {
+                                @ColumnResult(name = "sold_today", type = Integer.class)
+                        })
+        }
+)
 
 @Table(name = "vendor", schema = "spring-madrasda")
 public class Vendor {

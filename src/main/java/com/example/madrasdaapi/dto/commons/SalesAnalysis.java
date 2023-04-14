@@ -14,5 +14,6 @@ public class SalesAnalysis implements Serializable {
      private Long totalProducts;
      private Long totalOrders;
      private Long totalProfit;
+     private Integer productsSoldToday;
      private List<Double> monthlySales;
 }

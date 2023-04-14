@@ -26,8 +26,6 @@ import java.util.List;
 public class VendorController {
      private final VendorService vendorService;
      private final AdminService adminService;
-     private final MockupService mockupService;
-     private final TemplateService templateService;
      private final DesignService designService;
      private final PaymentService paymentService;
      @GetMapping
@@ -75,11 +73,10 @@ public class VendorController {
           paymentService.requestPayout(email);
 
      }
-     @GetMapping("vendorDetails")
+     @GetMapping("vendorDetails/{id}")
      public VendorDetails viewDashboard(
-             @RequestParam(name = "email") String email) {
+             @PathVariable Long id) {
 
-          return vendorService.getVendorDetails(email);
+          return vendorService.getVendorDetails(id);
      }
-
 }

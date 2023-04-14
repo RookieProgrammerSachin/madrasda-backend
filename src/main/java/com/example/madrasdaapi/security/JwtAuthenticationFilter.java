@@ -43,17 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String jwt = authHeader.substring(7);
-        try {
-            jwt = decrypt(jwt);
-        } catch (Exception e) {
-            throw new APIException("Invalid JWT Token", HttpStatus.UNAUTHORIZED);
-        }
         String emailOrPhone = jwtService.extractUsername(jwt);
         try {
             if (emailOrPhone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(emailOrPhone);
-                if (!jwtService.isTokenExpired(jwt)) {
+                if (!jwtService.isTokenExpired(jwt) && jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
