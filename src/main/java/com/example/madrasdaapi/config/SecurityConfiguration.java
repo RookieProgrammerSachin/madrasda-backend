@@ -60,7 +60,10 @@ public class SecurityConfiguration {
                           .requestMatchers(EndpointRequest.to("info", "health", "refresh")).permitAll()
                           .anyRequest().permitAll()
           )
-                  .csrf().disable();
+                  .csrf().disable()
+                  .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                  .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
+                  .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
           return http.build();
      }
 }

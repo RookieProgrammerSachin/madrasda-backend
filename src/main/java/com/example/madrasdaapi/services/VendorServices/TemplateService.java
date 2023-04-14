@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.services.VendorServices;
 
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
+import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.mappers.DesignMapper;
 import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
@@ -14,6 +15,7 @@ import com.example.madrasdaapi.repositories.MockupRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,7 +53,10 @@ public class TemplateService {
      }
 
      public TemplateDTO retrieveTemplate(Long templateId) {
-          return templateMapper.mapToTemplateDTO(templateRepository.findById(templateId).get());
+          Vendor vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
+                  .get().getAuthentication().getName());
+          return templateMapper.mapToTemplateDTO(templateRepository.findByIdAndVendor_Id(templateId, vendor.getId())
+                  .orElseThrow(() -> new ResourceNotFoundException("Template", "id", templateId.toString())));
      }
 
      public void deleteTemplate(Long id) {

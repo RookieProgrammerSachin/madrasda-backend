@@ -3,6 +3,7 @@ package com.example.madrasdaapi.repositories;
 import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import com.example.madrasdaapi.models.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
@@ -22,5 +23,8 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      Integer products_sold_today(@Param(("vendor_id")) Long vendorId);
 
      Vendor findByUser_Email(String email);
+
+     @Query("select v.id from Vendor v where v.user.email = ?1")
+     Vendor findIdByUser_Email(String email);
 
 }
