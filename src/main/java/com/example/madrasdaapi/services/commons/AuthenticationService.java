@@ -28,18 +28,18 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    //    private final Environment env;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService customUserDetailsService;
     @Value("${twilio.account.sid}")
     private String accSid;
     @Value("${twilio.auth.token}")
     private String twilioAuthToken;
     @Value("${twilio.service.sid}")
     private String serviceSid;
-//    private final Environment env;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService customUserDetailsService;
 
     public JwtDTO authenticateAdmin(LoginDTO loginDTO) throws Exception {
         User admin = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
@@ -47,8 +47,8 @@ public class AuthenticationService {
         );
         if (!admin.getRole().equals("ROLE_ADMIN")) throw new APIException("Bad credentials", HttpStatus.UNAUTHORIZED);
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        loginDTO.getEmail(),
-                        (loginDTO.getPassword())));
+                loginDTO.getEmail(),
+                (loginDTO.getPassword())));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwtToken = jwtService.generateToken(auth);
@@ -80,23 +80,29 @@ public class AuthenticationService {
     public JwtDTO validateOTP(String otp, String phone) throws Exception {
         String jwtToken;
         Twilio.init(accSid, twilioAuthToken);
-        try{
-            VerificationCheck verificationCheck =  VerificationCheck.creator(
-                    serviceSid)
+        try {
+            VerificationCheck verificationCheck = VerificationCheck.creator(
+                            serviceSid)
                     .setTo("+91" + phone)
                     .setCode(otp)
                     .create();
-            System.out.println(verificationCheck.getStatus());
-        }catch (Exception e) {
-            return null; //OTP invalid
+
+            for (int i = 0; i < 8; i++) {
+                if (verificationCheck.getStatus().equals("approved")) break;
+                Thread.sleep(700);
+            }
+            if (!verificationCheck.getStatus().equals("approved"))
+                throw new APIException("Invalid OTP", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new APIException("Invalid OTP", HttpStatus.BAD_REQUEST); //OTP invalid
         }
         Optional<User> user = userRepository.findByPhone(phone);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             jwtToken = jwtService.generateToken(user.get());
-        }else{
+        } else {
             User newUser = User.builder()
                     .phone(phone).build();
-            newUser.setRole(Role.ROLE_USER.name());
+            newUser.setRole(Role.ROLE_CUSTOMER.name());
             userRepository.save(newUser);
             jwtToken = jwtService.generateToken(newUser);
         }
