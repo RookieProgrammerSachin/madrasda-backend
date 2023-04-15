@@ -19,6 +19,7 @@ public class FeedbackDTO implements Serializable {
      private String query;
      private Boolean resolution;
      private Date timestamp;
-     private VendorDTO vendorDTO;
+     private String vendorName;
+     private String email;
 
 }

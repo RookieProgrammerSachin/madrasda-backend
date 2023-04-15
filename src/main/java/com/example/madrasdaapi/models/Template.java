@@ -16,13 +16,11 @@ public class Template {
      @ManyToOne
      private Mockup mockup;
 
-     @ManyToOne
-     private Design frontDesign;
+     private String frontDesignImage;
 
      private String frontDesignPlacement;
 
-     @ManyToOne
-     private Design backDesign;
+     private String backDesignImage;
 
      private String backDesignPlacement;
 

@@ -34,4 +34,9 @@ public class FeedbackController {
      public void resolveQuery(@PathVariable Long id) {
           feedbackService.toggleQuery(id);
      }
+
+     @DeleteMapping("deleteFeedback/{id}")
+     public void deleteFeedbackById(@PathVariable Long id) {
+          feedbackService.deleteById(id);
+     }
 }

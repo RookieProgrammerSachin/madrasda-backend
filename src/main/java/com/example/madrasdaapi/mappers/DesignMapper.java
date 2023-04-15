@@ -11,6 +11,7 @@ public class DesignMapper {
           designDTO.setId(design.getId());
           designDTO.setDesignType(design.getDesignType());
           designDTO.setImgUrl(design.getImgUrl());
+          designDTO.setTheme(design.getTheme());
           designDTO.setAdditionalInformation(design.getAdditionalInformation());
 
           return designDTO;
@@ -21,6 +22,7 @@ public class DesignMapper {
           design.setId(designDTO.getId());
           design.setDesignType(designDTO.getDesignType());
           design.setImgUrl(designDTO.getImgUrl());
+          design.setTheme(designDTO.getTheme());
           design.setAdditionalInformation(designDTO.getAdditionalInformation());
           return design;
      }

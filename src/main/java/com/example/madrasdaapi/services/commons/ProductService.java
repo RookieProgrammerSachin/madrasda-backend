@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.services.commons;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
@@ -31,12 +32,8 @@ public class ProductService {
      private final VendorRepository vendorRepository;
 
      public void togglePublishState(Long productId) {
-          Vendor vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder
-                  .getDeferredContext()
-                  .get()
-                  .getAuthentication()
-                  .getName());
-          productRepository.updatePublishStatusByIdAAndVendor_Id(productId, vendor.getId());
+          Long vendorId = vendorRepository.findIdByUser_Email(AuthContext.getCurrentUser());
+          productRepository.updatePublishStatusByIdAAndVendor_Id(productId, vendorId);
      }
 
      public ProductDTO createProduct(NewProductDTO newProduct) {

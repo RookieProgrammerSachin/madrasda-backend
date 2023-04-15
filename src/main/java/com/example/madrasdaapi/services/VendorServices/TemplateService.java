@@ -41,8 +41,8 @@ public class TemplateService {
 
           Template detachedTemplate = new Template();
           detachedTemplate.setId(templateDTO.getId());
-          detachedTemplate.setFrontDesign(detachedFrontDesign);
-          detachedTemplate.setBackDesign(detachedBackDesign);
+          detachedTemplate.setFrontDesignImage(detachedFrontDesign.getImgUrl());
+          detachedTemplate.setBackDesignImage(detachedBackDesign.getImgUrl());
           detachedTemplate.setMockup(detachedMockup);
           detachedTemplate.setVendor(detachedVendor);
           detachedTemplate.setFrontDesignPlacement(templateDTO.getFrontDesignPlacement());
@@ -53,9 +53,9 @@ public class TemplateService {
      }
 
      public TemplateDTO retrieveTemplate(Long templateId) {
-          Vendor vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
+          Long vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
                   .get().getAuthentication().getName());
-          return templateMapper.mapToTemplateDTO(templateRepository.findByIdAndVendor_Id(templateId, vendor.getId())
+          return templateMapper.mapToTemplateDTO(templateRepository.findByIdAndVendor_Id(templateId, vendor)
                   .orElseThrow(() -> new ResourceNotFoundException("Template", "id", templateId.toString())));
      }
 

@@ -6,6 +6,7 @@ import com.example.madrasdaapi.security.JwtService;
 import com.example.madrasdaapi.services.commons.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationService authService;
     private final JwtService jwtService;
-    @GetMapping("/")
-    public ResponseEntity<String> checkTokenValidity(@RequestParam(name = "token") String token) {
-        if(jwtService.isTokenExpired(token))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.ok("verificationSuccess");
-    }
+
     
     @PostMapping("/loginVendor")
     public ResponseEntity<JwtDTO> authenticateVendor(@RequestBody LoginDTO request) throws Exception {
@@ -33,19 +29,18 @@ public class AuthController {
     public ResponseEntity<JwtDTO> authenticateAdmin(@RequestBody LoginDTO request) throws Exception {
         return ResponseEntity.ok(authService.authenticateAdmin(request));
     }
-    @GetMapping("/loginClient")
-    public ResponseEntity<String> loginClient(@RequestParam("phone") String phone) throws Exception {
+
+    @PostMapping("/loginClient")
+    public ResponseEntity<String> loginClient(@RequestParam String phone) throws Exception {
+//        return ResponseEntity.ok("Received");
         return ResponseEntity.ok(authService.generateOTP(phone));
     }
-    @GetMapping("/validateClient")
+    @PostMapping("/verifyOtp")
     public ResponseEntity<JwtDTO> validate(
             @RequestParam("otp") String otp,
             @RequestParam("phone") String phone
     ) throws Exception {
         JwtDTO token = authService.validateOTP(otp, phone);
-        if(token == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        else
-            return ResponseEntity.ok(token);
+        return ResponseEntity.ok(token);
     }
 }

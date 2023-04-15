@@ -43,6 +43,7 @@ public class JwtService {
                 .claim("role", authentication.getAuthorities().stream().findFirst().get().getAuthority())
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
+                .claim("role", (authentication.getAuthorities().stream().findFirst().get().getAuthority()))
                 .signWith(key())
                 .compact();
     }

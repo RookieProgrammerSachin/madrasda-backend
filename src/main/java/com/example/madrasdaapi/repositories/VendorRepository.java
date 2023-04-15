@@ -25,6 +25,6 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      Vendor findByUser_Email(String email);
 
      @Query("select v.id from Vendor v where v.user.email = ?1")
-     Vendor findIdByUser_Email(String email);
+     Long findIdByUser_Email(String email);
 
 }

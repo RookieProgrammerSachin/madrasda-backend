@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.mappers;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.commons.OrderItemDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.Color;
@@ -31,7 +32,7 @@ public class TransactionMapper {
         Transaction transaction = new Transaction();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         mapper.map(transactionDTO, transaction);
-        transaction.setBillingUser(userRepository.findByEmail(SecurityContextHolder.getDeferredContext().get().getAuthentication().getName()).get());
+        transaction.setBillingUser(userRepository.findByEmail(AuthContext.getCurrentUser()).get());
         BigDecimal orderTotal = new BigDecimal(0L);
         List<OrderItem> orderItems = new ArrayList<>();
         for (OrderItemDTO item: transactionDTO.getOrderItems()) {

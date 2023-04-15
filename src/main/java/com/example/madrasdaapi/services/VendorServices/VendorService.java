@@ -11,6 +11,7 @@ import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.Template;
 import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -39,30 +40,7 @@ public class VendorService {
      private final UserRepository userRepository;
 
      @Transactional
-     public VendorDetails getVendorDetails(Long id) {
-          User vendor = userRepository.findById(id)
-                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
-          VendorDetails vendorDetails = new VendorDetails();
-          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
-          vendorDetails.setVendor(vendorDTO);
-          if(getMonthlySalesByVendorId(vendor.getId()) != null){
-               SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
-               salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
-               vendorDetails.setSalesAnalysis(salesAnalysis);
-               Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
-               List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
-               for(ProductLadderItem p : pLadder){
-                    p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
-               }
-               vendorDetails.setProductLadder(pLadder);
-               salesAnalysis.setProductsSoldToday(getProductsSoldToday(vendor.getId()));
-          }
-          return vendorDetails;
-     }
-     @Transactional
-     public VendorDetails getVendorDetails(String email) {
-          User vendor = userRepository.findByEmail(email)
-                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+     public VendorDetails getVendorDetails(User vendor) {
           VendorDetails vendorDetails = new VendorDetails();
           VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
           vendorDetails.setVendor(vendorDTO);

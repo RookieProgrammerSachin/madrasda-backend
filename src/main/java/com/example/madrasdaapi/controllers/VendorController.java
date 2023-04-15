@@ -1,8 +1,11 @@
 package com.example.madrasdaapi.controllers;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
+import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
 import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.DesignService;
@@ -24,16 +27,26 @@ import java.util.List;
 @CrossOrigin
 @Tag(name = "Vendor Resource Controller")
 public class VendorController {
+     private final UserRepository userRepository;
      private final VendorService vendorService;
      private final AdminService adminService;
      private final DesignService designService;
      private final PaymentService paymentService;
+
      @GetMapping
      public VendorDetails getVendorDetails() throws SQLException {
-          String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
-          return vendorService.getVendorDetails(email);
+          String email = AuthContext.getCurrentUser();
+          User vendor = userRepository.findByEmail(email)
+                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+          return vendorService.getVendorDetails(vendor);
      }
-
+     @GetMapping("vendorDetails/{id}")
+     public VendorDetails getVendorDetailsById(
+             @PathVariable Long id) {
+          User vendor = userRepository.findById(id)
+                  .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
+          return vendorService.getVendorDetails(vendor);
+     }
 
      @PutMapping("updateVendor")
      public VendorDTO saveOrUpdateVendor(@RequestBody VendorDTO registerDTO) {
@@ -51,11 +64,6 @@ public class VendorController {
           return designService.saveOrUpdate(designDTO);
      }
 
-     @PutMapping("updateDesign")
-     public DesignDTO updateDesign(@RequestBody DesignDTO designDTO) {
-          return designService.saveOrUpdate(designDTO);
-     }
-
      @DeleteMapping("deleteDesign/{designId}")
      public void deleteDesignById(@PathVariable Long designId) {
           designService.deleteById(designId);
@@ -69,14 +77,9 @@ public class VendorController {
 
      @PostMapping("requestPayout")
      public void requestPayout() {
-          String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
+          String email = AuthContext.getCurrentUser();
           paymentService.requestPayout(email);
 
      }
-     @GetMapping("vendorDetails/{id}")
-     public VendorDetails viewDashboard(
-             @PathVariable Long id) {
 
-          return vendorService.getVendorDetails(id);
-     }
 }

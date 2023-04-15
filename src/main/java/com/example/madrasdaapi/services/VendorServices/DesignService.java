@@ -7,6 +7,7 @@ import com.example.madrasdaapi.models.Design;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.DesignRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,12 +25,12 @@ public class DesignService {
     private final VendorRepository vendorRepository;
 
     public DesignDTO getDesignById(Long id) {
-        Vendor vendor = vendorRepository
+        Long vendor = vendorRepository
                 .findIdByUser_Email(SecurityContextHolder.getDeferredContext()
                         .get()
                         .getAuthentication()
                         .getName());
-        return designMapper.mapToDTO(designRepository.findByIdAndVendor_Id(id, vendor.getId())
+        return designMapper.mapToDTO(designRepository.findByIdAndVendor_Id(id, vendor)
                 .orElseThrow(() -> new ResourceNotFoundException("Design", "id", id.toString())));
     }
 
@@ -45,14 +46,14 @@ public class DesignService {
         Design savedDesign = designRepository.save(detachedDesign);
         return designMapper.mapToDTO(savedDesign);
     }
-
+    @Transactional
     public void deleteById(Long designId) {
-        Vendor vendor = vendorRepository
+        Long vendor = vendorRepository
                 .findIdByUser_Email(SecurityContextHolder.getDeferredContext()
                         .get()
                         .getAuthentication()
                         .getName());
-        designRepository.deleteByIdAndVendor_Id(designId, vendor.getId());
+        designRepository.deleteByIdAndVendor_Id(designId, vendor);
     }
 
     public List<DesignDTO> getAllDesignsByVendor(String email) {

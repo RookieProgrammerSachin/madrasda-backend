@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.mappers;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.commons.*;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
@@ -61,7 +62,7 @@ public class ProductMapper {
             product = productRepository.findById(detachedProduct.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", detachedProduct.getId().toString()));
 
-        Vendor vendor = vendorRepository.findById(detachedProduct.getVendor().getId()).get();
+        Vendor vendor = vendorRepository.findByUser_Email(AuthContext.getCurrentUser());
         List<ProductSKUMapping> skus = productSKUMappingRepository.findByMockup_IdAndColor_IdIn(
                 detachedProduct.getMockupId(),
                 detachedProduct.getColors()

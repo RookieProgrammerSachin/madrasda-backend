@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.mappers;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.models.Vendor;
@@ -39,7 +40,7 @@ public class VendorMapper {
      }
 
      public Vendor mapToEntity(VendorDTO vendorDTO) {
-          String email = SecurityContextHolder.getDeferredContext().get().getAuthentication().getName();
+          String email = AuthContext.getCurrentUser();
           Vendor vendor = vendorRepository.findByUser_Email(email);
 
           if (vendorDTO.getName() != null) {

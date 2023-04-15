@@ -22,9 +22,9 @@ public class TemplateController {
      @GetMapping("getTemplates")
      public Page<TemplateDTO> getTemplates(@RequestParam(defaultValue = "0") int pageNo,
                                            @RequestParam(defaultValue = "10") int pageSize){
-          Vendor vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
+          Long vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
                   .get().getAuthentication().getName());
-          return vendorService.retrieveAllTemplates(vendor.getId(),pageNo, pageSize);
+          return vendorService.retrieveAllTemplates(vendor,pageNo, pageSize);
      }
 
      @GetMapping("getTemplate/{templateId}")

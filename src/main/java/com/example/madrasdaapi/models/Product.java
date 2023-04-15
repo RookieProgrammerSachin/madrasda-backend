@@ -48,14 +48,6 @@ public class Product {
 
      private Boolean publishStatus;
 
-     @ManyToOne(optional = false)
-     @JoinColumn(name = "vendor_id", nullable = false)
-     private Vendor vendor;
-
-
-     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
-     List<ProductImage> productImages = new ArrayList<>();
-
      @Column(length = 1000)
      private String frontDesignUrl;
 
@@ -68,11 +60,17 @@ public class Product {
      @JdbcTypeCode(SqlTypes.JSON)
      private String backDesignPlacement;
 
+     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
+     List<ProductImage> productImages = new ArrayList<>();
+
+     @ManyToOne(optional = false)
+     @JoinColumn(name = "vendor_id", nullable = false)
+     private Vendor vendor;
+
      @ManyToMany
      @JoinTable(joinColumns = @JoinColumn(referencedColumnName = "id"),
              inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
      private List<ProductSKUMapping> skuMappings;
-
 
      @ManyToOne
      private Mockup mockup;

@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface DesignRepository extends JpaRepository<Design, Long> {
      Optional<Design> findByIdAndVendor_Id(Long id, Long vendorId);
 
-    void deleteByIdAndVendor_Id(Long designId, Long vendorId);
+
+
+    void deleteByIdAndVendor_Id(Long designId, Long vendor);
 }

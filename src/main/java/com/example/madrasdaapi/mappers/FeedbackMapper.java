@@ -21,7 +21,8 @@ public class FeedbackMapper {
           feedbackDTO.setResolution(feedback.getResolution());
           feedbackDTO.setQuery(feedback.getQuery());
           feedbackDTO.setTimestamp(feedback.getTimestamp());
-          feedbackDTO.setVendorDTO(vendorMapper.mapToDTO(feedback.getVendor()));
+          feedbackDTO.setVendorName(feedback.getVendor().getUser().getName());
+          feedbackDTO.setEmail(feedback.getVendor().getUser().getEmail());
           return feedbackDTO;
      }
 
@@ -31,7 +32,7 @@ public class FeedbackMapper {
           feedback.setResolution(feedbackDTO.getResolution());
           feedback.setTimestamp(feedbackDTO.getTimestamp());
           feedback.setQuery(feedbackDTO.getQuery());
-          feedback.setVendor(vendorRepository.findById(feedbackDTO.getVendorDTO().getId()).get());
+
 
           return feedback;
      }
