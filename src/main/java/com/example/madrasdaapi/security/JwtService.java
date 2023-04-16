@@ -40,7 +40,7 @@ public class JwtService {
         Date expiryDate = new Date(currentDate.getTime() + 1000 * 60 * 24 * 1000);
         return Jwts.builder()
                 .setSubject(usernameOrEmail)
-                .claim("role", authentication.getAuthorities().stream().findFirst().get().getAuthority())
+                .claim("role", authentication.getAuthorities().stream().findFirst().orElseThrow().getAuthority())
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
                 .claim("role", (authentication.getAuthorities().stream().findFirst().get().getAuthority()))
