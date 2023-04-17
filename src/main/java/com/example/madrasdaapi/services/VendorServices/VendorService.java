@@ -1,9 +1,6 @@
 package com.example.madrasdaapi.services.VendorServices;
 
-import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
-import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
-import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
-import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
+import com.example.madrasdaapi.dto.VendorDTO.*;
 import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import com.example.madrasdaapi.mappers.TemplateMapper;
@@ -100,4 +97,5 @@ public class VendorService {
           }
           return products;
      }
+
 }

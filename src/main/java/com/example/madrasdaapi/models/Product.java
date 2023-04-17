@@ -51,13 +51,11 @@ public class Product {
      @Column(length = 1000)
      private String frontDesignUrl;
 
-     @JdbcTypeCode(SqlTypes.JSON)
      private String frontDesignPlacement;
 
      @Column(length = 1000)
      private String backDesignUrl;
 
-     @JdbcTypeCode(SqlTypes.JSON)
      private String backDesignPlacement;
 
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")

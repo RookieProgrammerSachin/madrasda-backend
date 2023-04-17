@@ -38,6 +38,10 @@ public class ProductService {
 
      public ProductDTO createProduct(NewProductDTO newProduct) {
           Product product = productMapper.mapToEntity(newProduct);
+          Vendor vendor = vendorRepository.findById(newProduct.getVendor().getId()).orElseThrow(
+                  () -> new APIException("Vendor not found",HttpStatus.BAD_REQUEST)
+          );
+          product.setVendor(vendor);
           product.setPublishStatus(false);
           return productMapper.mapToDTO(productRepository.save(product));
      }
