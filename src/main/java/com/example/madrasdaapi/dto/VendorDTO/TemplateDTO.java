@@ -15,8 +15,10 @@ public class TemplateDTO implements Serializable {
      private Long vendorId;
      private MockupDTO mockup;
      private DesignDTO frontDesign;
+     private String frontDesignImage;
      private String frontDesignPlacement;
      private DesignDTO backDesign;
+     private String backDesignImage;
      private String backDesignPlacement;
      private List<String> colorPalette;
      private List<String> sizes;
