@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "shipment_tracking", indexes = {
         @Index(name = "idx_shipment_transaction_id", columnList = "transaction_id")
 })

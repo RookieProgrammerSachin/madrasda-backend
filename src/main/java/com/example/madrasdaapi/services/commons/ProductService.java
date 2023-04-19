@@ -3,13 +3,13 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
@@ -18,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +68,4 @@ public class ProductService {
           ));
      }
 
-     public ProductSKUMappingDTO mapSKUToDTO(ProductSKUMapping productSKUMapping) {
-          return productMapper.mapSKUToDTO(productSKUMapping);
-     }
 }

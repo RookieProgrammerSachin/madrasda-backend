@@ -8,14 +8,13 @@ import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.mappers.VendorMapper;
-import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.Template;
 import com.example.madrasdaapi.models.User;
-import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
+import com.example.madrasdaapi.utils.ProcedureCaller;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,8 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +30,7 @@ import java.util.stream.Collectors;
 public class VendorService {
      private final VendorMapper vendorMapper;
      private final TemplateMapper templateMapper;
+     private final ProcedureCaller caller;
      private final ModelMapper modelMapper;
      private final VendorRepository vendorRepository;
      private final TemplateRepository templateRepository;
@@ -44,17 +42,17 @@ public class VendorService {
           VendorDetails vendorDetails = new VendorDetails();
           VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
           vendorDetails.setVendor(vendorDTO);
-          if(getMonthlySalesByVendorId(vendor.getId()) != null){
+          if(caller.getMonthlySalesByVendorId(vendor.getId()) != null){
                SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
-               salesAnalysis.setMonthlySales(getMonthlySalesByVendorId(vendor.getId()));
+               salesAnalysis.setMonthlySales(caller.getMonthlySalesByVendorId(vendor.getId()));
                vendorDetails.setSalesAnalysis(salesAnalysis);
                Long profit = vendorDetails.getSalesAnalysis().getTotalProfit();
-               List<ProductLadderItem> pLadder =getTopSellingProductsForVendor(vendor.getId());
+               List<ProductLadderItem> pLadder = caller.getTopSellingProductsForVendor(vendor.getId(), 10);
                for(ProductLadderItem p : pLadder){
                     p.setReturnsContribution(Math.round((p.getProfitAmount().floatValue()/profit) * 100.0 * 100.0)/100.0);
                }
                vendorDetails.setProductLadder(pLadder);
-               salesAnalysis.setProductsSoldToday(getProductsSoldToday(vendor.getId()));
+               salesAnalysis.setProductsSoldToday(caller.getProductsSoldToday(vendor.getId()));
           }
           return vendorDetails;
      }
@@ -70,34 +68,7 @@ public class VendorService {
           Page<Template> page = templateRepository.findByVendor_Id(vendorId, pageRequest);
           return page.map(templateMapper::mapToTemplateDTO);
      }
-     public List<Double> getMonthlySalesByVendorId(Long vendorId) {
-          Object[][] results = vendorRepository.monthly_sales_by_id(vendorId);
-          if(results.length == 0)
-               return null;
-          List<Double> monthlySales = new ArrayList<>(0);
-          for (Object result : results[0]) {
-               monthlySales.add(((Double) result));
-          }
-          return monthlySales;
-     }
 
-     public Integer getProductsSoldToday(Long vendorId){
-          return vendorRepository.products_sold_today(vendorId);
-     }
-     public List<ProductLadderItem> getTopSellingProductsForVendor(Long vendorId) {
-          List<Object[]> results = vendorRepository.TOP_SELLERS_FOR_VENDOR(vendorId);
-          List<ProductLadderItem> products = new ArrayList<>();
 
-          for (Object[] result : results) {
-               Long id = (Long) result[0];
-               BigDecimal totalSales = (BigDecimal) result[1];
-               Product p = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-               ProductLadderItem item = new ProductLadderItem();
-               modelMapper.map(p, item);
-               item.setProfitAmount(p.getProfit().multiply(totalSales));
-               item.setStocksSold(totalSales.longValue());
-               products.add(item);
-          }
-          return products;
-     }
+
 }

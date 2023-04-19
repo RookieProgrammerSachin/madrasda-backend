@@ -14,16 +14,13 @@ import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.models.ShiprocketModels.NewOrder;
 import com.example.madrasdaapi.models.ShiprocketModels.ShipRocketOrderItem;
 import com.example.madrasdaapi.repositories.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.razorpay.Order;
-import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,6 +47,7 @@ public class TransactionService {
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
     private final VendorRepository vendorRepository;
+    private final CustomerRepository customerRepository;
     @Value("${razorpay.keySecret}")
     private String SECRET_KEY;
     @Value("${razorpay.keyId}")
@@ -58,24 +56,20 @@ public class TransactionService {
     public OrderResponse initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
-        if (!orderRequest.getBillingIsShipping())
-            transaction.setShippingAddress(customerMapper.mapToEntity(orderRequest.getShippingAddress()));
-        else
+        transaction.getShippingAddress().setUser(transaction.getBillingUser());
+        transaction.getShippingAddress().setName(orderRequest.getShippingAddress().getName());
+        if (!orderRequest.getBillingIsShipping()) {
+            transaction.getShippingAddress().setIsBillingUser(false);
+        } else {
             transaction.setBillingIsShipping(true);
-        OrderResponse response = new OrderResponse();
-        HashMap<Long, Vendor> vendors = new HashMap<>();
-        //Calculate Vendor profit
-        for (OrderItem item : transaction.getOrderItems()) {
-            Vendor vendor = item.getProduct().getVendor();
-            vendor.setOutstandingProfit(vendor.getOutstandingProfit()
-                    .add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
-            vendors.put(item.getProduct().getId(), vendor);
+            Customer billingAddress = customerRepository.findByIdAndIsBillingUser(transaction.getBillingUser().getId(), true);
+            if (billingAddress != null) transaction.setShippingAddress(billingAddress);
+            transaction.getShippingAddress().setIsBillingUser(true);
         }
-        vendorRepository.saveAll(vendors.values());
-
+        OrderResponse response = new OrderResponse();
         //Create payment option
         try {
-            Order order = createRazorPayOrder(orderRequest.getOrderTotal());
+            Order order = createRazorPayOrder(transaction.getOrderTotal());
             transaction.setOrderId(order.get("id"));
             transactionRepository.save(transaction);
             response.setRazorpayOrderId(order.get("id"));
@@ -100,30 +94,38 @@ public class TransactionService {
 
     public void updateTransactionStatus(PaymentRequest result) throws RazorpayException, IOException {
         String orderId = result.getPayload().getPayment().getEntity().getOrderId();
-        Transaction transaction = transactionRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", orderId));
+        Transaction transaction = transactionRepository.findByOrderId(orderId).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", orderId));
         transaction.setPaymentId(result.getPayload().getPayment().getEntity().getId());
 
         if (result.getEvent().equals("payment.captured")) {
+            HashMap<Long, Vendor> vendors = new HashMap<>();
+            //Calculate Vendor profit
+            for (OrderItem item : transaction.getOrderItems()) {
+                Vendor vendor = item.getProduct().getVendor();
+                vendor.setOutstandingProfit(vendor.getOutstandingProfit().add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
+                vendors.put(item.getProduct().getId(), vendor);
+            }
             transaction.setPaymentStatus(result.getEvent());
             NewOrder order = createShiprocketOrder(transaction);
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(gson.toJson(order), mediaType);
-            Request request = new Request.Builder()
-                    .url("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc")
+            RequestBody body = RequestBody.create(new ObjectMapper().writeValueAsString(order), mediaType);
+            Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc")
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", "Bearer " + shiprocket.getToken())
-                    .build();
-//            Response response = okHttpClient.newCall(request).execute();
-//            System.out.println(response.body().string());
-//            response.close();
+                    .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
+            Response response = okHttpClient.newCall(request).execute();
+            System.out.println(response.body().string());
+            response.close();
 
+            vendorRepository.saveAll(vendors.values());
+            transactionRepository.save(transaction);
         }
-        if (result.getEvent().equals("payment.failed"))
+        if (result.getEvent().equals("payment.failed")) {
+            transactionRepository.save(transaction);
             transaction.setPaymentStatus(result.getEvent());
-        transactionRepository.save(transaction);
+        }
+
 
     }
 
@@ -143,17 +145,20 @@ public class TransactionService {
             orderItem.setHsn(product.getHsn());
             orderItem.setUnits(item.getQuantity());
             orderItem.setSku(item.getSku() + "-" + product.getVendor().getId() + "-" + product.getId());
+            orderItem.setSellingPrice(product.getTotal().toString());
             orderItems.add(orderItem);
         }
-        Payment payment = razorpayClient.payments.fetch(transaction.getPaymentId());
+        order.setOrderItems(orderItems);
 
-        order.setBillingAddress(payment.get("billing_address"));
-        order.setBillingCustomerName(payment.get("billing_customer_name"));
-        order.setBillingCity(payment.get("billing_city"));
-        order.setBillingCountry(payment.get("billing_country"));
-        order.setBillingEmail(payment.get("billing_email"));
-        order.setBillingPhone(payment.get("billing_phone"));
-        order.setBillingPincode(payment.get("billing_pincode"));
+        Customer billingAddress = customerRepository.findByIdAndIsBillingUser(transaction.getBillingUser().getId(), true);
+        order.setBillingAddress(billingAddress.getAddressLine1() + billingAddress.getAddressLine2());
+        order.setBillingCustomerName(billingAddress.getName());
+        order.setBillingCity(billingAddress.getCity());
+        order.setBillingCountry(billingAddress.getCountry());
+        order.setBillingState(billingAddress.getState());
+        order.setBillingEmail(billingAddress.getEmail());
+        order.setBillingPhone(billingAddress.getPhone());
+        order.setBillingPincode(billingAddress.getPostalCode());
         if (!transaction.getBillingIsShipping()) {
             Customer shippingAddress = transaction.getShippingAddress();
             order.setShippingAddress(shippingAddress.getAddressLine1() + shippingAddress.getAddressLine2());
@@ -165,15 +170,14 @@ public class TransactionService {
             order.setShippingPincode(shippingAddress.getPostalCode());
         }
         order.setShippingIsBilling(transaction.getBillingIsShipping());
-
+        order.setPaymentMethod("PREPAID");
         order.setSubTotal(transaction.getOrderTotal().toString());
         order.setOrderItems(orderItems);
         return order;
     }
 
     public void updateShipmentStatus(TrackingData trackingData) {
-        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
+        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId()).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
         Shipment shipment = shipmentMapper.mapToShipment(trackingData);
         transaction.setShipment(shipment);
         shipment.setTransaction(transaction);
@@ -183,9 +187,7 @@ public class TransactionService {
     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
         List<Transaction> transactions = transactionRepository.findByBillingUser_Id(id);
 
-        return transactions.stream()
-                .map(transactionMapper::mapToDTO)
-                .toList();
+        return transactions.stream().map(transactionMapper::mapToDTO).toList();
     }
 
     public ShipmentDTO getOrderDetails(Long transactionId) {

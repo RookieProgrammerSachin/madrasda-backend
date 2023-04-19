@@ -21,17 +21,18 @@ public class ShipRocketProperties {
     private static String token;
 
     public String getToken() throws IOException {
-        if (jwtService.isTokenExpired(token)) {
+
+        if (token == null || new JwtService().isTokenExpired(token)) {
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(gson.toJson(new ShipRocketLogin("api@madrasda.com", "Braveheart@123")),
+            RequestBody body = RequestBody.create(new Gson().toJson(new ShipRocketLogin("api@madrasda.com", "Braveheart@123")),
                     mediaType);
-            Response response = okHttpClient.newCall(new Request.Builder()
+            Response response = new OkHttpClient().newCall(new Request.Builder()
                     .url("https://apiv2.shiprocket.in/v1/external/auth/login")
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .build()).execute();
             ResponseBody responseBody = response.body();
-            setToken(gson.fromJson(responseBody.string(), ShipRocketLoginResponse.class).getToken());
+            setToken(new Gson().fromJson(responseBody.string(), ShipRocketLoginResponse.class).getToken());
             response.close();
         }
         return token;

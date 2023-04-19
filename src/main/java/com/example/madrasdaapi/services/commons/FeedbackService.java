@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +23,7 @@ public class FeedbackService {
      private final AuthContext authContext;
      public FeedbackPage getAllQueries(int pageNo, int pageSize){
           Sort sort = Sort.by("timestamp").descending();
-          PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+          PageRequest pageRequest = PageRequest.of(pageNo, pageSize, sort);
           Page<FeedbackDTO> unresolvedQueries = feedbackRepository.findByResolution(false, pageRequest).map(feedbackMapper::mapToDTO);
           Page<FeedbackDTO> resolvedQueries = feedbackRepository.findByResolution(true, pageRequest).map(feedbackMapper::mapToDTO);
           return new FeedbackPage(unresolvedQueries, resolvedQueries);

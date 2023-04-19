@@ -7,15 +7,13 @@ import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
-import com.example.madrasdaapi.services.AdminServices.MockupService;
 import com.example.madrasdaapi.services.VendorServices.DesignService;
-import com.example.madrasdaapi.services.VendorServices.TemplateService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.PaymentService;
+import com.example.madrasdaapi.utils.ProcedureCaller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -32,7 +30,7 @@ public class VendorController {
      private final AdminService adminService;
      private final DesignService designService;
      private final PaymentService paymentService;
-
+     private final ProcedureCaller caller;
      @GetMapping
      public VendorDetails getVendorDetails() throws SQLException {
           String email = AuthContext.getCurrentUser();
@@ -72,7 +70,7 @@ public class VendorController {
      @Transactional
      @GetMapping("monthlySales/{vendorId}")
      public List<Double> getMonthlySales(@PathVariable Long vendorId) {
-          return vendorService.getMonthlySalesByVendorId(vendorId);
+          return caller.getMonthlySalesByVendorId(vendorId);
      }
 
      @PostMapping("requestPayout")

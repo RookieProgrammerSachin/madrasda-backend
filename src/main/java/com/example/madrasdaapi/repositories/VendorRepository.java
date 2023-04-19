@@ -14,7 +14,7 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      SalesAnalysis getSalesAnalysisByVendorId(@Param("vendorId") Long vendorId);
 
      @Procedure(name = "TOP_SELLERS_FOR_VENDOR")
-     List<Object[]> TOP_SELLERS_FOR_VENDOR(@Param("vendor_id") Long vendorId);
+     List<Object[]> TOP_SELLERS_FOR_VENDOR(@Param("vendor_id") Long vendorId, @Param("lim") Integer limit);
 
      @Procedure(name = "monthly_sales_by_id")
      Object[][] monthly_sales_by_id(@Param("vendor_id") Long vendorId);

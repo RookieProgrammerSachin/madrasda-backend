@@ -2,7 +2,6 @@ package com.example.madrasdaapi.services.AdminServices;
 
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
-import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
@@ -10,7 +9,6 @@ import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,8 +36,7 @@ public class AdminService {
         detachedVendor.setGSTIN(registerDTO.getGSTIN());
         detachedVendor.getUser().setRole("ROLE_VENDOR");
 
-        VendorDTO vendor = vendorMapper.mapToDTO(vendorRepository.save(detachedVendor));
-        return vendor;
+        return vendorMapper.mapToDTO(vendorRepository.save(detachedVendor));
 //          return vendorMapper.mapToDTO(newUser.getVendor());
     }
 

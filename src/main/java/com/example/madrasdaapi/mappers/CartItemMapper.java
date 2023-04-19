@@ -5,9 +5,11 @@ import com.example.madrasdaapi.dto.ClientDTO.CartItemDTO;
 import com.example.madrasdaapi.dto.ClientDTO.CartItemProduct;
 import com.example.madrasdaapi.dto.ClientDTO.TransientCartItemDTO;
 import com.example.madrasdaapi.dto.commons.ColorDTO;
+import com.example.madrasdaapi.dto.commons.ProductImageDTO;
 import com.example.madrasdaapi.dto.commons.SizeDTO;
 import com.example.madrasdaapi.models.CartItem;
 import com.example.madrasdaapi.models.Color;
+import com.example.madrasdaapi.models.ProductImage;
 import com.example.madrasdaapi.models.Size;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -39,7 +41,7 @@ public class CartItemMapper {
 
      public CartItemDTO mapToCartItemDTO(CartItem cartItem) {
           CartItemDTO cartItemDto = new CartItemDTO();
-          cartItemDto.setId(cartItemDto.getId());
+          cartItemDto.setId(cartItem.getId());
           cartItemDto.setQuantity(cartItem.getQuantity());
           CartItemProduct product = new CartItemProduct();
           product.setName(cartItem.getProduct().getName());
@@ -47,6 +49,18 @@ public class CartItemMapper {
           product.setTotal(cartItem.getProduct().getTotal().floatValue());
           product.setColorDTO(mapper.map((cartItem.getSku().getColor()), ColorDTO.class));
           product.setSizeDTO(mapper.map(cartItem.getSku().getSize(), SizeDTO.class));
+          product.getSizeDTO().setSku(cartItem.getSku().getSku());
+          ProductImage productImage = cartItem.getProduct()
+                  .getProductImages()
+                  .stream()
+                  .filter(image -> image.getColor().getId().equals(cartItem.getSku().getColor().getId()))
+                  .findFirst()
+                  .get();
+
+          product.setFrontImage(new ProductImageDTO(productImage.getId(), productImage.getImgUrl(), productImage.getColor().getId()));
+
+          product.setId(cartItem.getProduct().getId());
+
           cartItemDto.setProduct(product);
           return cartItemDto;
      }

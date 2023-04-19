@@ -56,11 +56,4 @@ public class DesignService {
         designRepository.deleteByIdAndVendor_Id(designId, vendor);
     }
 
-    public List<DesignDTO> getAllDesignsByVendor(String email) {
-        return vendorRepository.findByUser_Email(email)
-                .getDesigns()
-                .stream()
-                .map(designMapper::mapToDTO)
-                .collect(Collectors.toList());
-    }
 }

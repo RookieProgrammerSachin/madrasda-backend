@@ -24,9 +24,4 @@ public class PaymentController {
         return transactionService.initiateTransaction(orderRequest);
 
     }
-//    @PostMapping("buyNow")
-//    public OrderResponse buyNow(@RequestBody TransactionDTO transactionDTO) {
-//        return transactionService.initiateTransaction(transactionDTO);
-//    }
-
 }

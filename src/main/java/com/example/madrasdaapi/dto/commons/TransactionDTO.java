@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.dto.commons;
 
 import com.example.madrasdaapi.dto.ClientDTO.CustomerDto;
+import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentTrackActivityDTO;
 import com.example.madrasdaapi.models.ShipmentTrackActivity;
 import com.example.madrasdaapi.models.Transaction;
 import lombok.Getter;
@@ -30,6 +31,6 @@ public class TransactionDTO implements Serializable {
 
     private String status;
     private Set<OrderItemDTO> orderItems = new HashSet<>();
-    private List<ShipmentTrackActivity> shipmentActivity;
+    private List<ShipmentTrackActivityDTO> shipmentActivity;
 
 }

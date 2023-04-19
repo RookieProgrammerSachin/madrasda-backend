@@ -6,8 +6,6 @@ import com.example.madrasdaapi.security.JwtService;
 import com.example.madrasdaapi.services.commons.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

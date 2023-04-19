@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class Entity{
@@ -57,7 +59,7 @@ public class Entity{
 	private String email;
 
 	@JsonProperty("amount")
-	private Integer amount;
+	private Double amount;
 
 	@JsonProperty("refund_status")
 	private Object refundStatus;

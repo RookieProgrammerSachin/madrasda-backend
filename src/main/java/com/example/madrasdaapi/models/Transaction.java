@@ -17,7 +17,6 @@ import java.util.*;
 public class Transaction {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     @Column(name = "id", nullable = false)
      private Long id;//
 
      @CreationTimestamp
@@ -34,14 +33,14 @@ public class Transaction {
      private Boolean billingIsShipping;//
 
      @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-     @JoinColumn(name = "customer_id", nullable = false)
+     @JoinColumn(name = "customer_id")
      private Customer shippingAddress;//
 
      @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
      @JoinColumn(referencedColumnName = "id")
      private User billingUser;//
 
-     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
+     @OneToOne(mappedBy = "transaction")
      private Shipment shipment;//
 
      @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")

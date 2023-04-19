@@ -1,16 +1,13 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.commons.ProductDTO;
-import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
+import com.example.madrasdaapi.utils.ProcedureCaller;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Tag(name = "Customer Resource Controller")
@@ -20,6 +17,7 @@ import java.util.List;
 public class ClientController {
     private final VendorService vendorService;
     private final ProductService productService;
+    private final ProcedureCaller caller;
 
     @GetMapping("/allProducts")
     public Page<ProductDTO> getAllProducts(
@@ -27,12 +25,6 @@ public class ClientController {
             @RequestParam(defaultValue = "10", name = "pageSize") int pageSize
     ) {
         return productService.getAllProducts(pageNo, pageSize);
-    }
-
-    @Transactional
-    @GetMapping("/topSellers/{vendorId}")
-    public List<ProductLadderItem> getTopSellers(@PathVariable Long vendorId) {
-        return vendorService.getTopSellingProductsForVendor(vendorId);
     }
 
     @GetMapping("getProductsByVendor/{vendorId}")
