@@ -4,10 +4,7 @@ import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.commons.*;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
-import com.example.madrasdaapi.models.Product;
-import com.example.madrasdaapi.models.ProductImage;
-import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Vendor;
+import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -68,9 +65,16 @@ public class ProductMapper {
                 detachedProduct.getColors()
         );
         mapper.map(detachedProduct, product);
+        Mockup mockup = skus.get(0).getMockup();
         product.setVendor(vendor);
         product.setSkuMappings(skus);
         product.setProductImages(new ArrayList<>());
+        product.setHeight(mockup.getHeight());
+        product.setBreadth(mockup.getBreadth());
+        product.setLength(mockup.getLength());
+        product.setWeight(mockup.getWeight());
+        product.setHsn(mockup.getHsn());
+        product.setTax(mockup.getTax());
         for (ProductImageDTO img : detachedProduct.getProductImages()) {
             ProductImage productImage = new ProductImage();
             productImage.setId(img.getId());

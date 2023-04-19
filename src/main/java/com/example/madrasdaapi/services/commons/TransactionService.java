@@ -6,6 +6,7 @@ import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.mappers.CustomerMapper;
 import com.example.madrasdaapi.mappers.ShipmentMapper;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -95,6 +97,7 @@ public class TransactionService {
     public void updateTransactionStatus(PaymentRequest result) throws RazorpayException, IOException {
         String orderId = result.getPayload().getPayment().getEntity().getOrderId();
         Transaction transaction = transactionRepository.findByOrderId(orderId).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", orderId));
+        if(transaction.getPaymentId() != null && transaction.getPaymentStatus().equals("payment.captured")) throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
         transaction.setPaymentId(result.getPayload().getPayment().getEntity().getId());
 
         if (result.getEvent().equals("payment.captured")) {
@@ -102,7 +105,10 @@ public class TransactionService {
             //Calculate Vendor profit
             for (OrderItem item : transaction.getOrderItems()) {
                 Vendor vendor = item.getProduct().getVendor();
-                vendor.setOutstandingProfit(vendor.getOutstandingProfit().add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
+                vendor.setOutstandingProfit(vendor.getOutstandingProfit()
+                        .add(item.getProduct()
+                        .getProfit()
+                        .multiply(BigDecimal.valueOf(item.getQuantity()))));
                 vendors.put(item.getProduct().getId(), vendor);
             }
             transaction.setPaymentStatus(result.getEvent());
@@ -131,11 +137,14 @@ public class TransactionService {
 
     private NewOrder createShiprocketOrder(Transaction transaction) throws RazorpayException {
         NewOrder order = new NewOrder();
-
         order.setOrderId(transaction.getOrderId());
         order.setOrderDate(transaction.getOrderDate().toString());
-        order.setPickupLocation("No 33 Jai garden Jai nagar 3rd street Valasaravakkam Chennai - 600087");
+        order.setPickupLocation("MADRAS DA");
         List<ShipRocketOrderItem> orderItems = new ArrayList<>();
+        Float height = 0.0F;
+        Float length = 0.0F;
+        Float breadth = 0.0F;
+        Float weight = 0.0F;
         for (OrderItem item : transaction.getOrderItems()) {
             ShipRocketOrderItem orderItem = new ShipRocketOrderItem();
             Product product = item.getProduct();
@@ -146,12 +155,21 @@ public class TransactionService {
             orderItem.setUnits(item.getQuantity());
             orderItem.setSku(item.getSku() + "-" + product.getVendor().getId() + "-" + product.getId());
             orderItem.setSellingPrice(product.getTotal().toString());
+            height +=  product.getHeight() * item.getQuantity();
+            weight +=  product.getWeight() * item.getQuantity() ;
+            breadth = Math.max(product.getBreadth(), breadth);
+            length =  Math.max(product.getLength(), length);
             orderItems.add(orderItem);
         }
+        order.setWeight(weight);
+        order.setHeight(height);
+        order.setBreadth(breadth);
+        order.setLength(length);
+        order.setOrderTotal(transaction.getOrderTotal());
         order.setOrderItems(orderItems);
 
         Customer billingAddress = customerRepository.findByIdAndIsBillingUser(transaction.getBillingUser().getId(), true);
-        order.setBillingAddress(billingAddress.getAddressLine1() + billingAddress.getAddressLine2());
+        order.setBillingAddress(billingAddress.getAddressLine1() + " " + billingAddress.getAddressLine2());
         order.setBillingCustomerName(billingAddress.getName());
         order.setBillingCity(billingAddress.getCity());
         order.setBillingCountry(billingAddress.getCountry());

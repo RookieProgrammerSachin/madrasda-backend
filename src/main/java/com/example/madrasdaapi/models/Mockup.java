@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,18 @@ public class Mockup {
      private String category;
 
      private String model;
+
+     private Float height;
+
+     private Float breadth;
+
+     private Float length;
+
+     private Float weight;
+
+     private Integer hsn;
+
+     private BigDecimal tax;
 
      private String additionalInformation;
 

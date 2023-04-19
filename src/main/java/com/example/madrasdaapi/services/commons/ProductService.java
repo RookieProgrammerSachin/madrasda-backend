@@ -10,6 +10,7 @@ import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.ProductSKUMapping;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;

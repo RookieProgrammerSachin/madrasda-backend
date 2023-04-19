@@ -44,7 +44,6 @@ public class MockupService {
           }
           mockupDTO.setSkuMapping(skuDTOS);
           Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
-          mockupRepository.save(detachedMockup);
           return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
      }
 

@@ -61,6 +61,14 @@ public class Product {
 
      private String backDesignPlacement;
 
+     private Float height;
+
+     private Float breadth;
+
+     private Float length;
+
+     private Float weight;
+
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
      List<ProductImage> productImages = new ArrayList<>();
 

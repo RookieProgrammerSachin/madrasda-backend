@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -33,4 +34,16 @@ public class MockupDTO implements Serializable {
     private String additionalInformation;
 
     private List<MockupSkuDTO> skuMapping;
+
+    private Float height;
+
+    private Float breadth;
+
+    private Float length;
+
+    private Float weight;
+
+    private BigDecimal tax;
+
+    private Integer hsn;
 }

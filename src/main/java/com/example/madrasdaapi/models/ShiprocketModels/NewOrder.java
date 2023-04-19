@@ -2,81 +2,93 @@ package com.example.madrasdaapi.models.ShiprocketModels;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 public class NewOrder {
 
     @JsonProperty("pickup_location")
-    private String pickupLocation;
+    private String pickupLocation = "";
 
-    private String weight;
+    private Float weight;
 
     @JsonProperty("billing_phone")
-    private String billingPhone;
+    private String billingPhone = "";
 
     @JsonProperty("billing_customer_name")
-    private String billingCustomerName;
+    private String billingCustomerName = "";
+
+    @JsonProperty("billing_last_name")
+    private String billingLastName = "";
 
     @JsonProperty("billing_country")
-    private String billingCountry;
+    private String billingCountry = "";
 
     @JsonProperty("billing_address")
-    private String billingAddress;
+    private String billingAddress = "";
 
     @JsonProperty("billing_city")
-    private String billingCity;
+    private String billingCity = "";
 
     @JsonProperty("billing_state")
-    private String billingState;
+    private String billingState = "";
 
     @JsonProperty("billing_email")
-    private String billingEmail;
+    private String billingEmail = "";
 
     @JsonProperty("billing_pincode")
-    private String billingPincode;
+    private String billingPincode = "";
 
     @JsonProperty("shipping_is_billing")
     private Boolean shippingIsBilling;
 
     @JsonProperty("shipping_phone")
-    private String shippingPhone;
+    private String shippingPhone = "";
 
     @JsonProperty("shipping_customer_name")
-    private String shippingCustomerName;
+    private String shippingCustomerName = "";
 
     @JsonProperty("shipping_country")
-    private String shippingCountry;
+    private String shippingCountry = "";
 
     @JsonProperty("shipping_address")
-    private String shippingAddress;
+    private String shippingAddress = "";
 
     @JsonProperty("shipping_city")
-    private String shippingCity;
+    private String shippingCity = "";
 
     @JsonProperty("shipping_state")
-    private String shippingState;
+    private String shippingState = "";
 
     @JsonProperty("shipping_email")
-    private String shippingEmail;
+    private String shippingEmail = "";
 
     @JsonProperty("shipping_pincode")
-    private String shippingPincode;
+    private String shippingPincode = "";
 
     @JsonProperty("order_date")
-    private String orderDate;
+    private String orderDate = "";
 
     @JsonProperty("sub_total")
-    private String subTotal;
+    private String subTotal = "";
 
     @JsonProperty("order_id")
-    private String orderId;
+    private String orderId = "";
 
     @JsonProperty("channel_id")
-    private String channelId;
+    private String channelId = "";
 
     @JsonProperty("payment_method")
-    private String paymentMethod;
+    private String paymentMethod = "";
+
+    private Float height;
+
+    private Float breadth;
+
+    private Float length;
+
+    private BigDecimal orderTotal;
 
     @JsonProperty("order_items")
     private List<ShipRocketOrderItem> orderItems;
