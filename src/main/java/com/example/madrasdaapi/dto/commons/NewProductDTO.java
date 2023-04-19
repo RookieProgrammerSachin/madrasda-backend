@@ -17,6 +17,7 @@ public class NewProductDTO implements Serializable {
     private Long id;
     private String name;
     private String audience;
+    private String description;
     private Float basePrice;
     private Float shipping;
     private Float discount;

@@ -28,6 +28,9 @@ public class Product {
 
      private String audience;
 
+     @Column(length = 4000)
+     private String description;
+
      @Column(columnDefinition = "decimal(10,3) default '0.000'")
      private BigDecimal basePrice;
 
