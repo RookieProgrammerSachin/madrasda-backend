@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -14,7 +15,10 @@ import java.util.List;
 public class ProductDTO implements Serializable {
     private Long id;
     private String name;
-    private Float discount;
-    private Float total;
+    private BigDecimal profit;
+    private BigDecimal discount;
+    private BigDecimal total;
+    private Boolean publishStatus;
+    private String description;
     private List<ColorDTO> colors;
 }

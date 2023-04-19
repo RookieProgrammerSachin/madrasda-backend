@@ -33,6 +33,9 @@ public class TemplateController {
 
      @PostMapping("saveTemplate")
      public TemplateDTO saveTemplate(@RequestBody TemplateDTO productTemplateDTO){
+          Long vendor = vendorRepository.findIdByUser_Email(SecurityContextHolder.getDeferredContext()
+                  .get().getAuthentication().getName());
+          productTemplateDTO.setVendorId(vendor);
           return templateService.saveOrUpdateTemplate(productTemplateDTO);
      }
 

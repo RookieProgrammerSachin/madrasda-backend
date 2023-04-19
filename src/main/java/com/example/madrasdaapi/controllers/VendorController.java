@@ -51,6 +51,12 @@ public class VendorController {
           return adminService.updateVendor(registerDTO);
      }
 
+     @GetMapping("designs")
+     public List<DesignDTO> getALlDesigns() {
+          String email = AuthContext.getCurrentUser();
+          return designService.getAllDesignsByVendor(email);
+     }
+
 
      @GetMapping("getDesign/{id}")
      public DesignDTO getDesignById(@PathVariable Long id) {

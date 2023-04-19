@@ -2,11 +2,15 @@ package com.example.madrasdaapi.controllers.common;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.mappers.MockupMapper;
+import com.example.madrasdaapi.models.Mockup;
 import com.example.madrasdaapi.repositories.MockupRepository;
 import com.example.madrasdaapi.services.AdminServices.MockupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping("/api/mockup")
 @RestController
@@ -31,7 +35,7 @@ public class MockupController {
 
      @GetMapping("getAllMockups")
      public Page<MockupDTO> getAllMockups(@RequestParam(defaultValue = "0") int pageNo,
-                                          @RequestParam(defaultValue = "10") int pageSize) {
+                                          @RequestParam(defaultValue = "100") int pageSize) {
 
           return mockupService.getAllMockups(pageNo, pageSize);
      }

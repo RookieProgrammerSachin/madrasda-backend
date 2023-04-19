@@ -54,7 +54,7 @@ import java.util.List;
 public class Vendor {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     @Column(name = "id", nullable = false)
+     @Column(name = "id")
      private Long id;
 
      @MapsId
@@ -63,7 +63,6 @@ public class Vendor {
      private User user;
 
      @Size(max = 1000)
-     @NotNull
      @Column(name = "profile_pic", length = 1000)
      private String profilePic;
 

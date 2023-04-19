@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.services.VendorServices;
 
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.mappers.DesignMapper;
 import com.example.madrasdaapi.mappers.MockupMapper;
@@ -15,6 +16,7 @@ import com.example.madrasdaapi.repositories.MockupRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -32,17 +34,24 @@ public class TemplateService {
 
 
      public TemplateDTO saveOrUpdateTemplate(TemplateDTO templateDTO) {
-          Design detachedFrontDesign = designRepository.findById(templateDTO.getFrontDesign().getId()).get();
-          Design detachedBackDesign = designRepository.findById(templateDTO.getBackDesign().getId()).get();
+          Design detachedDesign;
+          if(templateDTO.getBackDesign()!=null){
+               detachedDesign = designRepository.findById(templateDTO.getBackDesign().getId()).get();
+          }
+          else{
+               detachedDesign = designRepository.findById(templateDTO.getFrontDesign().getId()).get();
+          }
           Mockup detachedMockup = mockupRepository.findById(templateDTO.getMockup().getId()).get();
           Vendor detachedVendor = vendorRepository.findById(templateDTO.getVendorId()).get();
-          detachedBackDesign.setVendor(detachedVendor);
-          detachedFrontDesign.setVendor(detachedVendor);
+          detachedDesign.setVendor(detachedVendor);
 
           Template detachedTemplate = new Template();
           detachedTemplate.setId(templateDTO.getId());
-          detachedTemplate.setFrontDesignImage(detachedFrontDesign.getImgUrl());
-          detachedTemplate.setBackDesignImage(detachedBackDesign.getImgUrl());
+          if(templateDTO.getBackDesignImage()!=null){
+               detachedTemplate.setBackDesignImage(templateDTO.getBackDesignImage());
+          }else{
+               detachedTemplate.setFrontDesignImage(templateDTO.getFrontDesignImage());
+          }
           detachedTemplate.setMockup(detachedMockup);
           detachedTemplate.setVendor(detachedVendor);
           detachedTemplate.setFrontDesignPlacement(templateDTO.getFrontDesignPlacement());

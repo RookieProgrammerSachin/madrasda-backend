@@ -28,6 +28,9 @@ public class Product {
 
      private String audience;
 
+     @Column(length = 4000)
+     private String description;
+
      @Column(columnDefinition = "decimal(10,3) default '0.000'")
      private BigDecimal basePrice;
 
@@ -51,13 +54,11 @@ public class Product {
      @Column(length = 1000)
      private String frontDesignUrl;
 
-     @JdbcTypeCode(SqlTypes.JSON)
      private String frontDesignPlacement;
 
      @Column(length = 1000)
      private String backDesignUrl;
 
-     @JdbcTypeCode(SqlTypes.JSON)
      private String backDesignPlacement;
 
      @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")

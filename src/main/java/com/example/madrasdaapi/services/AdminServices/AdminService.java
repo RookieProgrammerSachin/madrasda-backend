@@ -7,6 +7,7 @@ import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ public class AdminService {
     private final VendorMapper vendorMapper;
     private final ModelMapper mapper;
 
+    @Transactional
     public VendorDTO saveOrUpdateVendor(RegisterDTO registerDTO) {
         User detachedUser = new User();
         Vendor detachedVendor = new Vendor();
@@ -35,6 +37,8 @@ public class AdminService {
         detachedVendor.setCompanyUrl(registerDTO.getCompanyUrl());
         detachedVendor.setGSTIN(registerDTO.getGSTIN());
         detachedVendor.getUser().setRole("ROLE_VENDOR");
+        User user = userRepository.save(detachedUser);
+        detachedVendor.setUser(user);
 
         return vendorMapper.mapToDTO(vendorRepository.save(detachedVendor));
 //          return vendorMapper.mapToDTO(newUser.getVendor());

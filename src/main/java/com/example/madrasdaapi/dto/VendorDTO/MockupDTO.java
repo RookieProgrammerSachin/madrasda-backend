@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MockupDTO implements Serializable {
-        private Long id;
+    private Long id;
 
     private String name;
 
