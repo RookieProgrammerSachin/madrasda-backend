@@ -19,6 +19,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      @Procedure(name = "monthly_sales_by_id")
      Object[][] monthly_sales_by_id(@Param("vendor_id") Long vendorId);
 
+     @Procedure(name = "HOT_SELLERS")
+     Object[][] HOT_SELLERS(@Param("N") Integer limit);
+
      @Procedure(name = "products_sold_today")
      Integer products_sold_today(@Param(("vendor_id")) Long vendorId);
 

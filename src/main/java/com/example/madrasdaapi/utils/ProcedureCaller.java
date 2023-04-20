@@ -1,6 +1,8 @@
 package com.example.madrasdaapi.utils;
 
+import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductLadderItem;
+import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
@@ -20,6 +22,7 @@ public class ProcedureCaller {
     private final VendorRepository vendorRepository;
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
+    private final ProductMapper productMapper;
     @Transactional
     public List<ProductLadderItem> getTopSellingProductsForVendor(Long vendorId, Integer limit) {
         List<Object[]> results = vendorRepository.TOP_SELLERS_FOR_VENDOR(vendorId, limit);
@@ -43,12 +46,30 @@ public class ProcedureCaller {
             return null;
         List<Double> monthlySales = new ArrayList<>(0);
         for (Object result : results[0]) {
-            monthlySales.add(((Double) result));
+            monthlySales.add((((BigDecimal) result).doubleValue()));
         }
         return monthlySales;
     }
 
     public Integer getProductsSoldToday(Long vendorId){
         return vendorRepository.products_sold_today(vendorId);
+    }
+
+    @Transactional
+    public List<ProductDTO> getHotSellersOfAllTime() {
+        Object[][] results = vendorRepository.HOT_SELLERS(10);
+        if(results.length == 0)
+            return null;
+        List<ProductDTO> hotsellers = new ArrayList<>();
+        for (Object[] result : results) {
+            Product product = productRepository.findById((Long) result[0]).get();
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setId(product.getId());
+            productDTO.setName(product.getName());
+            productDTO.setVendorId(product.getVendor().getId());
+            productDTO.setVendorImg(product.getVendor().getProfilePic());
+            hotsellers.add(productDTO);
+        }
+        return hotsellers;
     }
 }

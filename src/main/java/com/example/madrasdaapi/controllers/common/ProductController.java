@@ -52,10 +52,14 @@ public class ProductController {
           return caller.getTopSellingProductsForVendor(vendorId, limit);
      }
 
-
+     @GetMapping("/hotsellers")
+     public List<ProductDTO> hotsellers(){
+          return caller.getHotSellersOfAllTime();
+     }
      @GetMapping("getAllSKU")
      public Page<ProductSKUMappingDTO> productSKUMapping(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                         @RequestParam(defaultValue = "25") Integer pageSize){
+                                                         @RequestParam(defaultValue = "25") Integer pageSize) {
+
           return productSKUMappingRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapSKUToDTO);
      }
 }
