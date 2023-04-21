@@ -51,10 +51,14 @@ public class AdminController {
           adminService.deleteVendor(id);
      }
 
+     @GetMapping("getPayoutRequestedVendors")
+     public List<VendorMenuItemDTO> getVendorPayouts() {
+          return adminService.getPayoutRequests();
+     }
+
      @PostMapping("completePayout/{id}")
      public void togglePayout(@PathVariable Long id) {
           paymentService.togglePayout(id);
-
      }
 }
 

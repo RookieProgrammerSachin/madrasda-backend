@@ -15,4 +15,5 @@ public class VendorMenuItemDTO implements Serializable {
      private String imgUrl;
      private Boolean payoutRequested;
      private BigDecimal payoutAmount;
+     private Long payoutId;
 }

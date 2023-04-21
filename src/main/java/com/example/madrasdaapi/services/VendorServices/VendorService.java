@@ -10,6 +10,7 @@ import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Template;
 import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -40,7 +41,8 @@ public class VendorService {
      @Transactional
      public VendorDetails getVendorDetails(User vendor) {
           VendorDetails vendorDetails = new VendorDetails();
-          VendorDTO vendorDTO = vendorMapper.mapToDTO(vendorRepository.findById(vendor.getId()).orElseThrow());
+          Vendor v = vendorRepository.findById(vendor.getId()).orElseThrow();
+          VendorDTO vendorDTO = vendorMapper.mapToDTO(v);
           vendorDetails.setVendor(vendorDTO);
           if(caller.getMonthlySalesByVendorId(vendor.getId()) != null){
                SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
@@ -54,6 +56,8 @@ public class VendorService {
                vendorDetails.setProductLadder(pLadder);
                salesAnalysis.setProductsSoldToday(caller.getProductsSoldToday(vendor.getId()));
           }
+          vendorDetails.setPayoutRequested(v.getPayoutRequested());
+          vendorDetails.setPayoutAmount(v.getOutstandingProfit());
           return vendorDetails;
      }
 
