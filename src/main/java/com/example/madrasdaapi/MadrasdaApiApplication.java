@@ -47,7 +47,9 @@ public class MadrasdaApiApplication {
     }
 
     @Bean
-    RazorpayClient razorpayClient() throws RazorpayException {  return new RazorpayClient(clientId, clientSecret); }
+    RazorpayClient razorpayClient() throws RazorpayException {
+        return new RazorpayClient(clientId, clientSecret);
+    }
 
     @Bean
     Gson gson() { return new Gson(); }

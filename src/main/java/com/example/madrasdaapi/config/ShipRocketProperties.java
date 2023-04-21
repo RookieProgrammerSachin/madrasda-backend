@@ -14,10 +14,6 @@ import java.io.IOException;
 @ConfigurationProperties(prefix = "shiprocket")
 @RequiredArgsConstructor
 public class ShipRocketProperties {
-    private final JwtService jwtService;
-    private final Gson gson;
-    private final OkHttpClient okHttpClient;
-
     private static String token;
 
     public String getToken() throws IOException {
