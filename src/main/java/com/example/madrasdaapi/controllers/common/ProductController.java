@@ -42,8 +42,8 @@ public class ProductController {
 
      @GetMapping("getProductsByVendor/{vendorId}")
      public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,
-                                                  @RequestParam Integer pageNo,
-                                                 @RequestParam Integer pageSize) {
+                                                  @RequestParam(defaultValue = "0") Integer pageNo,
+                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
           return productService.getProductsByVendor(vendorId, pageNo, pageSize);
      }
 

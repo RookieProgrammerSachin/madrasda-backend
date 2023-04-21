@@ -1,6 +1,5 @@
 package com.example.madrasdaapi.dto.commons;
 
-import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +23,6 @@ public class ProductDTO implements Serializable {
     private Long vendorId;
     private String vendorImg;
     private List<ColorDTO> colors;
+    private Integer quantity;
+    private String category;
 }
