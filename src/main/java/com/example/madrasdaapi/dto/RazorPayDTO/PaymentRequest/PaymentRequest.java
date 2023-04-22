@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.dto.RazorPayDTO;
+package com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

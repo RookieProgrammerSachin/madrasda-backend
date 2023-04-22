@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
      List<Transaction> findByBillingUser_Id(Long id);
      Optional<Transaction> findByOrderId(String orderId);
+
+     List<Transaction> findByBillingUser_Phone(String phone);
 }

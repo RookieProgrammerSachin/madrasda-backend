@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.controllers.common;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.services.commons.TransactionService;
@@ -23,8 +24,8 @@ public class TransactionController {
      }
 
 
-     @GetMapping("getAllOrdersById/{id}")
-     public List<TransactionDTO> getHistoryOfOrders(@PathVariable Long id) {
-          return transactionService.getHistoryOfOrdersByCustomerId(id);
+     @GetMapping("getAllOrdersById/")
+     public List<TransactionDTO> getHistoryOfOrders() {
+          return transactionService.getHistoryOfOrdersByCustomerId(AuthContext.getCurrentUser());
      }
 }

@@ -49,6 +49,7 @@ public class TransactionMapper {
             orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
 
         }
+        orderTotal = orderTotal.multiply(BigDecimal.valueOf(((double) 105) / 100));
         transaction.setOrderItems(orderItems);
         transaction.setOrderTotal(orderTotal);
 
