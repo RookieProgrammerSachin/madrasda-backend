@@ -1,8 +1,9 @@
 package com.example.madrasdaapi.services.commons;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.config.ShipRocketProperties;
-import com.example.madrasdaapi.dto.RazorPayDTO.OrderResponse;
-import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest.OrderResponse;
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest.PaymentRequest;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
@@ -13,11 +14,14 @@ import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.models.ShiprocketModels.NewOrder;
+import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
+import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
 import com.example.madrasdaapi.models.ShiprocketModels.ShipRocketOrderItem;
 import com.example.madrasdaapi.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.razorpay.Order;
+import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +54,13 @@ public class TransactionService {
     private final ShipRocketProperties shiprocket;
     private final VendorRepository vendorRepository;
     private final CustomerRepository customerRepository;
+    private final CartItemRepository cartItemRepository;
     @Value("${razorpay.keySecret}")
     private String SECRET_KEY;
     @Value("${razorpay.keyId}")
     private String SECRET_ID;
 
-    public OrderResponse initiateTransaction(TransactionDTO orderRequest) {
+    public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
         transaction.getShippingAddress().setUser(transaction.getBillingUser());
@@ -69,35 +74,46 @@ public class TransactionService {
             transaction.getShippingAddress().setIsBillingUser(true);
         }
         OrderResponse response = new OrderResponse();
+        String shortLink = null;
         //Create payment option
         try {
+            transaction.setOrderTotal(transaction.getOrderTotal()
+                    .add(BigDecimal.valueOf(calculateShippingCharges(orderRequest.getShippingAddress().getPostalCode()))));
             Order order = createRazorPayOrder(transaction.getOrderTotal());
+            PaymentLink link = createRazorPayLink(transaction.getOrderTotal());
             transaction.setOrderId(order.get("id"));
             transactionRepository.save(transaction);
-            response.setRazorpayOrderId(order.get("id"));
-            response.setApplicationFee(String.valueOf(orderRequest.getOrderTotal()));
-            response.setSecretKey(SECRET_KEY);
-            response.setSecretId(SECRET_ID);
-            response.setPgName("RazorPay");
-            return response;
+            shortLink = link.get("short_url");
+            return link.get("short_url");
         } catch (RazorpayException exception) {
             exception.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return response;
+        return shortLink;
     }
-
+    
     private Order createRazorPayOrder(BigDecimal amount) throws RazorpayException {
         JSONObject options = new JSONObject();
         options.put("amount", amount.multiply(new BigDecimal(100)));
         options.put("currency", "INR");
-        options.put("payment_capture", 1); // You can enable this if you want to do Auto Capture.
-        return razorpayClient.orders.create(options);
+        Order order = razorpayClient.orders.create(options);
+        return order;
     }
+    private PaymentLink createRazorPayLink(BigDecimal amount) throws RazorpayException {
+        JSONObject options = new JSONObject();
+        options.put("amount", amount.multiply(new BigDecimal(100)));
+        options.put("currency", "INR");
+        PaymentLink paymentLink = razorpayClient.paymentLink.create(options);
+        return paymentLink;
+    }
+
 
     public void updateTransactionStatus(PaymentRequest result) throws RazorpayException, IOException {
         String orderId = result.getPayload().getPayment().getEntity().getOrderId();
         Transaction transaction = transactionRepository.findByOrderId(orderId).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", orderId));
-        if(transaction.getPaymentId() != null && transaction.getPaymentStatus().equals("payment.captured")) throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
+        if (transaction.getPaymentId() != null && transaction.getPaymentStatus().equals("payment.captured"))
+            throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
         transaction.setPaymentId(result.getPayload().getPayment().getEntity().getId());
 
         if (result.getEvent().equals("payment.captured")) {
@@ -107,8 +123,8 @@ public class TransactionService {
                 Vendor vendor = item.getProduct().getVendor();
                 vendor.setOutstandingProfit(vendor.getOutstandingProfit()
                         .add(item.getProduct()
-                        .getProfit()
-                        .multiply(BigDecimal.valueOf(item.getQuantity()))));
+                                .getProfit()
+                                .multiply(BigDecimal.valueOf(item.getQuantity()))));
                 vendors.put(item.getProduct().getId(), vendor);
             }
             transaction.setPaymentStatus(result.getEvent());
@@ -121,9 +137,8 @@ public class TransactionService {
                     .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
             Response response = okHttpClient.newCall(request).execute();
-            System.out.println(response.body().string());
             response.close();
-
+            cartItemRepository.deleteByCustomer_Id(transaction.getBillingUser().getId());
             vendorRepository.saveAll(vendors.values());
             transactionRepository.save(transaction);
         }
@@ -155,10 +170,10 @@ public class TransactionService {
             orderItem.setUnits(item.getQuantity());
             orderItem.setSku(item.getSku() + "-" + product.getVendor().getId() + "-" + product.getId());
             orderItem.setSellingPrice(product.getTotal().toString());
-            height +=  product.getHeight() * item.getQuantity();
-            weight +=  product.getWeight() * item.getQuantity() ;
+            height += product.getHeight() * item.getQuantity();
+            weight += product.getWeight() * item.getQuantity();
             breadth = Math.max(product.getBreadth(), breadth);
-            length =  Math.max(product.getLength(), length);
+            length = Math.max(product.getLength(), length);
             orderItems.add(orderItem);
         }
         order.setWeight(weight);
@@ -203,8 +218,8 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
-    public List<TransactionDTO> getHistoryOfOrdersByCustomerId(Long id) {
-        List<Transaction> transactions = transactionRepository.findByBillingUser_Id(id);
+    public List<TransactionDTO> getHistoryOfOrdersByCustomerId(String phone) {
+        List<Transaction> transactions = transactionRepository.findByBillingUser_Phone(phone);
 
         return transactions.stream().map(transactionMapper::mapToDTO).toList();
     }
@@ -213,5 +228,50 @@ public class TransactionService {
         return shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
     }
 
+
+    public Double calculateShippingCharges(String pincode) throws IOException {
+        String phone = AuthContext.getCurrentUser();
+        Float height = 0.0F;
+        Float length = 0.0F;
+        Float breadth = 0.0F;
+        Float weight = 0.0F;
+        List<CartItem> cart = cartItemRepository.findByCustomer_Phone(phone);
+        for (CartItem item : cart) {
+            height += item.getProduct().getHeight() * item.getQuantity();
+            weight += item.getProduct().getWeight() * item.getQuantity();
+            breadth = Math.max(item.getProduct().getBreadth(), breadth);
+            length = Math.max(item.getProduct().getLength(), length);
+        }
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "");
+        Request request = new Request.Builder()
+                .url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" +
+                        "&height=" + height +
+                        "&weight=" + weight +
+                        "&breadth=" + breadth +
+                        "&length=" + length +
+                        "&delivery_postcode=" + pincode +
+                        "&cod=0"
+                )
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + shiprocket.getToken())
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        ServiceableCourierData serviceabilityResponse = new ObjectMapper()
+                .readValue(response.body().bytes(), ServiceableCourierData.class);
+        Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
+        List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
+        AvailableCourierCompany recommendedCompany;
+        for (AvailableCourierCompany company : companies) {
+            if (company.getCourierCompanyId().equals(courierId)) {
+                return company.getFreightCharge();
+            }
+        }
+        response.close();
+        throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
+    }
 
 }
