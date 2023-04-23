@@ -88,7 +88,10 @@ public class NewOrder {
 
     private Float length;
 
+    @JsonProperty("order_total")
     private BigDecimal orderTotal;
+
+    private Double shipping_charges;
 
     @JsonProperty("order_items")
     private List<ShipRocketOrderItem> orderItems;

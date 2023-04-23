@@ -46,4 +46,6 @@ public class MockupDTO implements Serializable {
     private BigDecimal tax;
 
     private Integer hsn;
+
+    private BigDecimal basePrice;
 }

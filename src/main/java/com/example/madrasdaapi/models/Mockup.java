@@ -41,7 +41,11 @@ public class Mockup {
 
      private BigDecimal tax;
 
+     private BigDecimal basePrice;
+
      private String additionalInformation;
+
+
 
      @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
      private List<ProductSKUMapping> skuMapping = new ArrayList<>();
