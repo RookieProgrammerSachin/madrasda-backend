@@ -11,6 +11,7 @@ import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
@@ -57,16 +58,21 @@ public class TransactionMapper {
     }
 
     public TransactionDTO mapToDTO(Transaction transaction) {
-        mapper.typeMap(OrderItem.class, OrderItemDTO.class);
-        TransactionDTO transactionDTO = mapper.createTypeMap(Transaction.class, TransactionDTO.class)
-                .addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems)
-                .map(transaction);
-        transactionDTO.setShipmentActivity(transaction.getShipment()
-                .getScans()
-                .stream()
-                .map(item -> mapper.map(item, ShipmentTrackActivityDTO.class))
-                .collect(Collectors.toList()));
-        transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
+        TypeMap<Transaction, TransactionDTO> typeMap = mapper.getTypeMap(Transaction.class, TransactionDTO.class);
+        if (typeMap == null) {
+            typeMap = mapper.createTypeMap(Transaction.class, TransactionDTO.class);
+            typeMap.addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems);
+        }
+        TransactionDTO transactionDTO = typeMap.map(transaction);
+        if (transaction.getShipment() != null) {
+            transactionDTO.setShipmentActivity(transaction.getShipment()
+                    .getScans()
+                    .stream()
+                    .map(item -> mapper.map(item, ShipmentTrackActivityDTO.class))
+                    .collect(Collectors.toList()));
+            transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
+        }
         return transactionDTO;
     }
+
 }

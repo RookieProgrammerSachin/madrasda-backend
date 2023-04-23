@@ -43,6 +43,7 @@ public class VendorService {
           VendorDetails vendorDetails = new VendorDetails();
           Vendor v = vendorRepository.findById(vendor.getId()).orElseThrow();
           VendorDTO vendorDTO = vendorMapper.mapToDTO(v);
+          vendorDTO.setPhone(vendor.getPhone());
           vendorDetails.setVendor(vendorDTO);
           if(caller.getMonthlySalesByVendorId(vendor.getId()) != null){
                SalesAnalysis salesAnalysis = vendorRepository.getSalesAnalysisByVendorId(vendor.getId());
