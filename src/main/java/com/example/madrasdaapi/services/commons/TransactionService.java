@@ -36,6 +36,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,8 +71,8 @@ public class TransactionService {
             transaction.getShippingAddress().setIsBillingUser(false);
         } else {
             transaction.setBillingIsShipping(true);
-            Customer billingAddress = customerRepository.findByIdAndIsBillingUser(transaction.getBillingUser().getId(), true);
-            if (billingAddress != null) transaction.setShippingAddress(billingAddress);
+            Optional<Customer> billingAddress = customerRepository.findByUser_IdAndIsBillingUser(transaction.getBillingUser().getId(), true);
+            billingAddress.ifPresent(transaction::setShippingAddress);
             transaction.getShippingAddress().setIsBillingUser(true);
         }
         OrderResponse response = new OrderResponse();
@@ -133,7 +134,10 @@ public class TransactionService {
             NewOrder order = createShiprocketOrder(transaction);
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(new ObjectMapper().writeValueAsString(order), mediaType);
-            Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc").method("POST", body).addHeader("Content-Type", "application/json").addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
+            Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
             Response response = okHttpClient.newCall(request).execute();
             response.close();
@@ -182,21 +186,14 @@ public class TransactionService {
             length = Math.max(product.getLength(), length);
             orderItems.add(orderItem);
         }
-        order.setWeight(weight);
-        order.setHeight(height);
-        order.setBreadth(breadth);
-        order.setLength(length);
-        order.setShipping_charges(shippingCharges);
-        order.setOrderItems(orderItems);
-
-        Customer billingAddress = customerRepository.findByIdAndIsBillingUser(transaction.getBillingUser().getId(), true);
+        Customer billingAddress = customerRepository.findByUser_IdAndIsBillingUser(transaction.getBillingUser().getId(), true).get();
         order.setBillingAddress(billingAddress.getAddressLine1() + " " + billingAddress.getAddressLine2());
         order.setBillingCustomerName(billingAddress.getName());
         order.setBillingCity(billingAddress.getCity());
         order.setBillingCountry(billingAddress.getCountry());
         order.setBillingState(billingAddress.getState());
         order.setBillingEmail(billingAddress.getEmail());
-        order.setBillingPhone(billingAddress.getPhone());
+        order.setBillingPhone(transaction.getBillingUser().getPhone());
         order.setBillingPincode(billingAddress.getPostalCode());
         if (!transaction.getBillingIsShipping()) {
             Customer shippingAddress = transaction.getShippingAddress();
@@ -208,6 +205,11 @@ public class TransactionService {
             order.setShippingPhone(shippingAddress.getPhone());
             order.setShippingPincode(shippingAddress.getPostalCode());
         }
+        order.setWeight(weight);
+        order.setHeight(height);
+        order.setBreadth(breadth);
+        order.setLength(length);
+        order.setShipping_charges(shippingCharges);
         order.setShippingIsBilling(transaction.getBillingIsShipping());
         order.setPaymentMethod("PREPAID");
         order.setSubTotal(transaction.getOrderTotal().toString()); //with deduction

@@ -6,10 +6,12 @@ import com.example.madrasdaapi.dto.commons.OrderItemDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.models.enums.ShipmentStatus;
+import com.example.madrasdaapi.repositories.CartItemRepository;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -27,6 +29,7 @@ public class TransactionMapper {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductSKUMappingRepository productSKUMappingRepository;
+    private final CartItemRepository cartItemRepository;
 
 
     public Transaction mapToEntity(TransactionDTO transactionDTO) {
@@ -37,9 +40,10 @@ public class TransactionMapper {
         transaction.setBillingUser(user);
         BigDecimal orderTotal = new BigDecimal(0L);
         List<OrderItem> orderItems = new ArrayList<>();
-        for (OrderItemDTO item : transactionDTO.getOrderItems()) {
+        List<CartItem> cart = user.getCart();
+        for (CartItem item : cart) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setSku(item.getProduct().getColors().get(0).getSizes().get(0).getSku());
+            orderItem.setSku(item.getSku().getSku());
             orderItem.setTransaction(transaction);
             orderItem.setQuantity(item.getQuantity());
             orderItem.setProduct(productRepository.findById(item.getProduct().getId()).get());

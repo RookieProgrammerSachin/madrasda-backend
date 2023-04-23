@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -80,10 +81,10 @@ public class Vendor {
      private String category;
 
      @Column(columnDefinition = "decimal(10,3) default '0.000'")
-     private BigDecimal outstandingProfit;
+     private BigDecimal outstandingProfit = new BigDecimal(0L);
 
      @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
-     private List<Design> designs;
+     private List<Design> designs = new ArrayList<>();
 
      private Boolean payoutRequested = false;
 
