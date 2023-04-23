@@ -46,10 +46,10 @@ public class TransactionMapper {
             orderItem.setSize(sku.getSize());
             orderItem.setColor(sku.getColor());
             orderItems.add(orderItem);
-            orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+            orderTotal = orderTotal.add(orderItem.getProduct()
+                    .getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())).multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
 
         }
-        orderTotal = orderTotal.multiply(BigDecimal.valueOf(((double) 105) / 100));
         transaction.setOrderItems(orderItems);
         transaction.setOrderTotal(orderTotal);
 

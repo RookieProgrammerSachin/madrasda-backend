@@ -20,10 +20,6 @@ public class WebhookController {
     private final TransactionService transactionService;
 
     @PostMapping("updateTransactionStatus")
-    public void updateTransactionStatus(@RequestBody PaymentRequest result) throws RazorpayException, IOException {
-        transactionService.updateTransactionStatus(result);
-    }
-    @PostMapping("updateTransactionStatus")
     public void updateTransactionStatus(@RequestBody PaymentLinkResult result) throws RazorpayException, IOException {
         transactionService.updateTransactionStatus(result);
     }
