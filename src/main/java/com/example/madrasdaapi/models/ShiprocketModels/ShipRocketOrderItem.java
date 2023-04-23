@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class ShipRocketOrderItem implements Serializable {
@@ -12,8 +13,8 @@ public class ShipRocketOrderItem implements Serializable {
     private Integer units;
     @JsonProperty("selling_price")
     private String sellingPrice;
-    private String discount;
-    private String tax;
+    private BigDecimal discount;
+    private BigDecimal tax;
     private Integer hsn;
 
 }
