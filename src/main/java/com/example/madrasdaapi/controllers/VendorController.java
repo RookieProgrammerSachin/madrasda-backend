@@ -4,16 +4,19 @@ import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
+import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
 import com.example.madrasdaapi.services.VendorServices.DesignService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.PaymentService;
+import com.example.madrasdaapi.services.commons.ProductService;
 import com.example.madrasdaapi.utils.ProcedureCaller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -31,6 +34,8 @@ public class VendorController {
      private final DesignService designService;
      private final PaymentService paymentService;
      private final ProcedureCaller caller;
+     private final ProductService productService;
+
      @GetMapping
      public VendorDetails getVendorDetails() throws SQLException {
           String email = AuthContext.getCurrentUser();
@@ -85,5 +90,10 @@ public class VendorController {
           paymentService.requestPayout(email);
 
      }
-
+     @GetMapping("getProductsByVendor/{vendorId}")
+     public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,
+                                                 @RequestParam(defaultValue = "0") Integer pageNo,
+                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
+          return productService.getAllProductsByVendor(vendorId, pageNo, pageSize);
+     }
 }
