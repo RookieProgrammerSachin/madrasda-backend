@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.controllers.webhooks;
 
-import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentLinkResult.PaymentLinkResult;
+import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest.PaymentRequest;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.repositories.TransactionRepository;
 import com.example.madrasdaapi.services.commons.TransactionService;
@@ -19,7 +20,7 @@ public class WebhookController {
     private final TransactionService transactionService;
 
     @PostMapping("updateTransactionStatus")
-    public void updateTransactionStatus(@RequestBody PaymentRequest result) throws RazorpayException, IOException {
+    public void updateTransactionStatus(@RequestBody PaymentLinkResult result) throws RazorpayException, IOException {
         transactionService.updateTransactionStatus(result);
     }
 

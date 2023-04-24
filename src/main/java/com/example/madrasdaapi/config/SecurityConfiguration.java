@@ -44,11 +44,14 @@ public class SecurityConfiguration {
                                   .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
                                   .requestMatchers("/api/templates/**").hasAnyRole("VENDOR", "ADMIN")
                                   .requestMatchers("/api/feedback/**").hasAnyRole("VENDOR", "ADMIN")
-                                  .anyRequest().authenticated()
+                                  .requestMatchers("/api/mockup/**").hasAnyRole("VENDOR", "ADMIN")
+                                  .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN", "VENDOR")
+                                  .anyRequest().permitAll()
                   )
                   .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                   .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
           return http.build();
      }
 

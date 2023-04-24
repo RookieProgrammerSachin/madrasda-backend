@@ -30,4 +30,5 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      @Query("select v.id from Vendor v where v.user.email = ?1")
      Long findIdByUser_Email(String email);
 
+     List<Vendor> findAllByPayoutRequested(Boolean payout);
 }

@@ -75,6 +75,7 @@ public class ProductMapper {
         product.setWeight(mockup.getWeight());
         product.setHsn(mockup.getHsn());
         product.setTax(mockup.getTax());
+        product.setBasePrice(mockup.getBasePrice());
         for (ProductImageDTO img : detachedProduct.getProductImages()) {
             ProductImage productImage = new ProductImage();
             productImage.setId(img.getId());

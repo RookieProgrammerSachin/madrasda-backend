@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.dto.RazorPayDTO;
+package com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest;
 
 import lombok.Data;
 

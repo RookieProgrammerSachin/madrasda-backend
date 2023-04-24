@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.utils;
 
+import com.example.madrasdaapi.dto.commons.ColorDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.mappers.ProductMapper;
@@ -68,6 +69,9 @@ public class ProcedureCaller {
             productDTO.setName(product.getName());
             productDTO.setVendorId(product.getVendor().getId());
             productDTO.setVendorImg(product.getVendor().getProfilePic());
+            ColorDTO color = new ColorDTO();
+            color.setImages(List.of(product.getProductImages().get(0).getImgUrl()));
+            productDTO.setColors(List.of(color));
             hotsellers.add(productDTO);
         }
         return hotsellers;

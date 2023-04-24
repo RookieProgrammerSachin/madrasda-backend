@@ -6,11 +6,14 @@ import com.example.madrasdaapi.dto.commons.OrderItemDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.models.enums.ShipmentStatus;
+import com.example.madrasdaapi.repositories.CartItemRepository;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,7 @@ public class TransactionMapper {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductSKUMappingRepository productSKUMappingRepository;
+    private final CartItemRepository cartItemRepository;
 
 
     public Transaction mapToEntity(TransactionDTO transactionDTO) {
@@ -36,9 +40,10 @@ public class TransactionMapper {
         transaction.setBillingUser(user);
         BigDecimal orderTotal = new BigDecimal(0L);
         List<OrderItem> orderItems = new ArrayList<>();
-        for (OrderItemDTO item : transactionDTO.getOrderItems()) {
+        List<CartItem> cart = user.getCart();
+        for (CartItem item : cart) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setSku(item.getProduct().getColors().get(0).getSizes().get(0).getSku());
+            orderItem.setSku(item.getSku().getSku());
             orderItem.setTransaction(transaction);
             orderItem.setQuantity(item.getQuantity());
             orderItem.setProduct(productRepository.findById(item.getProduct().getId()).get());
@@ -46,7 +51,8 @@ public class TransactionMapper {
             orderItem.setSize(sku.getSize());
             orderItem.setColor(sku.getColor());
             orderItems.add(orderItem);
-            orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+            orderTotal = orderTotal.add(orderItem.getProduct()
+                    .getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())).multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
 
         }
         transaction.setOrderItems(orderItems);
@@ -56,16 +62,21 @@ public class TransactionMapper {
     }
 
     public TransactionDTO mapToDTO(Transaction transaction) {
-        mapper.typeMap(OrderItem.class, OrderItemDTO.class);
-        TransactionDTO transactionDTO = mapper.createTypeMap(Transaction.class, TransactionDTO.class)
-                .addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems)
-                .map(transaction);
-        transactionDTO.setShipmentActivity(transaction.getShipment()
-                .getScans()
-                .stream()
-                .map(item -> mapper.map(item, ShipmentTrackActivityDTO.class))
-                .collect(Collectors.toList()));
-        transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
+        TypeMap<Transaction, TransactionDTO> typeMap = mapper.getTypeMap(Transaction.class, TransactionDTO.class);
+        if (typeMap == null) {
+            typeMap = mapper.createTypeMap(Transaction.class, TransactionDTO.class);
+            typeMap.addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems);
+        }
+        TransactionDTO transactionDTO = typeMap.map(transaction);
+        if (transaction.getShipment() != null) {
+            transactionDTO.setShipmentActivity(transaction.getShipment()
+                    .getScans()
+                    .stream()
+                    .map(item -> mapper.map(item, ShipmentTrackActivityDTO.class))
+                    .collect(Collectors.toList()));
+            transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
+        }
         return transactionDTO;
     }
+
 }

@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Customer findByIdAndIsBillingUser(Long id, Boolean isBillingUser);
+
+    Optional<Customer> findByUser_IdAndIsBillingUser(Long id, boolean b);
 }

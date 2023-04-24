@@ -10,7 +10,9 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>MadrasdaAPI</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-RELEASE</version>
+    <packaging>jar</packaging>
+
     <name>MadrasdaAPI</name>
     <description>MadrasdaAPI</description>
     <properties>
@@ -119,7 +121,7 @@
             <groupId>com.razorpay</groupId>
             <artifactId>razorpay-java</artifactId>
             <version>1.4.3</version>
-            <scope>import</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

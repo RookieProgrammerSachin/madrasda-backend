@@ -2,9 +2,12 @@ package com.example.madrasdaapi.services.AdminServices;
 
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
+import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.mappers.VendorMapper;
+import com.example.madrasdaapi.models.PayoutRecord;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
+import com.example.madrasdaapi.repositories.PayoutRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import jakarta.transaction.Transactional;
@@ -14,11 +17,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
     private final VendorRepository vendorRepository;
     private final UserRepository userRepository;
+    private final PayoutRepository payoutRepository;
     private final PasswordEncoder encoder;
     private final VendorMapper vendorMapper;
     private final ModelMapper mapper;
@@ -84,5 +91,17 @@ public class AdminService {
             vendor.setCategory(vendorDTO.getCategory());
         }
         return vendorMapper.mapToDTO(vendorRepository.save(vendor));
+    }
+
+    public List<VendorMenuItemDTO> getPayoutRequests() {
+        List<Vendor> vendorsList = vendorRepository.findAllByPayoutRequested(true);
+        List<VendorMenuItemDTO> vendorMenuItemDTOS = new ArrayList<>();
+        for(Vendor v : vendorsList) {
+            VendorMenuItemDTO vendorMenuItemDTO = vendorMapper.mapToMenuItemDTOWithPayout(v);
+            PayoutRecord payoutRecord = payoutRepository.findByVendor_IdAndPaid(v.getId(), false).orElseThrow();
+            vendorMenuItemDTO.setPayoutId(payoutRecord.getId());
+            vendorMenuItemDTOS.add(vendorMenuItemDTO);
+        }
+        return vendorMenuItemDTOS;
     }
 }

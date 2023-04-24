@@ -25,6 +25,12 @@ public class VendorMapper {
           item.setImgUrl(vendor.getProfilePic());
           return item;
      }
+     public VendorMenuItemDTO mapToMenuItemDTOWithPayout(Vendor vendor) {
+          VendorMenuItemDTO vendorMenuItemDTO = mapToMenuItemDTO(vendor);
+          vendorMenuItemDTO.setPayoutRequested(vendor.getPayoutRequested());
+          vendorMenuItemDTO.setPayoutAmount(vendor.getOutstandingProfit());
+          return vendorMenuItemDTO;
+     }
 
 
      public VendorDTO mapToDTO(Vendor vendor) {
