@@ -23,7 +23,7 @@ public class TransactionDTO implements Serializable {
     private Long id;
     private Date orderDate;
     private BigDecimal orderTotal;
-    private Integer paymentId;
+    private String paymentId;
     private UserDTO billingCustomer;
 
     private Boolean billingIsShipping;

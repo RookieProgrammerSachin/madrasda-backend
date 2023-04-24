@@ -12,4 +12,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      Optional<Transaction> findByPaymentId(String paymentId);
 
      List<Transaction> findByBillingUser_Phone(String phone);
+
+     List<Transaction> findByBillingUser_PhoneAndPaymentStatusLike(String phone, String paymentStatus);
 }

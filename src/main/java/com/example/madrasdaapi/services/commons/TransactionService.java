@@ -226,7 +226,7 @@ public class TransactionService {
     }
 
     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(String phone) {
-        List<Transaction> transactions = transactionRepository.findByBillingUser_Phone(phone);
+        List<Transaction> transactions = transactionRepository.findByBillingUser_PhoneAndPaymentStatusLike(phone, "payment_link.paid");
 
         return transactions.stream().map(transactionMapper::mapToDTO).toList();
     }
