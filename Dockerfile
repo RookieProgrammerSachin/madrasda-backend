@@ -15,7 +15,9 @@ RUN mvn clean package -DskipTests
 # Run stage
 FROM amazoncorretto:17
 # Copy the built JAR file to the container
+WORKDIR /app
 COPY target/MadrasdaAPI-0.0.1-RELEASE.jar app.jar
 EXPOSE 8080
 # Run the application
+CMD ["ls"]
 CMD ["java", "-jar", "app.jar"]
