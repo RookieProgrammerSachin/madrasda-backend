@@ -28,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -229,6 +231,11 @@ public class TransactionService {
         List<Transaction> transactions = transactionRepository.findByBillingUser_PhoneAndPaymentStatusLike(phone, "payment_link.paid");
 
         return transactions.stream().map(transactionMapper::mapToDTO).toList();
+    }
+
+    public Page<TransactionDTO> getAllOrders(int pageNo, int pageSize) {
+        Page<Transaction> transactions = transactionRepository.findAllByOrderByOrderDateDesc(PageRequest.of(pageNo, pageSize));
+        return transactions.map(transactionMapper::mapToDTO);
     }
 
     public ShipmentDTO getOrderDetails(Long transactionId) {
