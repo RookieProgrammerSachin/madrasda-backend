@@ -2,6 +2,7 @@ package com.example.madrasdaapi.repositories;
 
 import com.example.madrasdaapi.models.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,4 +20,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
      Page<Product> findByNameOrAudienceOrMockup_name(String name,String audience,String mockupName, Pageable pageable);
 
+    Page<Product> findByVendor_IdAndPublishStatus(Long vendorId, boolean b, Pageable pageable);
 }

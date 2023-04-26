@@ -46,7 +46,7 @@ public class ProductService {
      }
 
      public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findByVendor_Id(vendorId, PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findByVendor_IdAndPublishStatus(vendorId, true,  PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
@@ -70,4 +70,8 @@ public class ProductService {
           ));
      }
 
+     public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
+          Page<Product> products = productRepository.findByVendor_Id(vendorId,  PageRequest.of(pageNo, pageSize));
+          return products.map(productMapper::mapToDTO);
+     }
 }

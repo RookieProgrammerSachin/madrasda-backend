@@ -62,12 +62,8 @@ public class TransactionMapper {
     }
 
     public TransactionDTO mapToDTO(Transaction transaction) {
-        TypeMap<Transaction, TransactionDTO> typeMap = mapper.getTypeMap(Transaction.class, TransactionDTO.class);
-        if (typeMap == null) {
-            typeMap = mapper.createTypeMap(Transaction.class, TransactionDTO.class);
-            typeMap.addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems);
-        }
-        TransactionDTO transactionDTO = typeMap.map(transaction);
+
+        TransactionDTO transactionDTO = mapper.map(transaction, TransactionDTO.class);
         if (transaction.getShipment() != null) {
             transactionDTO.setShipmentActivity(transaction.getShipment()
                     .getScans()

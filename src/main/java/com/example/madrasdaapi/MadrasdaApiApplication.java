@@ -1,9 +1,10 @@
 package com.example.madrasdaapi;
 
 import com.example.madrasdaapi.config.ShipRocketProperties;
-import com.example.madrasdaapi.dto.ShipRocketDTO.ShipRocketLoginResponse;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
+import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.Product;
+import com.example.madrasdaapi.models.Transaction;
 import com.google.gson.Gson;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -15,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+
 @EnableConfigurationProperties(ShipRocketProperties.class)
 @SpringBootApplication
 public class MadrasdaApiApplication {
@@ -38,8 +40,11 @@ public class MadrasdaApiApplication {
                         skip(destination.getProductImages());
                     }
                 });
+        mapper.createTypeMap(Transaction.class, TransactionDTO.class)
+                .addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems);
+
         return mapper;
-    }
+}
 
     @Bean
     OkHttpClient okHttpClient() {
@@ -52,5 +57,7 @@ public class MadrasdaApiApplication {
     }
 
     @Bean
-    Gson gson() { return new Gson(); }
+    Gson gson() {
+        return new Gson();
+    }
 }

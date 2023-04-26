@@ -1,5 +1,13 @@
-FROM amazoncorretto:17
+FROM maven:sapmachine AS build
 LABEL maintainer="Adnan Mohamed Z"
-ADD target/MadrasdaAPI-0.0.1-RELEASE.jar spring-madrasda.jar
+WORKDIR /app
+COPY src /app/src
+COPY pom.xml /app/
+RUN mvn clean package -DskipTests
+
+FROM amazoncorretto:17
+WORKDIR /app
+COPY --from=build /app/target/MadrasdaAPI-0.0.1-RELEASE.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "spring-madrasda.jar"]
+CMD ["java", "-jar", "app.jar"]
+
