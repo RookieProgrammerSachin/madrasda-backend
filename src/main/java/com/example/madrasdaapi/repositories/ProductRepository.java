@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
      @Transactional
      @Modifying
@@ -21,4 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      Page<Product> findByNameOrAudienceOrMockup_name(String name,String audience,String mockupName, Pageable pageable);
 
     Page<Product> findByVendor_IdAndPublishStatus(Long vendorId, boolean b, Pageable pageable);
+
+    List<Product> deleteByAudience(String fanHouse);
+
 }

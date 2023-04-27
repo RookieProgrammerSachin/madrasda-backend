@@ -15,6 +15,7 @@ import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
