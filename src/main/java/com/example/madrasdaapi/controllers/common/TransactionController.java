@@ -30,7 +30,8 @@ public class TransactionController {
           return transactionService.getHistoryOfOrdersByCustomerId(AuthContext.getCurrentUser());
      }
      @GetMapping("/manageOrders")
-     public Page<TransactionDTO> viewAllOrders(@RequestParam int pageNo, @RequestParam int pageSize) {
+     public Page<TransactionDTO> viewAllOrders(@RequestParam(defaultValue = "0") int pageNo,
+                                               @RequestParam(defaultValue = "10") int pageSize) {
           return transactionService.getAllOrders(pageNo, pageSize);
      }
 }

@@ -14,6 +14,7 @@ import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.models.ShiprocketModels.NewOrder;
+import com.example.madrasdaapi.models.ShiprocketModels.OrderDetails.ShiprocketOrderDetail;
 import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
 import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
 import com.example.madrasdaapi.models.ShiprocketModels.ShipRocketOrderItem;
@@ -142,7 +143,20 @@ public class TransactionService {
                     .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
             Response response = okHttpClient.newCall(request).execute();
+            ShiprocketOrderDetail data = new ObjectMapper().readValue(response.body().bytes(), ShiprocketOrderDetail.class);
+            TrackingData trackingData = new TrackingData();
+            trackingData.setAwb(trackingData.getAwb());
+            trackingData.setCurrentStatus(data.getStatus());
+            trackingData.setCurrentStatusId(data.getStatusCode());
+            trackingData.setCourierName(data.getCourierName());
+            trackingData.setOrderId(data.getOrderId());
+            trackingData.setScans(new ArrayList<>());
             response.close();
+            Shipment shipment = shipmentMapper.mapToShipment(trackingData);
+            shipment.setTransaction(transaction);
+            transaction.setShipment(shipment);
+
+            shipmentRepository.save(shipment);
             cartItemRepository.deleteByCustomer_Id(transaction.getBillingUser().getId());
             vendorRepository.saveAll(vendors.values());
             transactionRepository.save(transaction);
@@ -234,7 +248,7 @@ public class TransactionService {
     }
 
     public Page<TransactionDTO> getAllOrders(int pageNo, int pageSize) {
-        Page<Transaction> transactions = transactionRepository.findAllByOrderByOrderDateDesc(PageRequest.of(pageNo, pageSize));
+        Page<Transaction> transactions = transactionRepository.findAllByShipment_CurrentStatus("NEW", PageRequest.of(pageNo, pageSize));
         return transactions.map(transactionMapper::mapToDTO);
     }
 
@@ -283,7 +297,7 @@ public class TransactionService {
         Float breadth = 0.0F;
         Float weight = 0.0F;
         List<CartItem> cart = cartItemRepository.findByCustomer_Phone(phone);
-        if(cart.size() == 0) throw new APIException("Cart is Empty", HttpStatus.CONFLICT);
+        if (cart.size() == 0) throw new APIException("Cart is Empty", HttpStatus.CONFLICT);
         for (CartItem item : cart) {
             height += item.getProduct().getHeight() * item.getQuantity();
             weight += item.getProduct().getWeight() * item.getQuantity();

@@ -40,7 +40,7 @@ public class Transaction {
      @JoinColumn(referencedColumnName = "id")
      private User billingUser;//
 
-     @OneToOne(mappedBy = "transaction")
+     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
      private Shipment shipment;//
 
      @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
