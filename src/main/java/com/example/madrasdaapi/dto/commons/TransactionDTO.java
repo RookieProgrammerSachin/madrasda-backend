@@ -31,6 +31,7 @@ public class TransactionDTO implements Serializable {
 
     private String status;
     private Set<OrderItemDTO> orderItems = new HashSet<>();
+    private String orderId;
     private List<ShipmentTrackActivityDTO> shipmentActivity;
 
 }

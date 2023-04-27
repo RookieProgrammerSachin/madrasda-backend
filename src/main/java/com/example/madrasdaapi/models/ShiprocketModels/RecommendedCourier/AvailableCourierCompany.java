@@ -161,7 +161,7 @@ public class AvailableCourierCompany{
     private Integer shipType;
 
     @JsonProperty("suppression_dates")
-    private List<Object> suppressionDates;
+    private Object suppressionDates;
 
     @JsonProperty("rto_performance")
     private Double rtoPerformance;

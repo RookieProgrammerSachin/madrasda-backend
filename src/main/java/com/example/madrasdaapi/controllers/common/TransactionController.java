@@ -5,6 +5,7 @@ import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.services.commons.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,5 +28,10 @@ public class TransactionController {
      @GetMapping("getAllOrdersById/")
      public List<TransactionDTO> getHistoryOfOrders() {
           return transactionService.getHistoryOfOrdersByCustomerId(AuthContext.getCurrentUser());
+     }
+     @GetMapping("/manageOrders")
+     public Page<TransactionDTO> viewAllOrders(@RequestParam(defaultValue = "0") int pageNo,
+                                               @RequestParam(defaultValue = "10") int pageSize) {
+          return transactionService.getAllOrders(pageNo, pageSize);
      }
 }
