@@ -64,6 +64,7 @@ public class TransactionMapper {
     public TransactionDTO mapToDTO(Transaction transaction) {
 
         TransactionDTO transactionDTO = mapper.map(transaction, TransactionDTO.class);
+
         if (transaction.getShipment() != null) {
             transactionDTO.setShipmentActivity(transaction.getShipment()
                     .getScans()
