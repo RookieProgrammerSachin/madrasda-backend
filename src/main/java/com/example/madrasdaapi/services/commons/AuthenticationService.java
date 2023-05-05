@@ -4,6 +4,7 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
 import com.example.madrasdaapi.exception.APIException;
+import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.enums.Role;
 import com.example.madrasdaapi.repositories.UserRepository;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.Optional;
 
@@ -42,9 +44,8 @@ public class AuthenticationService {
     private String serviceSid;
 
     public JwtDTO authenticateAdmin(LoginDTO loginDTO) throws Exception {
-        User admin = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
-                () -> new APIException("Bad credentials", HttpStatus.UNAUTHORIZED)
-        );
+        User admin = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Admin", "email", loginDTO.getEmail()));
         if (!admin.getRole().equals("ROLE_ADMIN")) throw new APIException("Bad credentials", HttpStatus.UNAUTHORIZED);
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
@@ -56,7 +57,8 @@ public class AuthenticationService {
     }
 
     public JwtDTO authenticateVendor(LoginDTO loginDTO) throws Exception {
-        User vendor = userRepository.findByEmail(loginDTO.getEmail()).get();
+        User vendor = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor", "email", loginDTO.getEmail()));
         if (!vendor.getRole().equals("ROLE_VENDOR")) throw new BadCredentialsException("Invalid Email or Password");
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
