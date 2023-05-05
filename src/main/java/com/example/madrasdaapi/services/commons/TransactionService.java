@@ -36,10 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -67,15 +64,12 @@ public class TransactionService {
     public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
-
         transaction.getShippingAddress().setUser(transaction.getBillingUser());
         transaction.getShippingAddress().setName(orderRequest.getShippingAddress().getName());
         if (!orderRequest.getBillingIsShipping()) {
             transaction.getShippingAddress().setIsBillingUser(false);
         } else {
             transaction.setBillingIsShipping(true);
-            Optional<Customer> billingAddress = customerRepository.findByUser_IdAndIsBillingUser(transaction.getBillingUser().getId(), true);
-            billingAddress.ifPresent(transaction::setShippingAddress);
             transaction.getShippingAddress().setIsBillingUser(true);
         }
         OrderResponse response = new OrderResponse();
@@ -106,9 +100,6 @@ public class TransactionService {
         customer.put("email", transaction.getBillingUser().getEmail());
         options.put("customer", customer);
         JSONObject notify = new JSONObject();
-        notify.put("sms", true);
-        notify.put("email", true);
-        options.put("notify", notify);
         PaymentLink paymentLink = razorpayClient.paymentLink.create(options);
         return paymentLink;
     }
@@ -117,12 +108,13 @@ public class TransactionService {
     @Transactional
     public void updateTransactionStatus(PaymentLinkResult result) throws RazorpayException, IOException {
         String paymentId = result.getPayload().getPaymentLink().getEntity().getId();
-        Transaction transaction = transactionRepository.findByPaymentId(paymentId).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", paymentId));
+        Transaction transaction = transactionRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", paymentId));
 
         if (transaction.getPaymentStatus() != null && transaction.getPaymentStatus().equals("payment_link.paid"))
             throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
-
-        transaction.setOrderId(result.getPayload().getOrder().getEntity().getId());
+        String orderId = String.valueOf(System.currentTimeMillis());
+        transaction.setOrderId(orderId.substring(orderId.length() - 10));
 
         if (result.getEvent().equals("payment_link.paid")) {
             HashMap<Long, Vendor> vendors = new HashMap<>();
@@ -150,6 +142,7 @@ public class TransactionService {
             trackingData.setCurrentStatusId(data.getStatusCode());
             trackingData.setCourierName(data.getCourierName());
             trackingData.setOrderId(data.getOrderId());
+            transaction.setOrderId(data.getOrderId());
             trackingData.setScans(new ArrayList<>());
             response.close();
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
@@ -202,7 +195,7 @@ public class TransactionService {
             length = Math.max(product.getLength(), length);
             orderItems.add(orderItem);
         }
-        Customer billingAddress = customerRepository.findByUser_IdAndIsBillingUser(transaction.getBillingUser().getId(), true).get();
+        Customer billingAddress = transaction.getShippingAddress();
         order.setBillingAddress(billingAddress.getAddressLine1() + " " + billingAddress.getAddressLine2());
         order.setBillingCustomerName(billingAddress.getName());
         order.setBillingCity(billingAddress.getCity());
@@ -234,7 +227,8 @@ public class TransactionService {
     }
 
     public void updateShipmentStatus(TrackingData trackingData) {
-        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId()).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
+        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
         Shipment shipment = shipmentMapper.mapToShipment(trackingData);
         transaction.setShipment(shipment);
         shipment.setTransaction(transaction);

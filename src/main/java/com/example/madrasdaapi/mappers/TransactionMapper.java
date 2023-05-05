@@ -38,6 +38,8 @@ public class TransactionMapper {
         mapper.map(transactionDTO, transaction);
         User user = userRepository.findByPhone(AuthContext.getCurrentUser()).get();
         transaction.setBillingUser(user);
+        Customer shippingAddress = mapper.map(transactionDTO.getShippingAddress(), Customer.class);
+        transaction.setShippingAddress(shippingAddress);
         BigDecimal orderTotal = new BigDecimal(0L);
         List<OrderItem> orderItems = new ArrayList<>();
         List<CartItem> cart = user.getCart();
