@@ -62,4 +62,13 @@ public class ProductController {
 
           return productSKUMappingRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapSKUToDTO);
      }
+
+     @GetMapping("/getByMockupId/{mockupId}")
+     public Page<ProductDTO> getProductsByMockup(
+             @PathVariable Long mockupId,
+             @RequestParam(defaultValue = "0") Integer pageNo,
+             @RequestParam(defaultValue = "25") Integer pageSize
+     ) {
+          return productService.getProductsByMockupId(mockupId, pageNo, pageSize);
+     }
 }

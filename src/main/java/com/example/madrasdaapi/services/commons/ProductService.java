@@ -75,4 +75,9 @@ public class ProductService {
           Page<Product> products = productRepository.findByVendor_Id(vendorId,  PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
+
+     public Page<ProductDTO> getProductsByMockupId(Long mockupId, Integer pageNo, Integer pageSize) {
+          Page<Product> products = productRepository.findAllByMockup_Id(mockupId, PageRequest.of(pageNo, pageSize));
+          return products.map(productMapper::mapToDTO);
+     }
 }

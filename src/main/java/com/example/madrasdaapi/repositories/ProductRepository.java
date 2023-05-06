@@ -17,6 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      @Query(value = "update product p set p.publish_status = p.publish_status XOR true where p.id = ?1 AND p.vendor_id = ?2" ,nativeQuery = true)
      void updatePublishStatusByIdAAndVendor_Id(Long id, Long vendorId);
 
+     Page<Product> findAllByMockup_Id(Long mockupId, Pageable pageable);
      Page<Product> findByVendor_Id(Long vendorId, Pageable pageable);
      Page<Product> findAllByAudience(String audience, Pageable pageable);
 
