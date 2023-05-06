@@ -35,6 +35,10 @@ public class ProcedureCaller {
             Product p = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
             ProductLadderItem item = new ProductLadderItem();
             modelMapper.map(p, item);
+            if(p.getFrontDesignUrl()!=null)
+                item.setImgUrl(p.getFrontDesignUrl());
+            else
+                item.setImgUrl(p.getBackDesignUrl());
             item.setProfitAmount(p.getProfit().multiply(totalSales));
             item.setStocksSold(totalSales.longValue());
             products.add(item);
