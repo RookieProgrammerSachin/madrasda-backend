@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.services.AdminServices;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
@@ -103,5 +104,11 @@ public class AdminService {
             vendorMenuItemDTOS.add(vendorMenuItemDTO);
         }
         return vendorMenuItemDTOS;
+    }
+
+    public void updatePassword(String newPassword){
+        User user = userRepository.findByEmail(AuthContext.getCurrentUser()).orElseThrow();
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

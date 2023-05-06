@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.config.AuthContext;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.DesignDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -95,5 +97,10 @@ public class VendorController {
                                                  @RequestParam(defaultValue = "0") Integer pageNo,
                                                  @RequestParam(defaultValue = "10") Integer pageSize) {
           return productService.getAllProductsByVendor(vendorId, pageNo, pageSize);
+     }
+     @PostMapping("updatePassword")
+     public ResponseEntity<String> updateVendorPassword(@RequestParam String newPassword){
+          adminService.updatePassword(newPassword);
+          return ResponseEntity.ok("Vendor updated");
      }
 }
