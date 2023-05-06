@@ -41,7 +41,6 @@ public class AdminService {
         User detachedUser = new User();
         Vendor detachedVendor = new Vendor();
         mapper.map(registerDTO, detachedUser);
-
         detachedUser.setPassword(encoder.encode(detachedUser.getPassword()));
         detachedVendor.setUser(detachedUser);
 
@@ -127,5 +126,11 @@ public class AdminService {
     }
     public void removeSignUpRequest(Long id){
         signupRepository.deleteById(id);
+    }
+    public VendorDTO appproveVendorSignup(Long id, String password){
+        RegisterDTO newVendor = new RegisterDTO();
+        mapper.map(signupRepository.findById(id).get(), newVendor);
+        newVendor.setPassword(password);
+        return saveOrUpdateVendor(newVendor);
     }
 }

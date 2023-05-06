@@ -73,5 +73,9 @@ public class AdminController {
           adminService.removeSignUpRequest(id);
           return ResponseEntity.ok("Request Removed");
      }
+     @PostMapping("approveSignup/{id}")
+     public VendorDTO approveSignup(@PathVariable Long id, @RequestBody RegisterDTO registerDTO){
+          return adminService.appproveVendorSignup(id, registerDTO.getPassword());
+     }
 }
 

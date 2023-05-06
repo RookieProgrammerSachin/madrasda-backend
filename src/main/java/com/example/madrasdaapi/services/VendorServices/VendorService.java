@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.services.VendorServices;
 
+import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.TemplateDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDetails;
@@ -74,6 +75,11 @@ public class VendorService {
           return page.map(templateMapper::mapToTemplateDTO);
      }
 
+     public void updateVendorImage(String imgUrl){
+          Vendor vendor = vendorRepository.findByUser_Email(AuthContext.getCurrentUser());
+          vendor.setProfilePic(imgUrl);
+          vendorRepository.save(vendor);
+     }
 
 
 }
