@@ -131,6 +131,8 @@ public class AdminService {
         RegisterDTO newVendor = new RegisterDTO();
         mapper.map(signupRepository.findById(id).get(), newVendor);
         newVendor.setPassword(password);
-        return saveOrUpdateVendor(newVendor);
+        VendorDTO vendor = saveOrUpdateVendor(newVendor);
+        signupRepository.deleteById(id);
+        return vendor;
     }
 }
