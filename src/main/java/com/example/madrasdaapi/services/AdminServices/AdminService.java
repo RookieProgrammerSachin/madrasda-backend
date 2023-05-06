@@ -6,14 +6,18 @@ import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.PayoutRecord;
+import com.example.madrasdaapi.models.SignupRequests;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.PayoutRepository;
+import com.example.madrasdaapi.repositories.SignupRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ public class AdminService {
     private final VendorRepository vendorRepository;
     private final UserRepository userRepository;
     private final PayoutRepository payoutRepository;
+    private final SignupRepository signupRepository;
     private final PasswordEncoder encoder;
     private final VendorMapper vendorMapper;
     private final ModelMapper mapper;
@@ -110,5 +115,17 @@ public class AdminService {
         User user = userRepository.findByEmail(AuthContext.getCurrentUser()).orElseThrow();
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public void saveSignUpRequest(RegisterDTO newVendor){
+        SignupRequests newRequest = new SignupRequests();
+        mapper.map(newVendor, newRequest);
+        signupRepository.save(newRequest);
+    }
+    public Page<SignupRequests> getAllSignupRequests(int pageNo, int pageSize) {
+        return signupRepository.findAll(PageRequest.of(pageNo, pageSize));
+    }
+    public void removeSignUpRequest(Long id){
+        signupRepository.deleteById(id);
     }
 }
