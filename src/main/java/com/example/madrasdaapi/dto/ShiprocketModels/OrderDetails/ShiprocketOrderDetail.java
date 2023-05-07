@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.models.ShiprocketModels.OrderDetails;
+package com.example.madrasdaapi.dto.ShiprocketModels.OrderDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

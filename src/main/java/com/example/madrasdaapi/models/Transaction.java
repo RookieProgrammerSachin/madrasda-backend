@@ -1,13 +1,20 @@
 package com.example.madrasdaapi.models;
 
+
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.C;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
-
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 @Entity
@@ -30,7 +37,14 @@ public class Transaction {
 
      private String orderId;//
 
+     @Column(columnDefinition = "boolean default false")
      private Boolean billingIsShipping;//
+
+     @Column(columnDefinition = "boolean default false")
+     private Boolean cancelled = false;
+
+     @Column(columnDefinition = "boolean default false")
+     private Boolean cancelRequested = false;
 
      @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
      @JoinColumn(name = "customer_id")
@@ -43,7 +57,7 @@ public class Transaction {
      @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
      private Shipment shipment;//
 
-     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
+     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "transaction")
      private List<OrderItem> orderItems = new ArrayList<>();//
 
 

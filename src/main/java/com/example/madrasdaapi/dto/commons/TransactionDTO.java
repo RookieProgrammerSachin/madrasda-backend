@@ -25,13 +25,13 @@ public class TransactionDTO implements Serializable {
     private BigDecimal orderTotal;
     private String paymentId;
     private UserDTO billingCustomer;
-
     private Boolean billingIsShipping;
     private CustomerDto shippingAddress;
-
     private String status;
-    private Set<OrderItemDTO> orderItems = new HashSet<>();
     private String orderId;
+    private Boolean cancelRequested;
+    private Boolean cancelled;
+    private Set<OrderItemDTO> orderItems = new HashSet<>();
     private List<ShipmentTrackActivityDTO> shipmentActivity;
 
 }

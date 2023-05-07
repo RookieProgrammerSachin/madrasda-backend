@@ -1,4 +1,4 @@
-package com.example.madrasdaapi.models.ShiprocketModels;
+package com.example.madrasdaapi.dto.ShiprocketModels;
 
 import lombok.Data;
 

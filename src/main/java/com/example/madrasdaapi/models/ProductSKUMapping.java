@@ -3,6 +3,7 @@ package com.example.madrasdaapi.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -25,6 +26,7 @@ public class ProductSKUMapping {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @BatchSize(size = 30)
     private Color color;
 
 

@@ -2,6 +2,8 @@ package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentTrackActivityDTO;
+import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
+import com.example.madrasdaapi.dto.commons.ColorDTO;
 import com.example.madrasdaapi.dto.commons.OrderItemDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.models.*;
@@ -11,14 +13,13 @@ import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.C;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,7 @@ public class TransactionMapper {
             orderItem.setSize(sku.getSize());
             orderItem.setColor(sku.getColor());
             orderItems.add(orderItem);
-            orderTotal = orderTotal.add(orderItem.getProduct()
-                    .getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())).multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
+            orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())).multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
 
         }
         transaction.setOrderItems(orderItems);
@@ -66,16 +66,39 @@ public class TransactionMapper {
     public TransactionDTO mapToDTO(Transaction transaction) {
 
         TransactionDTO transactionDTO = mapper.map(transaction, TransactionDTO.class);
-
-        if (transaction.getShipment() != null) {
-            transactionDTO.setShipmentActivity(transaction.getShipment()
-                    .getScans()
+        List<OrderItemDTO> items = new ArrayList<>();
+        HashMap<Long, ColorDTO> imageDTOHashMap = new HashMap<>();
+        for (OrderItem item : transaction.getOrderItems()) {
+            String sku = item.getSku();
+            ProductSKUMapping productSKUMapping = item.getProduct()
+                    .getSkuMappings()
                     .stream()
-                    .map(item -> mapper.map(item, ShipmentTrackActivityDTO.class))
-                    .collect(Collectors.toList()));
+                    .filter((productSku) -> productSku.getSku().equals(sku))
+                    .findFirst().get();
+            Long colorId = productSKUMapping.getColor().getId();
+            String productImageDTO = "";
+            for (ProductImage image : item.getProduct().getProductImages()) {
+                if (image.getColor().getId().equals(colorId)) {
+                    productImageDTO = image.getImgUrl();
+                    break;
+                }
+            }
+            ColorDTO colorDTO = new ColorDTO();
+            colorDTO.setImages(List.of(productImageDTO));
+            imageDTOHashMap.put(item.getId(), colorDTO);
+        }
+        for (OrderItemDTO item : transactionDTO.getOrderItems()) {
+            item.getProduct().setColors(List.of(imageDTOHashMap.get(item.getId())));
+        }
+        if (transaction.getShipment() != null) {
+            transactionDTO.setShipmentActivity(transaction.getShipment().getScans().stream().map(item -> mapper.map(item, ShipmentTrackActivityDTO.class)).collect(Collectors.toList()));
             transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
         }
         return transactionDTO;
+    }
+
+    public CancelRequestDTO mapToCancelRequestDTO(CancelRequest cancelRequest) {
+        return mapper.map(cancelRequest, CancelRequestDTO.class);
     }
 
 }

@@ -1,9 +1,9 @@
-package com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier;
+package com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
+
 @lombok.Data
 
 public class Data{

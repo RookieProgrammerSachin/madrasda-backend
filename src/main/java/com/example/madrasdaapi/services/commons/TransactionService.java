@@ -6,6 +6,7 @@ import com.example.madrasdaapi.dto.RazorPayDTO.PaymentLinkResult.PaymentLinkResu
 import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest.OrderResponse;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
+import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
@@ -13,11 +14,11 @@ import com.example.madrasdaapi.mappers.CustomerMapper;
 import com.example.madrasdaapi.mappers.ShipmentMapper;
 import com.example.madrasdaapi.mappers.TransactionMapper;
 import com.example.madrasdaapi.models.*;
-import com.example.madrasdaapi.models.ShiprocketModels.NewOrder;
-import com.example.madrasdaapi.models.ShiprocketModels.OrderDetails.ShiprocketOrderDetail;
-import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
-import com.example.madrasdaapi.models.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
-import com.example.madrasdaapi.models.ShiprocketModels.ShipRocketOrderItem;
+import com.example.madrasdaapi.dto.ShiprocketModels.NewOrder;
+import com.example.madrasdaapi.dto.ShiprocketModels.OrderDetails.ShiprocketOrderDetail;
+import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
+import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
+import com.example.madrasdaapi.dto.ShiprocketModels.ShipRocketOrderItem;
 import com.example.madrasdaapi.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -36,6 +37,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -45,6 +50,10 @@ public class TransactionService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ShipmentRepository shipmentRepository;
+    private final VendorRepository vendorRepository;
+    private final CustomerRepository customerRepository;
+    private final CartItemRepository cartItemRepository;
+    private final CancelRequestRepository cancelRequestRepository;
     private final ProductRepository productRepository;
     private final TransactionMapper transactionMapper;
     private final ShipmentMapper shipmentMapper;
@@ -53,9 +62,6 @@ public class TransactionService {
     private final Gson gson;
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
-    private final VendorRepository vendorRepository;
-    private final CustomerRepository customerRepository;
-    private final CartItemRepository cartItemRepository;
     @Value("${razorpay.keySecret}")
     private String SECRET_KEY;
     @Value("${razorpay.keyId}")
@@ -148,7 +154,7 @@ public class TransactionService {
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
             shipment.setTransaction(transaction);
             transaction.setShipment(shipment);
-
+            transaction.setOrderTotal(new BigDecimal(order.getSubTotal()));
             shipmentRepository.save(shipment);
             cartItemRepository.deleteByCustomer_Id(transaction.getBillingUser().getId());
             vendorRepository.saveAll(vendors.values());
@@ -242,7 +248,7 @@ public class TransactionService {
     }
 
     public Page<TransactionDTO> getAllOrders(int pageNo, int pageSize) {
-        Page<Transaction> transactions = transactionRepository.findAllByShipment_CurrentStatus("NEW", PageRequest.of(pageNo, pageSize));
+        Page<Transaction> transactions = transactionRepository.findAllByShipment_CurrentStatusOrderById("NEW", PageRequest.of(pageNo, pageSize));
         return transactions.map(transactionMapper::mapToDTO);
     }
 
@@ -300,6 +306,47 @@ public class TransactionService {
         }
 
         return requestFreightCharges(pincode, height, length, breadth, weight);
+    }
+
+    public void cancelOrder(CancelRequestDTO cancelRequestDTO) {
+        Transaction transaction = transactionRepository.findById(cancelRequestDTO.getTransaction().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", cancelRequestDTO.getTransaction().getId().toString()));
+        long diffInMillis = new Date().getTime() - transaction.getOrderDate().getTime();
+        if (diffInMillis > 4 * 60 * 60 * 1000L)
+            throw new APIException("4 Hour Time Frame Exceeded", HttpStatus.CONFLICT);
+        CancelRequest request = new CancelRequest();
+        request.setTransaction(transaction);
+        request.setReason(cancelRequestDTO.getReason());
+        request.setImages(cancelRequestDTO.getImages());
+        cancelRequestRepository.save(request);
+
+    }
+
+    public Page<CancelRequestDTO> getAllCancelRequests(int pageNo, int pageSize) {
+        return cancelRequestRepository.findAll(PageRequest.of(pageNo, pageSize))
+                .map(transactionMapper::mapToCancelRequestDTO);
+    }
+    @Transactional
+    public void resolveCancelOrder(Long transactionId) throws IOException {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionId.toString()));
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"ids\": [" + transaction.getOrderId() + "]}");
+        System.out.println("{\"ids\": [" + transaction.getOrderId() + "]}");
+        Request request = new Request.Builder()
+                .url("https://apiv2.shiprocket.in/v1/external/orders/cancel")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + shiprocket.getToken())
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        if(response.code() != 200) {
+            System.out.println(response.body().string());
+            throw new APIException("Error cancelling order", HttpStatus.valueOf(response.code()));
+        }
+
+        transaction.setCancelled(true);
+        cancelRequestRepository.deleteByTransaction_Id(transaction.getId());
     }
 
 }

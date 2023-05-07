@@ -1,8 +1,11 @@
 package com.example.madrasdaapi;
 
 import com.example.madrasdaapi.config.ShipRocketProperties;
+import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
+import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.TransactionDTO;
+import com.example.madrasdaapi.models.CancelRequest;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.models.Transaction;
 import com.google.gson.Gson;
@@ -42,9 +45,9 @@ public class MadrasdaApiApplication {
                 });
         mapper.createTypeMap(Transaction.class, TransactionDTO.class)
                 .addMapping(Transaction::getOrderItems, TransactionDTO::setOrderItems);
-
+        mapper.createTypeMap(CancelRequest.class, CancelRequestDTO.class);
         return mapper;
-}
+    }
 
     @Bean
     OkHttpClient okHttpClient() {

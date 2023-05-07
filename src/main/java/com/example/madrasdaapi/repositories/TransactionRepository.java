@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
      Page<Transaction> findAllByOrderByOrderDateDesc(Pageable pageable);
 
-     Page<Transaction> findAllByShipment_CurrentStatus(String status, Pageable pageable);
+     Page<Transaction> findAllByShipment_CurrentStatusOrderById(String status, Pageable pageable);
      List<Transaction> findByBillingUser_Id(Long id);
      Optional<Transaction> findByOrderId(String orderId);
      Optional<Transaction> findByPaymentId(String paymentId);
@@ -19,4 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      List<Transaction> findByBillingUser_Phone(String phone);
 
      List<Transaction> findByBillingUser_PhoneAndPaymentStatusLike(String phone, String paymentStatus);
+
+
 }

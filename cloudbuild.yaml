@@ -1,0 +1,11 @@
+steps:
+  - name: 'asia.gcr.io/cloud-builders/git'
+    args: ['clone', 'https://github.com/Dimitrov-Codes/spring-madrasda']
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia.gcr.io/madrasda/spring-madrasda', '.']
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    args: ['push', 'asia.gcr.io/madrasda/spring-madrasda']
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    args: ['run', '--rm', '-v', 'madrasda:/app', '-w', '/app', 'openjdk:17-jdk-buster', 'chmod', '+x', 'mvnw']
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    args: ['run', '--rm', '-v', 'madrasda:/app', '-w', '/app', 'asia.gcr.io/madrasda/spring-madrasda', './mvnw', 'clean', 'package', '-DskipTests']
