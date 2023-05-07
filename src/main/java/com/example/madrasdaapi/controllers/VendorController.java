@@ -98,9 +98,14 @@ public class VendorController {
                                                  @RequestParam(defaultValue = "10") Integer pageSize) {
           return productService.getAllProductsByVendor(vendorId, pageNo, pageSize);
      }
-     @PostMapping("updatePassword")
+     @PutMapping("updatePassword")
      public ResponseEntity<String> updateVendorPassword(@RequestParam String newPassword){
           adminService.updatePassword(newPassword);
-          return ResponseEntity.ok("Vendor updated");
+          return ResponseEntity.ok("Password updated");
+     }
+     @PutMapping("updateImage")
+     public ResponseEntity<String> updateVendorImage(@RequestBody RegisterDTO imgUrl){
+          vendorService.updateVendorImage(imgUrl.getImgUrl());
+          return ResponseEntity.ok("Profile Pic Updated");
      }
 }

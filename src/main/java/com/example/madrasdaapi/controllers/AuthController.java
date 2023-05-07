@@ -2,7 +2,9 @@ package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.security.JwtService;
+import com.example.madrasdaapi.services.AdminServices.AdminService;
 import com.example.madrasdaapi.services.commons.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class AuthController {
     private final AuthenticationService authService;
     private final JwtService jwtService;
 
+    private final AdminService adminService;
     
     @PostMapping("/loginVendor")
     public ResponseEntity<JwtDTO> authenticateVendor(@RequestBody LoginDTO request) throws Exception {
@@ -40,5 +43,12 @@ public class AuthController {
     ) throws Exception {
         JwtDTO token = authService.validateOTP(otp, phone);
         return ResponseEntity.ok(token);
+    }
+    @PostMapping("/signupVendor")
+    public ResponseEntity<String> signUpVendor(
+            @RequestBody RegisterDTO registerDTO
+            ) {
+        adminService.saveSignUpRequest(registerDTO);
+        return ResponseEntity.ok("Signup Submitted");
     }
 }

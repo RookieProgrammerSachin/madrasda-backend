@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class RegisterDTO {
     private String name;
     private String email;
+    private String influencerCategory;
     private String password;
     private String imgUrl;
     private String companyName;

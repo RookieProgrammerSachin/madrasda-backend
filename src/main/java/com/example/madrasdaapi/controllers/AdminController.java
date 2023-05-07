@@ -4,6 +4,7 @@ import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
+import com.example.madrasdaapi.models.SignupRequests;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
@@ -13,6 +14,8 @@ import com.example.madrasdaapi.services.commons.PaymentService;
 import com.example.madrasdaapi.services.commons.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
