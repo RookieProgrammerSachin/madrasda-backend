@@ -37,29 +37,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final ShipmentRepository shipmentRepository;
     private final VendorRepository vendorRepository;
-    private final CustomerRepository customerRepository;
     private final CartItemRepository cartItemRepository;
     private final CancelRequestRepository cancelRequestRepository;
-    private final ProductRepository productRepository;
     private final TransactionMapper transactionMapper;
     private final ShipmentMapper shipmentMapper;
-    private final CustomerMapper customerMapper;
     private final RazorpayClient razorpayClient;
-    private final Gson gson;
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
     @Value("${razorpay.keySecret}")
@@ -78,7 +68,6 @@ public class TransactionService {
             transaction.setBillingIsShipping(true);
             transaction.getShippingAddress().setIsBillingUser(true);
         }
-        OrderResponse response = new OrderResponse();
         String shortLink = null;
         //Create payment option
         try {
@@ -105,9 +94,7 @@ public class TransactionService {
         customer.put("contact", transaction.getBillingUser().getPhone());
         customer.put("email", transaction.getBillingUser().getEmail());
         options.put("customer", customer);
-        JSONObject notify = new JSONObject();
-        PaymentLink paymentLink = razorpayClient.paymentLink.create(options);
-        return paymentLink;
+        return razorpayClient.paymentLink.create(options);
     }
 
 
@@ -154,7 +141,6 @@ public class TransactionService {
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
             shipment.setTransaction(transaction);
             transaction.setShipment(shipment);
-            transaction.setOrderTotal(new BigDecimal(order.getSubTotal()));
             shipmentRepository.save(shipment);
             cartItemRepository.deleteByCustomer_Id(transaction.getBillingUser().getId());
             vendorRepository.saveAll(vendors.values());
@@ -227,6 +213,7 @@ public class TransactionService {
         order.setShipping_charges(shippingCharges);
         order.setShippingIsBilling(transaction.getBillingIsShipping());
         order.setPaymentMethod("PREPAID");
+        transaction.setOrderTotal((transaction.getOrderTotal().multiply(new BigDecimal("0.05"))).add(new BigDecimal(shippingCharges)));
         order.setSubTotal(transaction.getOrderTotal().toString()); //with deduction
         order.setOrderItems(orderItems);
         return order;
@@ -273,14 +260,12 @@ public class TransactionService {
 
     private Double requestFreightCharges(String pincode, Float height, Float length, Float breadth, Float weight) throws IOException {
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" + "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length + "&delivery_postcode=" + pincode + "&cod=0").method("GET", null).addHeader("Content-Type", "application/json").addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
         Response response = okHttpClient.newCall(request).execute();
         ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(response.body().bytes(), ServiceableCourierData.class);
         Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
         List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
-        AvailableCourierCompany recommendedCompany;
         for (AvailableCourierCompany company : companies) {
             if (company.getCourierCompanyId().equals(courierId)) {
                 return company.getFreightCharge();
