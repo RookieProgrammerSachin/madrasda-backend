@@ -213,7 +213,7 @@ public class TransactionService {
         order.setShipping_charges(shippingCharges);
         order.setShippingIsBilling(transaction.getBillingIsShipping());
         order.setPaymentMethod("PREPAID");
-        transaction.setOrderTotal((transaction.getOrderTotal().multiply(new BigDecimal("0.05"))).add(new BigDecimal(shippingCharges)));
+        transaction.setOrderTotal((transaction.getOrderTotal().multiply(new BigDecimal("1.05"))).add(new BigDecimal(shippingCharges)));
         order.setSubTotal(transaction.getOrderTotal().toString()); //with deduction
         order.setOrderItems(orderItems);
         return order;
