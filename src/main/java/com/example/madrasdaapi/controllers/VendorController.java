@@ -45,6 +45,7 @@ public class VendorController {
                   .orElseThrow(() -> new RuntimeException("Vendor does not exist"));
           return vendorService.getVendorDetails(vendor);
      }
+
      @GetMapping("vendorDetails/{id}")
      public VendorDetails getVendorDetailsById(
              @PathVariable Long id) {
@@ -92,20 +93,28 @@ public class VendorController {
           paymentService.requestPayout(email);
 
      }
+
      @GetMapping("getProductsByVendor/{vendorId}")
      public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,
                                                  @RequestParam(defaultValue = "0") Integer pageNo,
                                                  @RequestParam(defaultValue = "10") Integer pageSize) {
           return productService.getAllProductsByVendor(vendorId, pageNo, pageSize);
      }
+
      @PutMapping("updatePassword")
-     public ResponseEntity<String> updateVendorPassword(@RequestParam String newPassword){
+     public ResponseEntity<String> updateVendorPassword(@RequestParam String newPassword) {
           adminService.updatePassword(newPassword);
           return ResponseEntity.ok("Password updated");
      }
+
      @PutMapping("updateImage")
-     public ResponseEntity<String> updateVendorImage(@RequestBody RegisterDTO imgUrl){
+     public ResponseEntity<String> updateVendorImage(@RequestBody RegisterDTO imgUrl) {
           vendorService.updateVendorImage(imgUrl.getImgUrl());
           return ResponseEntity.ok("Profile Pic Updated");
+     }
+
+     @PutMapping("updateVendorDetails")
+     public void updateVendorDetails(@RequestBody RegisterDTO vendorDetails) {
+          vendorService.updateVendorDetails(vendorDetails, AuthContext.getCurrentUser());
      }
 }
