@@ -1,13 +1,15 @@
 package com.example.madrasdaapi.controllers;
 
+import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
-import com.example.madrasdaapi.utils.ProcedureCaller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Tag(name = "Customer Resource Controller")
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class ClientController {
     private final VendorService vendorService;
     private final ProductService productService;
-    private final ProcedureCaller caller;
 
     @GetMapping("/allProducts")
     public Page<ProductDTO> getAllProducts(
@@ -48,5 +49,10 @@ public class ClientController {
             @RequestParam(defaultValue = "10") Integer pageSize
     ) {
         return productService.searchProducts(pageNo, pageSize, searchTerm);
+    }
+
+    @GetMapping("getAllVendors")
+    public List<VendorMenuItemDTO> getAllVendors() {
+        return vendorService.getAllEnabledVendors();
     }
 }

@@ -13,14 +13,11 @@ import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.Template;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
-import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
-import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.utils.ProcedureCaller;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -34,11 +31,8 @@ public class VendorService {
     private final VendorMapper vendorMapper;
     private final TemplateMapper templateMapper;
     private final ProcedureCaller caller;
-    private final ModelMapper modelMapper;
     private final VendorRepository vendorRepository;
     private final TemplateRepository templateRepository;
-    private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public VendorDetails getVendorDetails(User vendor) {
@@ -93,4 +87,12 @@ public class VendorService {
         vendor.setProfilePic(registerDTO.getImgUrl());
         vendorRepository.save(vendor);
     }
+
+    public List<VendorMenuItemDTO> getAllEnabledVendors() {
+        return vendorRepository.findByStatus(true)
+                .stream()
+                .map(vendorMapper::mapToMenuItemDTO)
+                .collect(Collectors.toList());
+    }
+
 }
