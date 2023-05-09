@@ -19,6 +19,7 @@ public class ProductDTO implements Serializable {
     private BigDecimal discount;
     private BigDecimal total;
     private Boolean publishStatus;
+    private boolean adminBan;
     private String description;
     private Long vendorId;
     private String vendorImg;
