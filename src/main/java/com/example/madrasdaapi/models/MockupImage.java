@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "mockup_images", schema = "madrasda")
-public class MockupImages {
+public class MockupImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

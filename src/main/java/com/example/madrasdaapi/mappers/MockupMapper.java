@@ -1,10 +1,11 @@
 package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupImageDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
 import com.example.madrasdaapi.models.Mockup;
+import com.example.madrasdaapi.models.MockupImage;
 import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Size;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,15 @@ public class MockupMapper {
     public MockupDTO mapToDTO(Mockup mockup) {
 
         MockupDTO mockupDTO = mapper.map(mockup, MockupDTO.class);
-
+        List<MockupImageDTO> imagesDTO = new ArrayList<>();
+        List<MockupImage> images = mockup.getImages();
+        for (MockupImage image : images) {
+            MockupImageDTO imageDTO = new MockupImageDTO();
+            imageDTO.setImage(image.getImage());
+            imageDTO.setColorId(image.getColor().getId());
+            imagesDTO.add(imageDTO);
+        }
+        mockupDTO.setImages(imagesDTO);
         return mockupDTO;
     }
 
@@ -38,6 +47,8 @@ public class MockupMapper {
             skus.add(mockupSku);
         }
         mockup.setSkuMapping(skus);
+
         return mockup;
     }
+
 }

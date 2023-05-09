@@ -1,12 +1,10 @@
 package com.example.madrasdaapi.services.AdminServices;
 
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupImageDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
 import com.example.madrasdaapi.mappers.MockupMapper;
-import com.example.madrasdaapi.models.Color;
-import com.example.madrasdaapi.models.Mockup;
-import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Size;
+import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.ColorRepository;
 import com.example.madrasdaapi.repositories.MockupRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -35,8 +34,10 @@ public class MockupService {
 
      public MockupDTO addMockup(@RequestBody MockupDTO mockupDTO) {
           List<MockupSkuDTO> skuDTOS = new ArrayList<>();
+          HashMap<Long, Color> colors = new HashMap<>();
           for(MockupSkuDTO skuMapping : mockupDTO.getSkuMapping()) {
                Color color = colorRepository.findById(skuMapping.getColor().getId()).orElseThrow();
+               colors.put(color.getId(), color);
                Size size = sizeRepository.findById(skuMapping.getSize().getId()).orElseThrow();
                skuMapping.setColor(color);
                skuMapping.setSize(size);
@@ -44,6 +45,13 @@ public class MockupService {
           }
           mockupDTO.setSkuMapping(skuDTOS);
           Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
+          for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
+               MockupImage image = new MockupImage();
+               image.setImage(image.getImage());
+               image.setColor(colors.get(imageDTO.getColorId()));
+               image.setMockup(detachedMockup);
+          }
+
           return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
      }
 

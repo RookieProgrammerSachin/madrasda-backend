@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,4 +49,6 @@ public class MockupDTO implements Serializable {
     private Integer hsn;
 
     private BigDecimal basePrice;
+
+    private List<MockupImageDTO> images = new ArrayList<>();
 }

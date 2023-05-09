@@ -45,8 +45,8 @@ public class Mockup {
 
     private String additionalInformation;
 
-    @OneToMany(mappedBy = "mockup")
-    private List<MockupImages> images = new ArrayList<>();
+    @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
+    private List<MockupImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
     private List<ProductSKUMapping> skuMapping = new ArrayList<>();
