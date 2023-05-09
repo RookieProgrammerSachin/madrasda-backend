@@ -3,6 +3,7 @@ package com.example.madrasdaapi.repositories;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.models.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,5 +38,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void toggleProductStatus(Long productId);
 
 
-
+    Page<Product> findByVendor_IdAndPublishStatus(Long vendorId, boolean publishStatus, Pageable pageable);
 }
