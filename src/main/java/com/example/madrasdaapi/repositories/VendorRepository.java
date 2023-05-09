@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
      @Procedure(name = "GET_SALES_ANALYSIS_BY_VENDOR_ID")
@@ -27,8 +28,13 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
      Vendor findByUser_Email(String email);
 
+     Optional<Vendor> getVendorByUser_Email(String email);
+
      @Query("select v.id from Vendor v where v.user.email = ?1")
      Long findIdByUser_Email(String email);
 
      List<Vendor> findAllByPayoutRequested(Boolean payout);
+
+     @Procedure("TOGGLE_VENDOR_ACCOUNT")
+     void toggleVendorAccount(Long vendorId);
 }

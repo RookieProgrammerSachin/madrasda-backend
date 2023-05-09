@@ -42,6 +42,7 @@ public class VendorMapper {
           vendorDTO.setCompanyName(vendor.getCompanyName());
           vendorDTO.setCompanyUrl(vendor.getCompanyUrl());
           vendorDTO.setGSTIN(vendor.getGSTIN());
+          vendorDTO.setStatus(vendor.getStatus());
           return vendorDTO;
      }
 

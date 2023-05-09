@@ -6,8 +6,10 @@ import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.models.User;
+import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.models.enums.Role;
 import com.example.madrasdaapi.repositories.UserRepository;
+import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.security.CustomUserDetailsService;
 import com.example.madrasdaapi.security.JwtService;
 import com.twilio.Twilio;
@@ -42,6 +44,7 @@ public class AuthenticationService {
     private String twilioAuthToken;
     @Value("${twilio.service.sid}")
     private String serviceSid;
+    private final VendorRepository vendorRepository;
 
     public JwtDTO authenticateAdmin(LoginDTO loginDTO) throws Exception {
         User admin = userRepository.findByEmail(loginDTO.getEmail())
@@ -57,9 +60,11 @@ public class AuthenticationService {
     }
 
     public JwtDTO authenticateVendor(LoginDTO loginDTO) throws Exception {
-        User vendor = userRepository.findByEmail(loginDTO.getEmail())
+        Vendor vendorAccount = vendorRepository.getVendorByUser_Email(loginDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor", "email", loginDTO.getEmail()));
+        User vendor = vendorAccount.getUser();
         if (!vendor.getRole().equals("ROLE_VENDOR")) throw new BadCredentialsException("Invalid Email or Password");
+        if(!vendorAccount.getStatus()) throw new APIException("Account Disabled", HttpStatus.CONFLICT);
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
                 (loginDTO.getPassword())));

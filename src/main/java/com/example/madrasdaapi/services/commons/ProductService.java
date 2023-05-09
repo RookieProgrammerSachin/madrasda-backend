@@ -3,26 +3,19 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.commons.NewProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
-import com.example.madrasdaapi.dto.commons.ProductLadderItem;
-import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
 import com.example.madrasdaapi.models.Product;
-import com.example.madrasdaapi.models.ProductSKUMapping;
-import com.example.madrasdaapi.models.Vendor;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
 import com.example.madrasdaapi.services.VendorServices.TemplateService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,22 +40,22 @@ public class ProductService {
      }
 
      public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findByVendor_IdAndPublishStatus(vendorId, true,  PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatus(vendorId, true, true, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
           return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> getByAudience(int pageNo, int pageSize, String audience) {
-          return productRepository.findAllByAudience(audience, PageRequest.of(pageNo, pageSize))
+          return productRepository.findAllByAudienceAndVendor_StatusAndPublishStatus(audience, true, true, PageRequest.of(pageNo, pageSize))
                   .map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> searchProducts(int pageNo, int pageSize, String searchTerm) {
-          return productRepository.findByNameOrAudienceOrMockup_name(
+          return productRepository.findByNameOrAudienceOrMockup_nameAndVendor_StatusAndPublishStatus(
                   searchTerm,
                   searchTerm,
                   searchTerm,
-                  PageRequest.of(pageNo, pageSize)
+                  true, true, PageRequest.of(pageNo, pageSize)
           ).map(productMapper::mapToDTO);
      }
      public ProductDTO getProductDetails(Long id) {
@@ -72,12 +65,12 @@ public class ProductService {
      }
 
      public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findByVendor_Id(vendorId,  PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatus(vendorId, true, true, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
 
      public Page<ProductDTO> getProductsByMockupId(Long mockupId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findAllByMockup_Id(mockupId, PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findAllByMockup_IdAndVendor_StatusAndPublishStatus(mockupId, true, true, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
 }

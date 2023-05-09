@@ -92,7 +92,7 @@ public class AdminService {
         if (vendorDTO.getGSTIN() != null) {
             vendor.setGSTIN(vendorDTO.getGSTIN());
         }
-        if(vendorDTO.getCategory() != null) {
+        if (vendorDTO.getCategory() != null) {
             vendor.setCategory(vendorDTO.getCategory());
         }
         return vendorMapper.mapToDTO(vendorRepository.save(vendor));
@@ -101,7 +101,7 @@ public class AdminService {
     public List<VendorMenuItemDTO> getPayoutRequests() {
         List<Vendor> vendorsList = vendorRepository.findAllByPayoutRequested(true);
         List<VendorMenuItemDTO> vendorMenuItemDTOS = new ArrayList<>();
-        for(Vendor v : vendorsList) {
+        for (Vendor v : vendorsList) {
             VendorMenuItemDTO vendorMenuItemDTO = vendorMapper.mapToMenuItemDTOWithPayout(v);
             PayoutRecord payoutRecord = payoutRepository.findByVendor_IdAndPaid(v.getId(), false).orElseThrow();
             vendorMenuItemDTO.setPayoutId(payoutRecord.getId());
@@ -110,29 +110,36 @@ public class AdminService {
         return vendorMenuItemDTOS;
     }
 
-    public void updatePassword(String newPassword){
+    public void updatePassword(String newPassword) {
         User user = userRepository.findByEmail(AuthContext.getCurrentUser()).orElseThrow();
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
     }
 
-    public void saveSignUpRequest(RegisterDTO newVendor){
+    public void saveSignUpRequest(RegisterDTO newVendor) {
         SignupRequests newRequest = new SignupRequests();
         mapper.map(newVendor, newRequest);
         signupRepository.save(newRequest);
     }
+
     public Page<SignupRequests> getAllSignupRequests(int pageNo, int pageSize) {
         return signupRepository.findAll(PageRequest.of(pageNo, pageSize));
     }
-    public void removeSignUpRequest(Long id){
+
+    public void removeSignUpRequest(Long id) {
         signupRepository.deleteById(id);
     }
-    public VendorDTO appproveVendorSignup(Long id, String password){
+
+    public VendorDTO appproveVendorSignup(Long id, String password) {
         RegisterDTO newVendor = new RegisterDTO();
         mapper.map(signupRepository.findById(id).get(), newVendor);
         newVendor.setPassword(password);
         VendorDTO vendor = saveOrUpdateVendor(newVendor);
         signupRepository.deleteById(id);
         return vendor;
+    }
+    @Transactional
+    public void toggleVendorAccount(Long vendorId) {
+        vendorRepository.toggleVendorAccount(vendorId);
     }
 }

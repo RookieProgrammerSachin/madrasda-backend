@@ -15,5 +15,6 @@ public class  VendorDTO implements Serializable {
      private String companyName;
      private String companyUrl;
      private String GSTIN;
+     private boolean status;
 
 }

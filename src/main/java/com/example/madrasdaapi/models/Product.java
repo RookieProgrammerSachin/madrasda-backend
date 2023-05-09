@@ -18,6 +18,7 @@ import java.util.List;
         @Index(name = "fk_product_vendor1_idx", columnList = "vendor_id"),
 
 })
+@Cacheable
 public class Product {
 
      @Id

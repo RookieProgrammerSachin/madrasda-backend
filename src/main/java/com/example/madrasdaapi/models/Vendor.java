@@ -83,6 +83,9 @@ public class Vendor {
      @Column(columnDefinition = "decimal(10,3) default '0.000'")
      private BigDecimal outstandingProfit = new BigDecimal(0L);
 
+     @Column(columnDefinition = "boolean default true")
+     private Boolean status = true;
+
      @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Design> designs = new ArrayList<>();
 
