@@ -13,40 +13,41 @@ import java.util.List;
 @Entity
 @Table(name = "mockups", schema = "spring-madrasda")
 public class Mockup {
-     @Id
-     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-     private String name;
+    private String name;
 
-     private String frontImage;
+    private String frontImage;
 
-     private String backImage;
+    private String backImage;
 
-     private String productType;
+    private String productType;
 
-     private String category;
+    private String category;
 
-     private String model;
+    private String model;
 
-     private Float height;
+    private Float height;
 
-     private Float breadth;
+    private Float breadth;
 
-     private Float length;
+    private Float length;
 
-     private Float weight;
+    private Float weight;
 
-     private Integer hsn;
+    private Integer hsn;
 
-     private BigDecimal tax;
+    private BigDecimal tax;
 
-     private BigDecimal basePrice;
+    private BigDecimal basePrice;
 
-     private String additionalInformation;
+    private String additionalInformation;
 
+    @OneToMany(mappedBy = "mockup")
+    private List<MockupImages> images = new ArrayList<>();
 
-
-     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
-     private List<ProductSKUMapping> skuMapping = new ArrayList<>();
+    @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
+    private List<ProductSKUMapping> skuMapping = new ArrayList<>();
 }

@@ -53,6 +53,9 @@ public class Product {
 
      private Boolean publishStatus;
 
+     @Column(columnDefinition = "boolean default false")
+     private boolean adminBan;
+
      @Column(length = 1000)
      private String frontDesignUrl;
 

@@ -25,50 +25,62 @@ import java.util.List;
 @CrossOrigin
 @RequiredArgsConstructor
 public class AdminController {
-     private final VendorService vendorService;
-     private final AdminService adminService;
-     private final MockupService mockupService;
-     private final PaymentService paymentService;
-     private final TransactionService transactionService;
-     private final UserRepository userRepository;
-     private final VendorRepository vendorRepository;
+    private final VendorService vendorService;
+    private final AdminService adminService;
+    private final MockupService mockupService;
+    private final PaymentService paymentService;
+    private final TransactionService transactionService;
+    private final UserRepository userRepository;
+    private final VendorRepository vendorRepository;
 
-     @GetMapping("getVendors")
-     public List<VendorMenuItemDTO> getVendorList() {
+    @GetMapping("getVendors")
+    public List<VendorMenuItemDTO> getVendorList() {
 
-          return vendorService.getVendors();
-     }
+        return vendorService.getVendors();
+    }
 
-     @PostMapping("addVendor")
-     public VendorDTO addVendor(@RequestBody RegisterDTO vendorDTO) {
-          if (userRepository.existsByEmail(vendorDTO.getEmail())) throw new RuntimeException("Vendor already exists");
-          return adminService.saveOrUpdateVendor(vendorDTO);
-     }
+    @PostMapping("addVendor")
+    public VendorDTO addVendor(@RequestBody RegisterDTO vendorDTO) {
+        if (userRepository.existsByEmail(vendorDTO.getEmail())) throw new RuntimeException("Vendor already exists");
+        return adminService.saveOrUpdateVendor(vendorDTO);
+    }
 
-     @DeleteMapping("deleteVendor/{id}")
-     public void deleteVendor(@PathVariable Long id) {
-          if (!vendorRepository.existsById(id)) throw new ResourceNotFoundException("Vendor", "id", id.toString());
-          adminService.deleteVendor(id);
-     }
+    @DeleteMapping("deleteVendor/{id}")
+    public void deleteVendor(@PathVariable Long id) {
+        if (!vendorRepository.existsById(id)) throw new ResourceNotFoundException("Vendor", "id", id.toString());
+        adminService.deleteVendor(id);
+    }
 
-     @GetMapping("getPayoutRequestedVendors")
-     public List<VendorMenuItemDTO> getVendorPayouts() {
-          return adminService.getPayoutRequests();
-     }
+    @GetMapping("getPayoutRequestedVendors")
+    public List<VendorMenuItemDTO> getVendorPayouts() {
+        return adminService.getPayoutRequests();
+    }
 
-     @PostMapping("completePayout/{id}")
-     public void togglePayout(@PathVariable Long id) {
-          paymentService.togglePayout(id);
-     }
+    @PostMapping("completePayout/{id}")
+    public void togglePayout(@PathVariable Long id) {
+        paymentService.togglePayout(id);
+    }
 
-     @DeleteMapping("cancelOrder/{transactionId}")
-     public void cancelOrder(@PathVariable Long transactionId) throws IOException {
-          transactionService.resolveCancelOrder(transactionId);
-     }
+    @DeleteMapping("cancelOrder/{transactionId}")
+    public void cancelOrder(@PathVariable Long transactionId) throws IOException {
+        transactionService.resolveCancelOrder(transactionId);
+    }
 
-     @PutMapping("toggleVendor/{vendorId}")
-     public void disableVendor(@PathVariable Long vendorId) {
-          adminService.toggleVendorAccount(vendorId);
-     }
+    @PutMapping("toggleVendor/{vendorId}")
+    public void disableVendor(@PathVariable Long vendorId) {
+        adminService.toggleVendorAccount(vendorId);
+    }
+
+    @PutMapping("toggleProductState/{productId}")
+    public void toggleProduct(@PathVariable Long productId) {
+        adminService.toggleProduct(productId);
+    }
+
+    @PutMapping("deleteVendorPicture/{vendorId}")
+    public void deleteVendorProfilePicture(@PathVariable Long vendorId) {
+        adminService.deleteVendorProfilePicture(vendorId);
+    }
+
+
 }
 

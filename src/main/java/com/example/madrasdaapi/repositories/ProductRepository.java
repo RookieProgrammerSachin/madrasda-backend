@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.repositories;
 
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.models.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +14,11 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
      @Transactional
      @Modifying
-     @Query(value = "update product p set p.publish_status = p.publish_status XOR true where p.id = ?1 AND p.vendor_id = ?2" ,nativeQuery = true)
-     void updatePublishStatusByIdAAndVendor_Id(Long id, Long vendorId);
+     @Query(value = "update product p set p.publish_status = p.publish_status XOR true where p.id = ?1 AND p.vendor_id = ?2" +
+             " AND IF(p.admin_ban, 1, 0) = 0", nativeQuery = true)
+     void updatePublishStatusByIdAndVendorId(Long id, Long vendorId) throws Exception;
 
-     Page<Product> findAllByMockup_IdAndVendor_StatusAndPublishStatus(Long mockupId,boolean vendorStatus, boolean publishStatus, Pageable pageable);
+    Page<Product> findAllByMockup_IdAndVendor_StatusAndPublishStatus(Long mockupId,boolean vendorStatus, boolean publishStatus, Pageable pageable);
 
      Page<Product> findByVendor_Id(Long vendorId, Pageable pageable);
 
@@ -29,5 +31,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByVendor_IdAndVendor_StatusAndPublishStatus(Long vendorId, boolean vendorStatus, boolean publishStatus, Pageable pageable);
 
     List<Product> deleteByAudience(String fanHouse);
+
+    @Modifying
+    @Query("UPDATE Product p set p.adminBan = (NOT p.adminBan), p.publishStatus = false where p.id = :productId")
+    void toggleProductStatus(Long productId);
+
+
 
 }

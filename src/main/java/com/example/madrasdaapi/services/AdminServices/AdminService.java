@@ -9,10 +9,7 @@ import com.example.madrasdaapi.models.PayoutRecord;
 import com.example.madrasdaapi.models.SignupRequests;
 import com.example.madrasdaapi.models.User;
 import com.example.madrasdaapi.models.Vendor;
-import com.example.madrasdaapi.repositories.PayoutRepository;
-import com.example.madrasdaapi.repositories.SignupRepository;
-import com.example.madrasdaapi.repositories.UserRepository;
-import com.example.madrasdaapi.repositories.VendorRepository;
+import com.example.madrasdaapi.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -35,6 +32,7 @@ public class AdminService {
     private final PasswordEncoder encoder;
     private final VendorMapper vendorMapper;
     private final ModelMapper mapper;
+    private final ProductRepository productRepository;
 
     @Transactional
     public VendorDTO saveOrUpdateVendor(RegisterDTO registerDTO) {
@@ -138,8 +136,20 @@ public class AdminService {
         signupRepository.deleteById(id);
         return vendor;
     }
+
     @Transactional
     public void toggleVendorAccount(Long vendorId) {
         vendorRepository.toggleVendorAccount(vendorId);
     }
+
+    @Transactional
+    public void toggleProduct(Long productId) {
+        productRepository.toggleProductStatus(productId);
+    }
+
+    @Transactional
+    public void deleteVendorProfilePicture(Long vendorId) {
+        vendorRepository.deleteVendorProfilePicture(vendorId);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.madrasdaapi.repositories;
 import com.example.madrasdaapi.dto.commons.SalesAnalysis;
 import com.example.madrasdaapi.models.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +38,8 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
      @Procedure("TOGGLE_VENDOR_ACCOUNT")
      void toggleVendorAccount(Long vendorId);
+
+     @Modifying
+     @Query("UPDATE Vendor v SET v.profilePic = NULL WHERE v.id = :vendorId")
+     void deleteVendorProfilePicture(Long vendorId);
 }
