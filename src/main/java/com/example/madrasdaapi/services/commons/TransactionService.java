@@ -22,6 +22,7 @@ import com.example.madrasdaapi.dto.ShiprocketModels.ShipRocketOrderItem;
 import com.example.madrasdaapi.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -260,10 +261,18 @@ public class TransactionService {
 
     private Double requestFreightCharges(String pincode, Float height, Float length, Float breadth, Float weight) throws IOException {
         MediaType mediaType = MediaType.parse("application/json");
-        Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" + "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length + "&delivery_postcode=" + pincode + "&cod=0").method("GET", null).addHeader("Content-Type", "application/json").addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
+        Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" +
+                "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length +
+                "&delivery_postcode=" + pincode + "&cod=0")
+                .method("GET", null).addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
 
         Response response = okHttpClient.newCall(request).execute();
-        ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(response.body().bytes(), ServiceableCourierData.class);
+        String json = response.body().string();
+        JsonObject data = new Gson().fromJson(json, JsonObject.class);
+        Integer code = data.get("status").getAsInt();
+        if(code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.CONFLICT);
+        ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
         Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
         List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
         for (AvailableCourierCompany company : companies) {
