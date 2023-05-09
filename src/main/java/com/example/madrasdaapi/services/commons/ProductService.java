@@ -48,6 +48,10 @@ public class ProductService {
           Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatus(vendorId, true, true, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
+     public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
+          Page<Product> products = productRepository.findByVendor_Id(vendorId, PageRequest.of(pageNo, pageSize));
+          return products.map(productMapper::mapToDTO);
+     }
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
           return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
@@ -69,10 +73,7 @@ public class ProductService {
           ));
      }
 
-     public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findByVendor_IdAndPublishStatus(vendorId, true, PageRequest.of(pageNo, pageSize));
-          return products.map(productMapper::mapToDTO);
-     }
+
 
      public Page<ProductDTO> getProductsByMockupId(Long mockupId, Integer pageNo, Integer pageSize) {
           Page<Product> products = productRepository.findAllByMockup_IdAndVendor_StatusAndPublishStatus(mockupId, true, true, PageRequest.of(pageNo, pageSize));
