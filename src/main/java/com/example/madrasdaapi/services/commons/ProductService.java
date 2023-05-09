@@ -29,12 +29,10 @@ public class ProductService {
 
      public void togglePublishState(Long productId) {
           Long vendorId = vendorRepository.findIdByUser_Email(AuthContext.getCurrentUser());
-          try {
-               productRepository.updatePublishStatusByIdAndVendorId(productId, vendorId);
-          }
-          catch(Exception e){
+          int result = productRepository.updatePublishStatusByIdAndVendorId(productId, vendorId);
+          if( result != 1)
                throw new APIException("Admin Ban Present", HttpStatus.CONFLICT);
-          }
+
      }
 
      public ProductDTO createProduct(NewProductDTO newProduct) {
