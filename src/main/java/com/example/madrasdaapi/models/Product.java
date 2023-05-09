@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "product",schema = "spring-madrasda", indexes = {
+@Table(name = "product",schema = "madrasda", indexes = {
         @Index(name = "fk_product_vendor1_idx", columnList = "vendor_id"),
 
 })

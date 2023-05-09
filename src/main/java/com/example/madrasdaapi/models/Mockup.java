@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "mockups", schema = "spring-madrasda")
+@Table(name = "mockups", schema = "madrasda")
 public class Mockup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
