@@ -50,7 +50,7 @@ public class CartService {
     public void addToCart(String phone, ProductDTO productDTO) {
         User customer = userRepository.findByPhone(phone)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "phone", phone));
-        Optional<CartItem> item = cartItemRepository.findByProduct_IdAndSku_Sku(productDTO.getId(), productDTO.getColors().get(0).getSizes().get(0).getSku());
+        Optional<CartItem> item = cartItemRepository.findByCustomer_PhoneAndProduct_IdAndSku_Sku(phone, productDTO.getId(), productDTO.getColors().get(0).getSizes().get(0).getSku());
 
         CartItem cartItem;
         if (item.isPresent()) {
