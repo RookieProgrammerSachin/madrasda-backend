@@ -46,7 +46,7 @@ public class MockupService {
           List<MockupImage> imageList = new ArrayList<>();
           for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
                MockupImage image = new MockupImage();
-               image.setImage(image.getImage());
+               image.setImage(imageDTO.getImage());
                image.setColor(colorRepository.findById(imageDTO.getColorId()).get());
                image.setMockup(detachedMockup);
                imageList.add(image);
