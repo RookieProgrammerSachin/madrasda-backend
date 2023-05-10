@@ -5,10 +5,7 @@ import com.example.madrasdaapi.dto.VendorDTO.MockupImageDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
 import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.models.*;
-import com.example.madrasdaapi.repositories.ColorRepository;
-import com.example.madrasdaapi.repositories.MockupRepository;
-import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
-import com.example.madrasdaapi.repositories.SizeRepository;
+import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,6 +26,7 @@ public class MockupService {
      private final ColorRepository colorRepository;
      private final SizeRepository sizeRepository;
      private final ProductSKUMappingRepository productSKUMappingRepository;
+     private final MockupImageRepository mockupImageRepository;
      private final ModelMapper mapper;
 
 
@@ -45,13 +43,15 @@ public class MockupService {
           }
           mockupDTO.setSkuMapping(skuDTOS);
           Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
+          List<MockupImage> imageList = new ArrayList<>();
           for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
                MockupImage image = new MockupImage();
                image.setImage(image.getImage());
-               image.setColor(colors.get(imageDTO.getColorId()));
+               image.setColor(colorRepository.findById(imageDTO.getColorId()).get());
                image.setMockup(detachedMockup);
+               imageList.add(image);
           }
-
+          detachedMockup.setImages(imageList);
           return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
      }
 
