@@ -39,6 +39,7 @@ public class ProductService {
           Product product = productMapper.mapToEntity(newProduct);
 
           product.setPublishStatus(false);
+          product.setAdminBan(false);
           return productMapper.mapToDTO(productRepository.save(product));
      }
 

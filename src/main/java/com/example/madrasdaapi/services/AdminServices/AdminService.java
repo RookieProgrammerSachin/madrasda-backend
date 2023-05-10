@@ -54,6 +54,7 @@ public class AdminService {
 //          return vendorMapper.mapToDTO(newUser.getVendor());
     }
 
+    @Transactional
     public void deleteVendor(Long id) {
         vendorRepository.deleteById(id);
     }
