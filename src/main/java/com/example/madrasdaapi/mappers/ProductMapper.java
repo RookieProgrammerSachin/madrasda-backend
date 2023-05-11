@@ -2,6 +2,7 @@ package com.example.madrasdaapi.mappers;
 
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
+import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.dto.commons.*;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.models.*;
@@ -11,9 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -98,5 +97,43 @@ public class ProductMapper {
         dto.setColor(productSKUMapping.getColor());
         dto.setMockup(mapper.map(productSKUMapping.getMockup(), MockupDTO.class));
         return dto;
+    }
+
+    public NewProductDTO mapToNewProductDTO(Product product) {
+        NewProductDTO dto = new NewProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setAudience(product.getAudience());
+        dto.setDescription(product.getDescription());
+        dto.setBasePrice(product.getBasePrice().floatValue());
+        dto.setDiscount(product.getDiscount().floatValue());
+        dto.setTotal(product.getTotal().floatValue());
+        dto.setProfit(product.getProfit().floatValue());
+        dto.setTax(product.getTax().floatValue());
+        dto.setPublishStatus(product.getPublishStatus());
+        VendorMenuItemDTO vendorDTO = new VendorMenuItemDTO();
+        vendorDTO.setId(product.getVendor().getId());
+        dto.setVendor(vendorDTO);
+        dto.setFrontDesignUrl(product.getFrontDesignUrl());
+        dto.setFrontDesignPlacement(product.getFrontDesignPlacement());
+        dto.setBackDesignUrl(product.getBackDesignUrl());
+        dto.setBackDesignPlacement(product.getBackDesignPlacement());
+        dto.setMockupId(product.getMockup().getId());
+        Set<Long> colorIds = new HashSet<>();
+        for (ProductSKUMapping sku : product.getSkuMappings()) {
+            colorIds.add(sku.getColor().getId());
+        }
+        dto.setColors(colorIds.stream().toList());
+        List<ProductImageDTO> images = new ArrayList<>();
+        for (ProductImage image : product.getProductImages()) {
+            ProductImageDTO imageDTO = new ProductImageDTO();
+            imageDTO.setId(image.getId());
+            imageDTO.setColor(image.getColor().getId());
+            imageDTO.setImageUrl(image.getImgUrl());
+            images.add(imageDTO);
+        }
+        dto.setProductImages(images);
+        return dto;
+
     }
 }

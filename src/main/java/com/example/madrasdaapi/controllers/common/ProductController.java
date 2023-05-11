@@ -34,16 +34,19 @@ public class ProductController {
           return productService.createProduct(productDTO);
      }
      @GetMapping("getProductDetails/{prodId}")
-     public ProductDTO getProductDetails(
-             @PathVariable Long prodId
-     ) {
+     public ProductDTO getProductDetails(@PathVariable Long prodId ) {
           return productService.getProductDetails(prodId);
      }
 
+     @GetMapping("getProductTemplate/{productId}")
+     public NewProductDTO getProductTemplate(@PathVariable Long productId) {
+          return productService.getProductTemplate(productId);
+     }
      @GetMapping("getProductsByVendor/{vendorId}")
      public Page<ProductDTO> getProductsByVendor(@PathVariable Long vendorId,
-                                                  @RequestParam(defaultValue = "0") Integer pageNo,
+                                                 @RequestParam(defaultValue = "0") Integer pageNo,
                                                  @RequestParam(defaultValue = "10") Integer pageSize) {
+
           return productService.getProductsByVendor(vendorId, pageNo, pageSize);
      }
 
