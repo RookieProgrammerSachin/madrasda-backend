@@ -3,6 +3,7 @@ package com.example.madrasdaapi.services.AdminServices;
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupImageDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupSkuDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -77,6 +79,12 @@ public class MockupService {
      }
 
      public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
-          return mockupRepository.findAll(PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
+          return mockupRepository.findByDisabled(false, PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
+     }
+
+     public void disableMockup(Long id) {
+          int n = mockupRepository.updateDisabledById(id);
+          if(n != 1) throw new APIException("Mockup not found", HttpStatus.NOT_FOUND);
+
      }
 }

@@ -2,8 +2,10 @@ package com.example.madrasdaapi.services.AdminServices;
 
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
+import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.PayoutRecord;
 import com.example.madrasdaapi.models.SignupRequests;
@@ -33,6 +35,8 @@ public class AdminService {
     private final VendorMapper vendorMapper;
     private final ModelMapper mapper;
     private final ProductRepository productRepository;
+    private final MockupRepository mockupRepository;
+    private final MockupMapper mockupMapper;
 
     @Transactional
     public VendorDTO saveOrUpdateVendor(RegisterDTO registerDTO) {
@@ -153,4 +157,7 @@ public class AdminService {
         vendorRepository.deleteVendorProfilePicture(vendorId);
     }
 
+    public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
+        return mockupRepository.findAll(PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
+    }
 }

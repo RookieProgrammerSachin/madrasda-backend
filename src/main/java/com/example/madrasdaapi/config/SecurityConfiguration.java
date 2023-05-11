@@ -39,7 +39,6 @@ public class SecurityConfiguration {
                   .disable()
                   .authorizeHttpRequests(authorizeRequests ->
                           authorizeRequests
-                                  .requestMatchers("/api/**").permitAll()
                                   .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                   .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
                                   .requestMatchers("/api/templates/**").hasAnyRole("VENDOR", "ADMIN")

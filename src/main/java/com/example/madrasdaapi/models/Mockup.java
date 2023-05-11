@@ -45,6 +45,9 @@ public class Mockup {
 
     private String additionalInformation;
 
+    @Column(columnDefinition = "bit default false")
+    private Boolean disabled = false;
+
     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
     private List<MockupImage> images = new ArrayList<>();
 

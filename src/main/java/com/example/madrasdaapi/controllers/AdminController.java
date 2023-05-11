@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
@@ -50,7 +51,8 @@ public class AdminController {
 
     @DeleteMapping("deleteVendor/{id}")
     public void deleteVendor(@PathVariable Long id) {
-        if (!vendorRepository.existsById(id)) throw new ResourceNotFoundException("Vendor", "id", id.toString());
+        if (!vendorRepository.existsById(id))
+            throw new ResourceNotFoundException("Vendor", "id", id.toString());
         adminService.deleteVendor(id);
     }
 
@@ -83,20 +85,33 @@ public class AdminController {
     public void deleteVendorProfilePicture(@PathVariable Long vendorId) {
         adminService.deleteVendorProfilePicture(vendorId);
     }
+
     @GetMapping("getAllSignups")
     public Page<SignupRequests> getAllRequests(@RequestParam(defaultValue = "0") Integer pageNo,
-                                               @RequestParam(defaultValue = "10") Integer pageSize){
+                                               @RequestParam(defaultValue = "10") Integer pageSize) {
         return adminService.getAllSignupRequests(pageNo, pageSize);
     }
+
     @DeleteMapping("removeSignUp/{id}")
-    public ResponseEntity<String> removeSignupRequest(@PathVariable Long id){
+    public ResponseEntity<String> removeSignupRequest(@PathVariable Long id) {
         adminService.removeSignUpRequest(id);
         return ResponseEntity.ok("Request Removed");
     }
+
     @PostMapping("approveSignup/{id}")
-    public VendorDTO approveSignup(@PathVariable Long id, @RequestBody RegisterDTO registerDTO){
+    public VendorDTO approveSignup(@PathVariable Long id, @RequestBody RegisterDTO registerDTO) {
         return adminService.appproveVendorSignup(id, registerDTO.getPassword());
     }
 
+    @GetMapping("getAllMockups")
+    public Page<MockupDTO> getAllMockups(@RequestParam(defaultValue = "0") int pageNo,
+                                         @RequestParam(defaultValue = "100") int pageSize) {
+
+        return adminService.getAllMockups(pageNo, pageSize);
+    }
+    @PutMapping("toggleMockup/{id}")
+    public void disableMockup(@PathVariable Long id) {
+        mockupService.disableMockup(id);
+    }
 }
 

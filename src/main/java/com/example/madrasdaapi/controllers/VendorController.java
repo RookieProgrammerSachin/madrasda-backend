@@ -117,4 +117,5 @@ public class VendorController {
      public void updateVendorDetails(@RequestBody RegisterDTO vendorDetails) {
           vendorService.updateVendorDetails(vendorDetails, AuthContext.getCurrentUser());
      }
+
 }

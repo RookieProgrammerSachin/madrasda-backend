@@ -50,5 +50,7 @@ public class MockupDTO implements Serializable {
 
     private BigDecimal basePrice;
 
+    private Boolean disabled;
+
     private List<MockupImageDTO> images = new ArrayList<>();
 }
