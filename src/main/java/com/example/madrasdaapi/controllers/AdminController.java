@@ -5,6 +5,7 @@ import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
+import com.example.madrasdaapi.models.Mockup;
 import com.example.madrasdaapi.models.SignupRequests;
 import com.example.madrasdaapi.repositories.UserRepository;
 import com.example.madrasdaapi.repositories.VendorRepository;
@@ -109,9 +110,15 @@ public class AdminController {
 
         return adminService.getAllMockups(pageNo, pageSize);
     }
+
     @PutMapping("toggleMockup/{id}")
     public void disableMockup(@PathVariable Long id) {
         mockupService.disableMockup(id);
+    }
+
+    @PutMapping("updateMockup")
+    public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
+        return mockupService.updateMockup(mockupDTO);
     }
 }
 

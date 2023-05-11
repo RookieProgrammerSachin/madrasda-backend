@@ -23,39 +23,39 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class MockupService {
-     private final MockupMapper mockupMapper;
-     private final MockupRepository mockupRepository;
-     private final ColorRepository colorRepository;
-     private final SizeRepository sizeRepository;
-     private final ProductSKUMappingRepository productSKUMappingRepository;
-     private final MockupImageRepository mockupImageRepository;
-     private final ModelMapper mapper;
+    private final MockupMapper mockupMapper;
+    private final MockupRepository mockupRepository;
+    private final ColorRepository colorRepository;
+    private final SizeRepository sizeRepository;
+    private final ProductSKUMappingRepository productSKUMappingRepository;
+    private final MockupImageRepository mockupImageRepository;
+    private final ModelMapper mapper;
 
 
-     public MockupDTO addMockup(@RequestBody MockupDTO mockupDTO) {
-          List<MockupSkuDTO> skuDTOS = new ArrayList<>();
-          HashMap<Long, Color> colors = new HashMap<>();
-          for(MockupSkuDTO skuMapping : mockupDTO.getSkuMapping()) {
-               Color color = colorRepository.findById(skuMapping.getColor().getId()).orElseThrow();
-               colors.put(color.getId(), color);
-               Size size = sizeRepository.findById(skuMapping.getSize().getId()).orElseThrow();
-               skuMapping.setColor(color);
-               skuMapping.setSize(size);
-               skuDTOS.add(skuMapping);
-          }
-          mockupDTO.setSkuMapping(skuDTOS);
-          Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
-          List<MockupImage> imageList = new ArrayList<>();
-          for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
-               MockupImage image = new MockupImage();
-               image.setImage(imageDTO.getImage());
-               image.setColor(colorRepository.findById(imageDTO.getColorId()).get());
-               image.setMockup(detachedMockup);
-               imageList.add(image);
-          }
-          detachedMockup.setImages(imageList);
-          return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
-     }
+    public MockupDTO addMockup(@RequestBody MockupDTO mockupDTO) {
+        List<MockupSkuDTO> skuDTOS = new ArrayList<>();
+        HashMap<Long, Color> colors = new HashMap<>();
+        for (MockupSkuDTO skuMapping : mockupDTO.getSkuMapping()) {
+            Color color = colorRepository.findById(skuMapping.getColor().getId()).orElseThrow();
+            colors.put(color.getId(), color);
+            Size size = sizeRepository.findById(skuMapping.getSize().getId()).orElseThrow();
+            skuMapping.setColor(color);
+            skuMapping.setSize(size);
+            skuDTOS.add(skuMapping);
+        }
+        mockupDTO.setSkuMapping(skuDTOS);
+        Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
+        List<MockupImage> imageList = new ArrayList<>();
+        for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
+            MockupImage image = new MockupImage();
+            image.setImage(imageDTO.getImage());
+            image.setColor(colorRepository.findById(imageDTO.getColorId()).get());
+            image.setMockup(detachedMockup);
+            imageList.add(image);
+        }
+        detachedMockup.setImages(imageList);
+        return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
+    }
 
      /*public MockupDTO updateMockup(MockupDTO mockupDTO) {
           Mockup detachedMockup = mockupRepository.findById(mockupDTO.getId()).get();
@@ -66,25 +66,48 @@ public class MockupService {
           return mockupMapper.mapToDTO(mockupRepository.saveOrUpdate(detachedMockup));
      }*/
 
-     public void deleteMockup(Long id) {
-          Mockup detachedMockup = mockupRepository.findById(id).orElseThrow();
-          for(ProductSKUMapping sku : detachedMockup.getSkuMapping()){
-               productSKUMappingRepository.deleteById(sku.getId());
-          }
-          mockupRepository.deleteById(id);
-     }
+    public void deleteMockup(Long id) {
+        Mockup detachedMockup = mockupRepository.findById(id).orElseThrow();
+        for (ProductSKUMapping sku : detachedMockup.getSkuMapping()) {
+            productSKUMappingRepository.deleteById(sku.getId());
+        }
+        mockupRepository.deleteById(id);
+    }
 
-     public MockupDTO getMockupById(Long id) {
-          return mockupMapper.mapToDTO(mockupRepository.findById(id).get());
-     }
+    public MockupDTO getMockupById(Long id) {
+        return mockupMapper.mapToDTO(mockupRepository.findById(id).get());
+    }
 
-     public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
-          return mockupRepository.findByDisabled(false, PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
-     }
+    public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
+        return mockupRepository.findByDisabled(false, PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
+    }
 
-     public void disableMockup(Long id) {
-          int n = mockupRepository.updateDisabledById(id);
-          if(n != 1) throw new APIException("Mockup not found", HttpStatus.NOT_FOUND);
+    public void disableMockup(Long id) {
+        int n = mockupRepository.updateDisabledById(id);
+        if (n != 1) throw new APIException("Mockup not found", HttpStatus.NOT_FOUND);
 
-     }
+    }
+
+    public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
+        // Retrieve the existing mockup from the database.
+         Mockup detachedMockup = mockupMapper.mapToEntity(mockupDTO);
+         // Remove all existing images associated with the mockup.
+        // Add the new images to the mockup.
+         mockupImageRepository.deleteByMockup_Id(mockupDTO.getId());
+        List<MockupImage> imageList = new ArrayList<>();
+        for (MockupImageDTO imageDTO : mockupDTO.getImages()) {
+            MockupImage image = new MockupImage();
+            image.setImage(imageDTO.getImage());
+            image.setColor(colorRepository.findById(imageDTO.getColorId()).get());
+            image.setMockup(detachedMockup);
+            imageList.add(image);
+        }
+         detachedMockup.setImages(imageList);
+
+        // Save the modified mockup to the database.
+        Mockup updatedMockup = mockupRepository.save(detachedMockup);
+        return mockupMapper.mapToDTO(updatedMockup);
+    }
+
 }
+

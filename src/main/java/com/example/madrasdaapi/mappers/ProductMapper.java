@@ -54,10 +54,14 @@ public class ProductMapper {
         mapper.getConfiguration()
                 .setSkipNullEnabled(true);
         Product product = new Product();
-        if (detachedProduct.getId() != null)
+        if (detachedProduct.getId() != null) {
             product = productRepository.findById(detachedProduct.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", detachedProduct.getId().toString()));
+            long n = productImageRepository.deleteAllByProduct_Id(detachedProduct.getId());
 
+            product.getProductImages().clear();
+
+        }
         Vendor vendor = vendorRepository.findByUser_Email(AuthContext.getCurrentUser());
         List<ProductSKUMapping> skus = productSKUMappingRepository.findByMockup_IdAndColor_IdIn(
                 detachedProduct.getMockupId(),

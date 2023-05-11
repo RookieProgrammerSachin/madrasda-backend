@@ -48,7 +48,7 @@ public class Mockup {
     @Column(columnDefinition = "bit default false")
     private Boolean disabled = false;
 
-    @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MockupImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL)

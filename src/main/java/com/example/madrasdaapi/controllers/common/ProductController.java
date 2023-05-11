@@ -5,9 +5,12 @@ import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.ProductLadderItem;
 import com.example.madrasdaapi.dto.commons.ProductSKUMappingDTO;
 import com.example.madrasdaapi.mappers.ProductMapper;
+import com.example.madrasdaapi.repositories.ProductImageRepository;
+import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.services.commons.ProductService;
 import com.example.madrasdaapi.utils.ProcedureCaller;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +27,9 @@ public class ProductController {
      private final ProductMapper productMapper;
      private final ProcedureCaller caller;
      private final ProductSKUMappingRepository productSKUMappingRepository;
+     private final ProductRepository productRepository;
+     private final ProductImageRepository productImageRepository;
+
      @PutMapping("togglePublishState/{productId}")
      public void togglePublishState(@PathVariable Long productId) {
           productService.togglePublishState(productId);
@@ -31,6 +37,11 @@ public class ProductController {
 
      @PostMapping("createProduct")
      public ProductDTO createProduct(@RequestBody NewProductDTO productDTO) {
+          return productService.createProduct(productDTO);
+     }
+     @Transactional
+     @PutMapping("updateProduct")
+     public ProductDTO updateProduct(@RequestBody NewProductDTO productDTO) {
           return productService.createProduct(productDTO);
      }
      @GetMapping("getProductDetails/{prodId}")

@@ -36,8 +36,14 @@ public class SecurityConfiguration {
      public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
           http.authorizeHttpRequests(authorizeRequests ->
                           authorizeRequests
-                                  .requestMatchers(EndpointRequest.to("info", "health", "refresh")).permitAll()
-                                  .anyRequest().permitAll()
+                                  .requestMatchers("/api/**").permitAll()
+                          .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                          .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
+                          .requestMatchers("/api/templates/**").hasAnyRole("VENDOR", "ADMIN")
+                          .requestMatchers("/api/feedback/**").hasAnyRole("VENDOR", "ADMIN")
+                          .requestMatchers("/api/mockup/**").hasAnyRole("VENDOR", "ADMIN")
+                          .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN", "VENDOR")
+                          .anyRequest().permitAll()
                   )
                   .csrf().disable()
                   .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
