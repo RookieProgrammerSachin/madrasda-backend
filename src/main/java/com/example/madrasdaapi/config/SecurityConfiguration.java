@@ -34,23 +34,15 @@ public class SecurityConfiguration {
      @Profile("prod")
      @Bean
      public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-          http
-                  .csrf()
-                  .disable()
-                  .authorizeHttpRequests(authorizeRequests ->
+          http.authorizeHttpRequests(authorizeRequests ->
                           authorizeRequests
-                                  .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                  .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
-                                  .requestMatchers("/api/templates/**").hasAnyRole("VENDOR", "ADMIN")
-                                  .requestMatchers("/api/feedback/**").hasAnyRole("VENDOR", "ADMIN")
-                                  .requestMatchers("/api/mockup/**").hasAnyRole("VENDOR", "ADMIN")
-                                  .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN", "VENDOR")
+                                  .requestMatchers(EndpointRequest.to("info", "health", "refresh")).permitAll()
                                   .anyRequest().permitAll()
                   )
+                  .csrf().disable()
                   .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                   .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
           return http.build();
      }
 
