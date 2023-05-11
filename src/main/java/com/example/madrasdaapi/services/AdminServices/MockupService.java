@@ -54,6 +54,7 @@ public class MockupService {
             imageList.add(image);
         }
         detachedMockup.setImages(imageList);
+        detachedMockup.setDisabled(false);
         return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
     }
 
@@ -79,7 +80,7 @@ public class MockupService {
     }
 
     public Page<MockupDTO> getAllMockups(int pageNo, int pageSize) {
-        return mockupRepository.findByDisabled(false, PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
+        return mockupRepository.findAllByDisabled(false, PageRequest.of(pageNo, pageSize)).map(mockupMapper::mapToDTO);
     }
 
     public void disableMockup(Long id) {

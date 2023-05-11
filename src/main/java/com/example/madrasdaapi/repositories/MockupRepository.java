@@ -19,5 +19,5 @@ public interface MockupRepository extends JpaRepository<Mockup, Long> {
     @Query("update Mockup m set m.disabled = (NOT m.disabled) where m.id = ?1")
     int updateDisabledById(Long id);
 
-    Page<Mockup> findByDisabled(boolean isDisabled, Pageable pageable);
+    Page<Mockup> findAllByDisabled(boolean isDisabled, Pageable pageable);
 }

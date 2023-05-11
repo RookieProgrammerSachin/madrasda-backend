@@ -35,7 +35,7 @@ public class MockupController {
 
      @GetMapping("getAllMockups")
      public Page<MockupDTO> getAllMockups(@RequestParam(defaultValue = "0") int pageNo,
-                                          @RequestParam(defaultValue = "100") int pageSize) {
+                                          @RequestParam(defaultValue = "10000") int pageSize) {
 
           return mockupService.getAllMockups(pageNo, pageSize);
      }
