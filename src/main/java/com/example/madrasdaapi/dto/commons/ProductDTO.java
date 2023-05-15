@@ -26,4 +26,5 @@ public class ProductDTO implements Serializable {
     private List<ColorDTO> colors;
     private Integer quantity;
     private String category;
+    private String mockupDescription;
 }

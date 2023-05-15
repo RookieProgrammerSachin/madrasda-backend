@@ -6,6 +6,7 @@ import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.ProductMapper;
 import com.example.madrasdaapi.mappers.TemplateMapper;
+import com.example.madrasdaapi.models.Mockup;
 import com.example.madrasdaapi.models.Product;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.TemplateRepository;

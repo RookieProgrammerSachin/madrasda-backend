@@ -29,6 +29,7 @@ public class ProductMapper {
 
         ProductDTO productDTO = mapper.map(product, ProductDTO.class);
         productDTO.setCategory(product.getMockup().getName());
+        productDTO.setMockupDescription(product.getMockup().getAdditionalInformation());
         HashMap<String, ColorDTO> colors = new HashMap<>();
         for (ProductSKUMapping sku : product.getSkuMappings()) {
             String color = sku.getColor().getColor();
