@@ -19,6 +19,7 @@ public class SignupRequests {
     private String email;
     private String influencerCategory;
     private String password;
+    private String phone;
     private String imgUrl;
     private String companyName;
     private String companyUrl;
