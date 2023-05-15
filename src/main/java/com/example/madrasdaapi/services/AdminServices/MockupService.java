@@ -57,6 +57,43 @@ public class MockupService {
         detachedMockup.setDisabled(false);
         return mockupMapper.mapToDTO(mockupRepository.save(detachedMockup));
     }
+    public MockupDTO updateMockup(Long id, MockupDTO newMockupDetails){
+        Mockup oldMockupDetails = mockupRepository.findById(id).orElseThrow();
+        if(newMockupDetails.getBasePrice() != null){
+            oldMockupDetails.setBasePrice(newMockupDetails.getBasePrice());
+        }
+        if(newMockupDetails.getName() != null){
+            oldMockupDetails.setName(newMockupDetails.getName());
+        }
+        if(newMockupDetails.getProductType() != null){
+            oldMockupDetails.setProductType(newMockupDetails.getProductType());
+        }
+        if(newMockupDetails.getCategory() != null){
+            oldMockupDetails.setCategory(newMockupDetails.getCategory());
+        }
+        if(newMockupDetails.getAdditionalInformation() != null){
+            oldMockupDetails.setAdditionalInformation(newMockupDetails.getAdditionalInformation());
+        }
+        if(newMockupDetails.getHeight() != null){
+            oldMockupDetails.setHeight(newMockupDetails.getHeight());
+        }
+        if(newMockupDetails.getBreadth() != null) {
+            oldMockupDetails.setBreadth(newMockupDetails.getBreadth());
+        }
+        if(newMockupDetails.getWeight() != null){
+            oldMockupDetails.setWeight(newMockupDetails.getWeight());
+        }
+        if(newMockupDetails.getTax() != null){
+            oldMockupDetails.setTax(newMockupDetails.getTax());
+        }
+        if(newMockupDetails.getHsn() != null){
+            oldMockupDetails.setHsn(newMockupDetails.getHsn());
+        }
+        if(newMockupDetails.getBasePrice() != null){
+            oldMockupDetails.setBasePrice(newMockupDetails.getBasePrice());
+        }
+        return mockupMapper.mapToDTO(mockupRepository.save(oldMockupDetails));
+    }
 
      /*public MockupDTO updateMockup(MockupDTO mockupDTO) {
           Mockup detachedMockup = mockupRepository.findById(mockupDTO.getId()).get();

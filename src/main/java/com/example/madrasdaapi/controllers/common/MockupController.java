@@ -29,8 +29,12 @@ public class MockupController {
      }
 
      @PostMapping("addMockup")
-     public MockupDTO saveOrUpdateMockup(@RequestBody MockupDTO mockupDTO) {
+     public MockupDTO saveMockup(@RequestBody MockupDTO mockupDTO) {
           return mockupService.addMockup(mockupDTO);
+     }
+     @PutMapping("upDateMockup/{id}")
+     public MockupDTO updateMockup(@PathVariable Long id, @RequestBody MockupDTO newMockupDetails){
+          return mockupService.updateMockup(id, newMockupDetails);
      }
 
      @GetMapping("getAllMockups")
