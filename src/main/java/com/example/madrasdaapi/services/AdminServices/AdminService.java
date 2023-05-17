@@ -5,6 +5,7 @@ import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
+import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.mappers.VendorMapper;
 import com.example.madrasdaapi.models.PayoutRecord;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class AdminService {
 
     @Transactional
     public VendorDTO saveOrUpdateVendor(RegisterDTO registerDTO) {
+        if(userRepository.findByEmailOrPhone(registerDTO.getEmail(), registerDTO.getPhone()).isPresent()){
+            throw new APIException("User Already Exists", HttpStatus.BAD_REQUEST);
+        }
         User detachedUser = new User();
         Vendor detachedVendor = new Vendor();
         mapper.map(registerDTO, detachedUser);
