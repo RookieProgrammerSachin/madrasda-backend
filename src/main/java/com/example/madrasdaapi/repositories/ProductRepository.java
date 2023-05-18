@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
      @Transactional
@@ -25,17 +26,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     int updatePublishStatusByVendor_IdAndIdAndAdminBanFalse(Long vendorId, Long id);
 
 
-    Page<Product> findAllByMockup_IdAndVendor_StatusAndPublishStatus(Long mockupId,boolean vendorStatus, boolean publishStatus, Pageable pageable);
+    Page<Product> findAllByMockup_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(Long mockupId,boolean vendorStatus, boolean publishStatus, boolean mockupDisabled, Pageable pageable);
 
      Page<Product> findByVendor_Id(Long vendorId, Pageable pageable);
 
-     Page<Product> findAllByAudienceAndVendor_StatusAndPublishStatus(String audience,boolean vendorStatus, boolean publishStatus, Pageable pageable);
+    Optional<Product> findByIdAndMockupDisabledAndAdminBan(Long aLong, boolean mockupDisabled, boolean adminBan);
+
+    Page<Product> findAllByAudienceAndVendor_StatusAndPublishStatus(String audience, boolean vendorStatus, boolean publishStatus, Pageable pageable);
 
 
      Page<Product> findByNameOrAudienceOrMockup_nameAndVendor_StatusAndPublishStatus(String name,String audience,String mockupName, boolean status,
                                                                                      boolean publishStatus, Pageable pageable);
 
-    Page<Product> findByVendor_IdAndVendor_StatusAndPublishStatus(Long vendorId, boolean vendorStatus, boolean publishStatus, Pageable pageable);
+    Page<Product> findByVendor_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(Long vendorId, boolean vendorStatus, boolean publishStatus, boolean mockupStatus, Pageable pageable);
 
     List<Product> deleteByAudience(String fanHouse);
 

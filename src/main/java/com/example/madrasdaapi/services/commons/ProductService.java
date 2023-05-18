@@ -45,7 +45,7 @@ public class ProductService {
      }
 
      public Page<ProductDTO> getProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatus(vendorId, true, true, PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(vendorId, true, true, false, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
@@ -76,7 +76,7 @@ public class ProductService {
 
 
      public Page<ProductDTO> getProductsByMockupId(Long mockupId, Integer pageNo, Integer pageSize) {
-          Page<Product> products = productRepository.findAllByMockup_IdAndVendor_StatusAndPublishStatus(mockupId, true, true, PageRequest.of(pageNo, pageSize));
+          Page<Product> products = productRepository.findAllByMockup_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(mockupId, true, true, false, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
 
