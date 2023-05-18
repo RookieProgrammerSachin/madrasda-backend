@@ -15,6 +15,7 @@ import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.PaymentService;
 import com.example.madrasdaapi.services.commons.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -117,6 +118,7 @@ public class AdminController {
     }
 
     @PutMapping("updateMockup")
+    @Transactional
     public MockupDTO updateMockup(@RequestBody MockupDTO mockupDTO) {
         return mockupService.updateMockup(mockupDTO);
     }
