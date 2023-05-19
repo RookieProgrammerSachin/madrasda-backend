@@ -8,4 +8,5 @@ import lombok.Setter;
 public class MockupImageDTO {
     private Long colorId;
     private String image;
+    private boolean status;
 }

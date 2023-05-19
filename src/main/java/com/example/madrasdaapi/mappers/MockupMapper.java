@@ -28,6 +28,7 @@ public class MockupMapper {
             MockupImageDTO imageDTO = new MockupImageDTO();
             imageDTO.setImage(image.getImage());
             imageDTO.setColorId(image.getColor().getId());
+
             imagesDTO.add(imageDTO);
         }
         mockupDTO.setImages(imagesDTO);

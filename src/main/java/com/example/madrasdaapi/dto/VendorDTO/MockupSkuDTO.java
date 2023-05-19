@@ -21,4 +21,6 @@ public class MockupSkuDTO {
     private Size size;
 
     private Color color;
+
+    private Boolean status;
 }
