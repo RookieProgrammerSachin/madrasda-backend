@@ -45,6 +45,7 @@ public class MockupMapper {
             mockupSku.setSize(sku.getSize());
             mockupSku.setColor(sku.getColor());
             mockupSku.setMockup(mockup);
+            mockupSku.setStatus(true);
             skus.add(mockupSku);
         }
         mockup.setSkuMapping(skus);

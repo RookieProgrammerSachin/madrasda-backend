@@ -30,6 +30,6 @@ public class ProductSKUMapping {
     private Color color;
 
     @Column(columnDefinition = "bit default true")
-    private Boolean status;
+    private Boolean status = true;
 
 }

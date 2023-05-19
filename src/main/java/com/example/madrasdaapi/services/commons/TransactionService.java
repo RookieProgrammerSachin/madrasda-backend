@@ -317,7 +317,8 @@ public class TransactionService {
         request.setReason(cancelRequestDTO.getReason());
         request.setImages(cancelRequestDTO.getImages());
         cancelRequestRepository.save(request);
-
+        transaction.setCancelRequested(true);
+        transactionRepository.save(transaction);
     }
 
     public Page<CancelRequestDTO> getAllCancelRequests(int pageNo, int pageSize) {
