@@ -245,16 +245,20 @@ public class TransactionService {
     }
 
     public Double calculateShippingCharges(List<OrderItem> cart, String pincode) throws IOException {
+
         Float height = 0.0F;
         Float length = 0.0F;
         Float breadth = 0.0F;
         Float weight = 0.0F;
+        Float subtotal = 0.0f;
         for (OrderItem item : cart) {
             height += item.getProduct().getHeight() * item.getQuantity();
             weight += item.getProduct().getWeight() * item.getQuantity();
             breadth = Math.max(item.getProduct().getBreadth(), breadth);
             length = Math.max(item.getProduct().getLength(), length);
+            subtotal += item.getProduct().getTotal().floatValue();
         }
+        if(subtotal > 500) return (double) 0;
 
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
