@@ -7,6 +7,7 @@ import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.mappers.MockupMapper;
 import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -146,6 +147,9 @@ public class MockupService {
         Mockup updatedMockup = mockupRepository.save(detachedMockup);
         return mockupMapper.mapToDTO(updatedMockup);
     }
-
+    @Transactional
+    public int toggleColorSku(Long colorId, Long mockupId) {
+        return productSKUMappingRepository.updateStatusByColor(colorId, mockupId);
+    }
 }
 

@@ -43,6 +43,6 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
      @Query("UPDATE Vendor v SET v.profilePic = NULL WHERE v.id = :vendorId")
      void deleteVendorProfilePicture(Long vendorId);
 
-     List<Vendor> findByStatus(boolean status);
+     List<Vendor> findByStatus(Boolean status);
 
 }

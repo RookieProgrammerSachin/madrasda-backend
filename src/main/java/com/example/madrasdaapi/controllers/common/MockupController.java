@@ -49,7 +49,12 @@ public class MockupController {
           mockupService.deleteMockup(id);
      }
 
-
-
-
+     @PutMapping("editMockup")
+     public void editMockup(@RequestBody MockupDTO mockupDTO) {
+          mockupService.updateMockup(mockupDTO);
+     }
+     @PutMapping("/toggleColorSku/{colorId}&{mockupId}")
+     public int toggleColorSku(@PathVariable Long colorId, @PathVariable Long mockupId){
+          return mockupService.toggleColorSku(colorId, mockupId);
+     }
 }

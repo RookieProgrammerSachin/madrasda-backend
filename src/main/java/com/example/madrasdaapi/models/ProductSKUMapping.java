@@ -29,5 +29,7 @@ public class ProductSKUMapping {
     @BatchSize(size = 30)
     private Color color;
 
+    @Column(columnDefinition = "bit default true")
+    private Boolean status;
 
 }

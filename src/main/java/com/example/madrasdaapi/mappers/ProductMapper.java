@@ -9,7 +9,6 @@ import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,20 +31,24 @@ public class ProductMapper {
         productDTO.setMockupDescription(product.getMockup().getAdditionalInformation());
         HashMap<String, ColorDTO> colors = new HashMap<>();
         for (ProductSKUMapping sku : product.getSkuMappings()) {
-            String color = sku.getColor().getColor();
-            ColorDTO colorDTO = colors.getOrDefault(color, new ColorDTO());
-            SizeDTO sizeDTO = mapper.map(sku.getSize(), SizeDTO.class);
+            if (sku.getStatus()) {
 
-            sizeDTO.setSku(sku.getSku());
-            mapper.map(sku.getColor(), colorDTO);
+                String color = sku.getColor().getColor();
+                ColorDTO colorDTO = colors.getOrDefault(color, new ColorDTO());
+                SizeDTO sizeDTO = mapper.map(sku.getSize(), SizeDTO.class);
 
-            colorDTO.getSizes().add(sizeDTO);
-            colors.put(color, colorDTO);
+                sizeDTO.setSku(sku.getSku());
+                mapper.map(sku.getColor(), colorDTO);
+
+                colorDTO.getSizes().add(sizeDTO);
+                colors.put(color, colorDTO);
+            }
 
         }
 
         for (ProductImage image : product.getProductImages()) {
-            colors.get(image.getColor().getColor()).getImages().add(image.getImgUrl());
+            if(colors.containsKey(image.getColor().getColor()))
+                colors.get(image.getColor().getColor()).getImages().add(image.getImgUrl());
         }
         productDTO.setColors(new ArrayList<>(colors.values()));
         return productDTO;

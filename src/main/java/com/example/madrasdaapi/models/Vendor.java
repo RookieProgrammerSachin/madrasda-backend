@@ -51,7 +51,7 @@ import java.util.List;
         }
 )
 
-@Table(name = "vendor", schema = "spring-madrasda")
+@Table(name = "vendor", schema = "madrasda")
 public class Vendor {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
