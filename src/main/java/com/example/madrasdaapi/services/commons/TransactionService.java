@@ -294,6 +294,7 @@ public class TransactionService {
         Float length = 0.0F;
         Float breadth = 0.0F;
         Float weight = 0.0F;
+        Float total = 0.0f;
         List<CartItem> cart = cartItemRepository.findByCustomer_Phone(phone);
         if (cart.size() == 0) throw new APIException("Cart is Empty", HttpStatus.CONFLICT);
         for (CartItem item : cart) {
@@ -301,7 +302,9 @@ public class TransactionService {
             weight += item.getProduct().getWeight() * item.getQuantity();
             breadth = Math.max(item.getProduct().getBreadth(), breadth);
             length = Math.max(item.getProduct().getLength(), length);
+            total += item.getProduct().getTotal().floatValue();
         }
+        if(total > 500) return 0.0d;
 
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
