@@ -349,7 +349,7 @@ public class TransactionService {
 
         transaction.setCancelled(true);
         transaction.setCancelRequested(false);
-
+        transactionRepository.save(transaction);
         cancelRequestRepository.deleteByTransaction_Id(transaction.getId());
     }
 
