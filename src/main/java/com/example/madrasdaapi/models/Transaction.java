@@ -37,13 +37,13 @@ public class Transaction {
 
      private String orderId;//
 
-     @Column(columnDefinition = "boolean default false")
+     @Column(columnDefinition = "bit(1) default b'0'")
      private Boolean billingIsShipping;//
 
-     @Column(columnDefinition = "boolean default false")
+     @Column(columnDefinition = "bit(1) default b'0'")
      private Boolean cancelled = false;
 
-     @Column(columnDefinition = "boolean default false")
+     @Column(columnDefinition = "bit(1) default b'0'")
      private Boolean cancelRequested = false;
 
      @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

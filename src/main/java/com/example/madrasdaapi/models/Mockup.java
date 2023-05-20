@@ -45,7 +45,7 @@ public class Mockup {
 
     private String additionalInformation;
 
-    @Column(columnDefinition = "bit default false")
+    @Column(columnDefinition = "bit(1) default b'0'")
     private Boolean disabled = false;
 
     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL, orphanRemoval = true)

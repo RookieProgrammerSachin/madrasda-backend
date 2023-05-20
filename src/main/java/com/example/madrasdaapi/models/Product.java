@@ -53,7 +53,7 @@ public class Product {
 
      private Boolean publishStatus;
 
-     @Column(columnDefinition = "bit default false")
+     @Column(columnDefinition = "bit(1) default b'0'")
      private Boolean adminBan;
 
      @Column(length = 1000)
