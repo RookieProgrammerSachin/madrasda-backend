@@ -142,7 +142,6 @@ public class MockupService {
             imageList.add(image);
         }
          detachedMockup.setImages(imageList);
-
         // Save the modified mockup to the database.
         Mockup updatedMockup = mockupRepository.save(detachedMockup);
         return mockupMapper.mapToDTO(updatedMockup);

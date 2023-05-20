@@ -22,7 +22,6 @@ public class MockupController {
      private final MockupMapper mockupMapper;
 
      @GetMapping("getMockup/{id}")
-
      public MockupDTO retrieveMockup(@PathVariable Long id) {
 
           return mockupService.getMockupById(id);

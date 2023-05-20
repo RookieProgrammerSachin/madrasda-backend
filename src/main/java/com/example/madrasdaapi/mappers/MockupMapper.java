@@ -41,6 +41,7 @@ public class MockupMapper {
         List<ProductSKUMapping> skus = new ArrayList<>();
         for (MockupSkuDTO sku : mockupDTO.getSkuMapping()) {
             ProductSKUMapping mockupSku = new ProductSKUMapping();
+            mockupSku.setId(sku.getId());
             mockupSku.setSku(sku.getSku());
             mockupSku.setSize(sku.getSize());
             mockupSku.setColor(sku.getColor());
@@ -49,7 +50,7 @@ public class MockupMapper {
             skus.add(mockupSku);
         }
         mockup.setSkuMapping(skus);
-
+        mockup.setDisabled(mockupDTO.getDisabled());
         return mockup;
     }
 
