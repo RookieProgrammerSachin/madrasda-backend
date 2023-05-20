@@ -348,6 +348,8 @@ public class TransactionService {
         }
 
         transaction.setCancelled(true);
+        transaction.setCancelRequested(false);
+
         cancelRequestRepository.deleteByTransaction_Id(transaction.getId());
     }
 
