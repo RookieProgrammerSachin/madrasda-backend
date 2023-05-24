@@ -137,7 +137,7 @@ public class TransactionService {
             trackingData.setCurrentStatusId(data.getStatusCode());
             trackingData.setCourierName(data.getCourierName());
             trackingData.setOrderId(data.getOrderId());
-            transaction.setOrderId(data.getOrderId());
+//            transaction.setOrderId(data.getOrderId());
             trackingData.setScans(new ArrayList<>());
             response.close();
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
@@ -276,7 +276,7 @@ public class TransactionService {
         String json = response.body().string();
         JsonObject data = new Gson().fromJson(json, JsonObject.class);
         Integer code = data.get("status").getAsInt();
-        if(code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.CONFLICT);
+        if(code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.OK);
         ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
         Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
         List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
@@ -335,7 +335,7 @@ public class TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionId.toString()));
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\"ids\": [" + transaction.getOrderId() + "]}");
-        System.out.println("{\"ids\": [" + transaction.getOrderId() + "]}");
+//        System.out.println("{\"ids\": [" + transaction.getOrderId() + "]}");
         Request request = new Request.Builder()
                 .url("https://apiv2.shiprocket.in/v1/external/orders/cancel")
                 .method("POST", body)
