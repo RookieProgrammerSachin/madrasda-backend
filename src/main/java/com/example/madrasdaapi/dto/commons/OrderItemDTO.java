@@ -13,5 +13,6 @@ import java.io.Serializable;
 public class OrderItemDTO implements Serializable {
      private Long id;
      private int quantity;
+     private String sku;
      private ProductDTO product;
 }

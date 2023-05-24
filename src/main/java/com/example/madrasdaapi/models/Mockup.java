@@ -43,6 +43,7 @@ public class Mockup {
 
     private BigDecimal basePrice;
 
+    @Column(length = 60000)
     private String additionalInformation;
 
     @Column(columnDefinition = "bit(1) default b'0'")
