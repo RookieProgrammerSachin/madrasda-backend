@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.dto.commons;
 
+import com.example.madrasdaapi.dto.VendorDTO.MockupDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +28,8 @@ public class ProductDTO implements Serializable {
     private Integer quantity;
     private String category;
     private String mockupDescription;
+    private MockupDTO productMockup;
+    private String frontDesignUrl;
+
+    private String frontDesignPlacement;
 }
