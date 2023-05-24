@@ -52,5 +52,9 @@ public class MockupDTO implements Serializable {
 
     private Boolean disabled;
 
+    private Double canvasHeight;
+
+    private Double canvasWidth;
+
     private List<MockupImageDTO> images = new ArrayList<>();
 }

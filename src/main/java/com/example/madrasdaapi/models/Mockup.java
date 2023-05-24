@@ -49,6 +49,10 @@ public class Mockup {
     @Column(columnDefinition = "bit(1) default b'0'")
     private Boolean disabled = false;
 
+    private Double canvasHeight;
+
+    private Double canvasWidth;
+
     @OneToMany(mappedBy = "mockup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MockupImage> images = new ArrayList<>();
 
