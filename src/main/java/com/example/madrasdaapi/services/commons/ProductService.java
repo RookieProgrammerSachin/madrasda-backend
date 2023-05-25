@@ -37,9 +37,6 @@ public class ProductService {
      }
 
      public ProductDTO createProduct(NewProductDTO newProduct) {
-          if(productRepository.findByName(newProduct.getName()).isPresent()){
-               throw new APIException("Product name already exists", HttpStatus.BAD_REQUEST);
-          }
           Product product = productMapper.mapToEntity(newProduct);
 
           product.setPublishStatus(false);
