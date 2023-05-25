@@ -37,6 +37,9 @@ public class ProductService {
      }
 
      public ProductDTO createProduct(NewProductDTO newProduct) {
+          if(productRepository.findByName(newProduct.getName()).isPresent()){
+               throw new APIException("Product name already exists", HttpStatus.BAD_REQUEST);
+          }
           Product product = productMapper.mapToEntity(newProduct);
 
           product.setPublishStatus(false);
@@ -56,7 +59,8 @@ public class ProductService {
           return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> getByAudience(int pageNo, int pageSize, String audience) {
-          return productRepository.findAllByAudienceAndVendor_StatusAndPublishStatus(audience, true, true, PageRequest.of(pageNo, pageSize))
+          return productRepository.findAllByAudienceAndVendor_StatusAndPublishStatusAndMockupDisabled
+                          (audience, true, true, false, PageRequest.of(pageNo, pageSize))
                   .map(productMapper::mapToDTO);
      }
      public Page<ProductDTO> searchProducts(int pageNo, int pageSize, String searchTerm) {

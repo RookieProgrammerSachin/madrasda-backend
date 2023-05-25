@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    Optional<Product> findByName(String name);
+
      @Transactional
      @Modifying
      @Query("UPDATE Product p SET p.publishStatus = (NOT p.publishStatus) WHERE p.id = ?1 AND p.vendor.id = ?2 AND p.adminBan = false")
@@ -33,6 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByIdAndMockupDisabledAndAdminBan(Long aLong, boolean mockupDisabled, boolean adminBan);
 
     Page<Product> findAllByAudienceAndVendor_StatusAndPublishStatus(String audience, boolean vendorStatus, boolean publishStatus, Pageable pageable);
+    Page<Product> findAllByAudienceAndVendor_StatusAndPublishStatusAndMockupDisabled(String audience, boolean vendorStatus, boolean publishStatus, boolean mockupStatus, Pageable pageable);
 
 
      Page<Product> findByNameOrAudienceOrMockup_nameAndVendor_StatusAndPublishStatus(String name,String audience,String mockupName, boolean status,
