@@ -30,6 +30,6 @@ public class ProductDTO implements Serializable {
     private String mockupDescription;
     private MockupDTO productMockup;
     private String frontDesignUrl;
-
     private String frontDesignPlacement;
+    private String backDesignPlacement;
 }
