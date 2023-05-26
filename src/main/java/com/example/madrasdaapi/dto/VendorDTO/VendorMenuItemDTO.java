@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class VendorMenuItemDTO implements Serializable {
      private Long id;
      private String name;
+     private String companyName;
      private String imgUrl;
      private Boolean payoutRequested;
      private BigDecimal payoutAmount;

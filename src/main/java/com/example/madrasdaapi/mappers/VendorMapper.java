@@ -22,6 +22,7 @@ public class VendorMapper {
           VendorMenuItemDTO item = new VendorMenuItemDTO();
           item.setId(vendor.getUser().getId());
           item.setName(vendor.getUser().getName());
+          item.setCompanyName(vendor.getCompanyName());
           item.setImgUrl(vendor.getProfilePic());
           return item;
      }
