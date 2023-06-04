@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Service
@@ -88,7 +89,9 @@ public class TransactionService {
         options.put("amount", transaction.getOrderTotal() //with deduction
                 .multiply(BigDecimal.valueOf(((double) 105) / 100))
                 .add(BigDecimal.valueOf(calculateShippingCharges(pincode)))
-                .multiply(new BigDecimal(100)));
+                .multiply(new BigDecimal(100))
+                .setScale(0, RoundingMode.CEILING)
+                .intValueExact());
         options.put("currency", "INR");
         JSONObject customer = new JSONObject();
         customer.put("name", transaction.getBillingUser().getName());
