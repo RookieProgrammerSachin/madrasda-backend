@@ -8,6 +8,9 @@ import lombok.Data;
 
 public class PaymentEntity {
 
+	@JsonProperty("razorpay_signature")
+	private String signature;
+
 	@JsonProperty("notes")
 	private List<Object> notes;
 

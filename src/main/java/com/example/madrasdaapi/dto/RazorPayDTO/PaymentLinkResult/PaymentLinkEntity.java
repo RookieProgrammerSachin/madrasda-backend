@@ -74,4 +74,7 @@ public class PaymentLinkEntity {
 
 	@JsonProperty("status")
 	private String status;
+
+	@JsonProperty("razorpay_signature")
+	private String signature;
 }

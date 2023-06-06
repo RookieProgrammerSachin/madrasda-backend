@@ -15,4 +15,8 @@ public class Payload{
 
 	@JsonProperty("order")
 	private Order order;
+
+	@JsonProperty("razorpay_signature")
+	private String signature;
+
 }

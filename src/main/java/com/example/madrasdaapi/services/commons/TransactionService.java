@@ -3,22 +3,20 @@ package com.example.madrasdaapi.services.commons;
 import com.example.madrasdaapi.config.AuthContext;
 import com.example.madrasdaapi.config.ShipRocketProperties;
 import com.example.madrasdaapi.dto.RazorPayDTO.PaymentLinkResult.PaymentLinkResult;
-import com.example.madrasdaapi.dto.RazorPayDTO.PaymentRequest.OrderResponse;
 import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
-import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
-import com.example.madrasdaapi.dto.commons.TransactionDTO;
-import com.example.madrasdaapi.exception.APIException;
-import com.example.madrasdaapi.exception.ResourceNotFoundException;
-import com.example.madrasdaapi.mappers.CustomerMapper;
-import com.example.madrasdaapi.mappers.ShipmentMapper;
-import com.example.madrasdaapi.mappers.TransactionMapper;
-import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.dto.ShiprocketModels.NewOrder;
 import com.example.madrasdaapi.dto.ShiprocketModels.OrderDetails.ShiprocketOrderDetail;
 import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
 import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
 import com.example.madrasdaapi.dto.ShiprocketModels.ShipRocketOrderItem;
+import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
+import com.example.madrasdaapi.dto.commons.TransactionDTO;
+import com.example.madrasdaapi.exception.APIException;
+import com.example.madrasdaapi.exception.ResourceNotFoundException;
+import com.example.madrasdaapi.mappers.ShipmentMapper;
+import com.example.madrasdaapi.mappers.TransactionMapper;
+import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -39,7 +37,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,7 @@ public class TransactionService {
     private final RazorpayClient razorpayClient;
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
+    private final Gson gson;
     @Value("${razorpay.keySecret}")
     private String SECRET_KEY;
     @Value("${razorpay.keyId}")
@@ -84,27 +86,10 @@ public class TransactionService {
         return shortLink;
     }
 
-    private PaymentLink createRazorPayLink(Transaction transaction, String pincode) throws RazorpayException, IOException {
-        JSONObject options = new JSONObject();
-        options.put("amount", transaction.getOrderTotal() //with deduction
-                .multiply(BigDecimal.valueOf(((double) 105) / 100))
-                .add(BigDecimal.valueOf(calculateShippingCharges(pincode)))
-                .multiply(new BigDecimal(100))
-                .setScale(0, RoundingMode.CEILING)
-                .intValueExact());
-        options.put("currency", "INR");
-        JSONObject customer = new JSONObject();
-        customer.put("name", transaction.getBillingUser().getName());
-        customer.put("contact", transaction.getBillingUser().getPhone());
-        customer.put("email", transaction.getBillingUser().getEmail());
-        options.put("customer", customer);
-        options.put("callback_url", "https://madrasda.com/clientprofile");
-        return razorpayClient.paymentLink.create(options);
-    }
-
-
     @Transactional
     public void updateTransactionStatus(PaymentLinkResult result) throws RazorpayException, IOException {
+//        JSONObject payload = new JSONObject(result.getPayload());
+//        Utils.verifyPaymentLink(payload, "BraveHeart");
         String paymentId = result.getPayload().getPaymentLink().getEntity().getId();
         Transaction transaction = transactionRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", paymentId));
@@ -123,6 +108,11 @@ public class TransactionService {
                         .add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
                 vendors.put(item.getProduct().getId(), vendor);
             }
+            BigDecimal induvidualShippingCharge = transaction.getShippingCharge().divide(BigDecimal.valueOf(vendors.size()))
+                    .setScale(2, RoundingMode.CEILING);
+            if (transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) == 1)
+                vendors.forEach((id, vendor) -> vendor.setOutstandingProfit(vendor.getOutstandingProfit().subtract(induvidualShippingCharge)));
+
             transaction.setPaymentStatus(result.getEvent());
             NewOrder order = createShiprocketOrder(transaction);
             MediaType mediaType = MediaType.parse("application/json");
@@ -159,6 +149,36 @@ public class TransactionService {
 
     }
 
+    public void updateShipmentStatus(TrackingData trackingData) {
+        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
+        Shipment shipment = shipmentMapper.mapToShipment(trackingData);
+        transaction.setShipment(shipment);
+        shipment.setTransaction(transaction);
+        transactionRepository.save(transaction);
+    }
+
+    private PaymentLink createRazorPayLink(Transaction transaction, String pincode) throws RazorpayException, IOException {
+        JSONObject options = new JSONObject();
+        BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
+        transaction.setShippingCharge(shippingCharges);
+        BigDecimal customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
+        options.put("amount", transaction.getOrderTotal() //with deduction
+                .multiply(BigDecimal.valueOf(((double) 105) / 100))
+                .add(customerShippingCharge)
+                .setScale(0, RoundingMode.CEILING)
+                .multiply(new BigDecimal(100))
+                .longValueExact());
+        options.put("currency", "INR");
+        JSONObject customer = new JSONObject();
+        customer.put("name", transaction.getBillingUser().getName());
+        customer.put("contact", transaction.getBillingUser().getPhone());
+        customer.put("email", transaction.getBillingUser().getEmail());
+        options.put("customer", customer);
+        options.put("callback_url", "https://madrasda.com/clientprofile");
+        return razorpayClient.paymentLink.create(options);
+    }
+
     private NewOrder createShiprocketOrder(Transaction transaction) throws RazorpayException, IOException {
         NewOrder order = new NewOrder();
         order.setOrderId(transaction.getOrderId());
@@ -169,7 +189,7 @@ public class TransactionService {
         Float length = 0.0F;
         Float breadth = 0.0F;
         Float weight = 0.0F;
-        Double shippingCharges = calculateShippingCharges(transaction.getOrderItems(), transaction.getShippingAddress().getPostalCode());
+        Double shippingCharges = transaction.getShippingCharge().doubleValue();
         for (OrderItem item : transaction.getOrderItems()) {
             ShipRocketOrderItem orderItem = new ShipRocketOrderItem();
             Product product = item.getProduct();
@@ -224,15 +244,6 @@ public class TransactionService {
         return order;
     }
 
-    public void updateShipmentStatus(TrackingData trackingData) {
-        Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
-        Shipment shipment = shipmentMapper.mapToShipment(trackingData);
-        transaction.setShipment(shipment);
-        shipment.setTransaction(transaction);
-        transactionRepository.save(transaction);
-    }
-
     public List<TransactionDTO> getHistoryOfOrdersByCustomerId(String phone) {
         List<Transaction> transactions = transactionRepository.findByBillingUser_PhoneAndPaymentStatusLike(phone, "payment_link.paid");
 
@@ -248,7 +259,32 @@ public class TransactionService {
         return shipmentMapper.mapToDTO(shipmentRepository.findByTransaction_Id(transactionId));
     }
 
-    public Double calculateShippingCharges(List<OrderItem> cart, String pincode) throws IOException {
+    private Double requestFreightCharges(String pincode, Float height, Float length, Float breadth, Float weight) throws IOException {
+        MediaType mediaType = MediaType.parse("application/json");
+        Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" +
+                        "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length +
+                        "&delivery_postcode=" + pincode + "&cod=0")
+                .method("GET", null).addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        String json = response.body().string();
+        JsonObject data = new Gson().fromJson(json, JsonObject.class);
+        Integer code = data.get("status").getAsInt();
+        if (code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.OK);
+        ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
+        Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
+        List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
+        for (AvailableCourierCompany company : companies) {
+            if (company.getCourierCompanyId().equals(courierId)) {
+                return company.getFreightCharge();
+            }
+        }
+        response.close();
+        throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
+    }
+
+    public Double calculateShippingCharges(List<OrderItem> cart, String pincode, boolean isCustomer) throws IOException {
 
         Float height = 0.0F;
         Float length = 0.0F;
@@ -262,37 +298,12 @@ public class TransactionService {
             length = Math.max(item.getProduct().getLength(), length);
             subtotal += item.getProduct().getTotal().floatValue();
         }
-        if(subtotal > 500) return (double) 0;
+        if (isCustomer && subtotal > 500) return 0.0;
 
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
-    private Double requestFreightCharges(String pincode, Float height, Float length, Float breadth, Float weight) throws IOException {
-        MediaType mediaType = MediaType.parse("application/json");
-        Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" +
-                "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length +
-                "&delivery_postcode=" + pincode + "&cod=0")
-                .method("GET", null).addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer " + shiprocket.getToken()).build();
-
-        Response response = okHttpClient.newCall(request).execute();
-        String json = response.body().string();
-        JsonObject data = new Gson().fromJson(json, JsonObject.class);
-        Integer code = data.get("status").getAsInt();
-        if(code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.OK);
-        ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
-        Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
-        List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
-        for (AvailableCourierCompany company : companies) {
-            if (company.getCourierCompanyId().equals(courierId)) {
-                return company.getFreightCharge();
-            }
-        }
-        response.close();
-        throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
-    }
-
-    public Double calculateShippingCharges(String pincode) throws IOException {
+    public Double calculateShippingCharges(String pincode, boolean isCustomer) throws IOException {
         String phone = AuthContext.getCurrentUser();
         Float height = 0.0F;
         Float length = 0.0F;
@@ -308,7 +319,7 @@ public class TransactionService {
             length = Math.max(item.getProduct().getLength(), length);
             total += item.getProduct().getTotal().floatValue();
         }
-        if(total > 500) return 0.0d;
+        if (isCustomer && total > 500) return 0.0d;
 
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
@@ -317,8 +328,8 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(cancelRequestDTO.getTransaction().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", cancelRequestDTO.getTransaction().getId().toString()));
         long diffInMillis = new Date().getTime() - transaction.getOrderDate().getTime();
-        if (diffInMillis > 4 * 60 * 60 * 1000L)
-            throw new APIException("4 Hour Time Frame Exceeded", HttpStatus.CONFLICT);
+        if (diffInMillis > 5 * 60 * 1000L)
+            throw new APIException("5 Minutes Time Limit Exceeded", HttpStatus.CONFLICT);
         CancelRequest request = new CancelRequest();
         request.setTransaction(transaction);
         request.setReason(cancelRequestDTO.getReason());
@@ -328,10 +339,6 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
-    public Page<CancelRequestDTO> getAllCancelRequests(int pageNo, int pageSize) {
-        return cancelRequestRepository.findAll(PageRequest.of(pageNo, pageSize))
-                .map(transactionMapper::mapToCancelRequestDTO);
-    }
     @Transactional
     public void resolveCancelOrder(Long transactionId) throws IOException {
         Transaction transaction = transactionRepository.findById(transactionId)
@@ -346,15 +353,39 @@ public class TransactionService {
                 .addHeader("Authorization", "Bearer " + shiprocket.getToken())
                 .build();
         Response response = okHttpClient.newCall(request).execute();
-        if(response.code() != 200) {
+        if (!response.isSuccessful()) {
             System.out.println(response.body().string());
             throw new APIException("Error cancelling order", HttpStatus.valueOf(response.code()));
         }
+        //Deduct from Vendor's Total Profit
+        HashMap<Vendor, BigDecimal> deductibleProfit = new HashMap<>();
+        transaction.getOrderItems()
+                .forEach(item -> {
+                    Product product = item.getProduct();
+                    Vendor vendor = product.getVendor();
+                    deductibleProfit.put(vendor,
+                            deductibleProfit.getOrDefault(vendor, BigDecimal.ZERO).add(product.getProfit()));
 
+                });
+        int vendorCount = deductibleProfit.size();
+        BigDecimal shippingCharge = transaction.getShippingCharge().divide(BigDecimal.valueOf(vendorCount),
+                RoundingMode.CEILING);
+        deductibleProfit.forEach((vendor, profit) -> {
+            BigDecimal outstandingProfit = vendor.getOutstandingProfit();
+            BigDecimal newOutstandingProfit = outstandingProfit.subtract(profit.subtract(shippingCharge));
+            vendor.setOutstandingProfit(newOutstandingProfit.max(BigDecimal.ZERO));
+            vendorRepository.save(vendor);
+        });
         transaction.setCancelled(true);
         transaction.setCancelRequested(false);
         transactionRepository.save(transaction);
         cancelRequestRepository.deleteByTransaction_Id(transaction.getId());
     }
+
+    public Page<CancelRequestDTO> getAllCancelRequests(int pageNo, int pageSize) {
+        return cancelRequestRepository.findAll(PageRequest.of(pageNo, pageSize))
+                .map(transactionMapper::mapToCancelRequestDTO);
+    }
+
 
 }
