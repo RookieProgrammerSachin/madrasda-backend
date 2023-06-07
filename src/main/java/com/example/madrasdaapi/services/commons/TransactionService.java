@@ -7,7 +7,7 @@ import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.dto.ShiprocketModels.NewOrder;
 import com.example.madrasdaapi.dto.ShiprocketModels.OrderDetails.ShiprocketOrderDetail;
-import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.AvailableCourierCompany;
+import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.AvailableCourierCompaniesItem;
 import com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier.ServiceableCourierData;
 import com.example.madrasdaapi.dto.ShiprocketModels.ShipRocketOrderItem;
 import com.example.madrasdaapi.dto.commons.CancelRequestDTO;
@@ -274,9 +274,9 @@ public class TransactionService {
         if (code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.OK);
         ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
         Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
-        List<AvailableCourierCompany> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
-        for (AvailableCourierCompany company : companies) {
-            if (company.getCourierCompanyId().equals(courierId)) {
+        List<AvailableCourierCompaniesItem> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
+        for (AvailableCourierCompaniesItem company : companies) {
+            if (courierId.equals(company.getCourierCompanyId())) {
                 return company.getFreightCharge();
             }
         }

@@ -1,9 +1,11 @@
 package com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
-@lombok.Data
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CovidZones{
 
 	@JsonProperty("delivery_zone")
