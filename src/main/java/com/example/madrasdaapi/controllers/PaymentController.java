@@ -28,6 +28,6 @@ public class PaymentController {
 
     @GetMapping("/getShippingCharges/{pincode}")
     public Double calculateShippingCharges(@PathVariable String pincode) throws IOException {
-        return transactionService.calculateShippingCharges(pincode);
+        return transactionService.calculateShippingCharges(pincode, true);
     }
 }

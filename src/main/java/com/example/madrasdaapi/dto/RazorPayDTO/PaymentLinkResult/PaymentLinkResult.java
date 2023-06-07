@@ -23,6 +23,9 @@ public class PaymentLinkResult{
 	@JsonProperty("event")
 	private String event;
 
+	@JsonProperty("razorpay_signature")
+	private String signature;
+
 	@JsonProperty("entity")
 	private String entity;
 }

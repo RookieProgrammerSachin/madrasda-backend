@@ -38,7 +38,6 @@ public class ProductService {
 
      public ProductDTO createProduct(NewProductDTO newProduct) {
           Product product = productMapper.mapToEntity(newProduct);
-
           product.setPublishStatus(false);
           product.setAdminBan(false);
           return productMapper.mapToDTO(productRepository.save(product));
@@ -48,18 +47,22 @@ public class ProductService {
           Page<Product> products = productRepository.findByVendor_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(vendorId, true, true, false, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
+
      public Page<ProductDTO> getAllProductsByVendor(Long vendorId, Integer pageNo, Integer pageSize) {
           Page<Product> products = productRepository.findByVendor_Id(vendorId, PageRequest.of(pageNo, pageSize));
           return products.map(productMapper::mapToDTO);
      }
+
      public Page<ProductDTO> getAllProducts(int pageNo, int pageSize) {
           return productRepository.findAll(PageRequest.of(pageNo, pageSize)).map(productMapper::mapToDTO);
      }
+
      public Page<ProductDTO> getByAudience(int pageNo, int pageSize, String audience) {
           return productRepository.findAllByAudienceAndVendor_StatusAndPublishStatusAndMockupDisabled
                           (audience, true, true, false, PageRequest.of(pageNo, pageSize))
                   .map(productMapper::mapToDTO);
      }
+
      public Page<ProductDTO> searchProducts(int pageNo, int pageSize, String searchTerm) {
           return productRepository.findByNameOrAudienceOrMockup_nameAndVendor_StatusAndPublishStatus(
                   searchTerm,
@@ -68,13 +71,12 @@ public class ProductService {
                   true, true, PageRequest.of(pageNo, pageSize)
           ).map(productMapper::mapToDTO);
      }
+
      public ProductDTO getProductDetails(Long id) {
           return productMapper.mapToDTO(productRepository.findById(id).orElseThrow(
                   () -> new APIException("Product not found", HttpStatus.BAD_REQUEST)
           ));
      }
-
-
 
      public Page<ProductDTO> getProductsByMockupId(Long mockupId, Integer pageNo, Integer pageSize) {
           Page<Product> products = productRepository.findAllByMockup_IdAndVendor_StatusAndPublishStatusAndMockupDisabled(mockupId, true, true, false, PageRequest.of(pageNo, pageSize));

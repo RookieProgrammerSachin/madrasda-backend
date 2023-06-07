@@ -1,17 +1,19 @@
 package com.example.madrasdaapi.dto.ShiprocketModels.RecommendedCourier;
 
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
-@lombok.Data
+@Getter
+@Setter
 public class ServiceableCourierData{
 
 	@JsonProperty("data")
 	private Data data;
 
 	@JsonProperty("is_zone_from_mongo")
-	private Boolean isZoneFromMongo;
+	private boolean isZoneFromMongo;
 
 	@JsonProperty("covid_zones")
 	private CovidZones covidZones;
@@ -20,38 +22,38 @@ public class ServiceableCourierData{
 	private List<Object> sellerAddress;
 
 	@JsonProperty("user_insurance_manadatory")
-	private Boolean userInsuranceManadatory;
+	private boolean userInsuranceManadatory;
 
 	@JsonProperty("is_latlong")
-	private Integer isLatlong;
+	private int isLatlong;
 
 	@JsonProperty("is_old_zone_opted")
-	private Boolean isOldZoneOpted;
+	private boolean isOldZoneOpted;
 
 	@JsonProperty("dg_courier")
-	private Integer dgCourier;
+	private int dgCourier;
 
 	@JsonProperty("eligible_for_insurance")
-	private Integer eligibleForInsurance;
+	private int eligibleForInsurance;
 
 	@JsonProperty("insurace_opted_at_order_creation")
-	private Boolean insuraceOptedAtOrderCreation;
+	private boolean insuraceOptedAtOrderCreation;
 
 	@JsonProperty("on_new_zone")
-	private Integer onNewZone;
+	private int onNewZone;
 
 	@JsonProperty("label_generate_type")
-	private Integer labelGenerateType;
+	private int labelGenerateType;
 
 	@JsonProperty("currency")
 	private String currency;
 
 	@JsonProperty("company_auto_shipment_insurance_setting")
-	private Boolean companyAutoShipmentInsuranceSetting;
+	private boolean companyAutoShipmentInsuranceSetting;
 
 	@JsonProperty("is_allow_templatized_pricing")
-	private Boolean isAllowTemplatizedPricing;
+	private boolean isAllowTemplatizedPricing;
 
 	@JsonProperty("status")
-	private Integer status;
+	private int status;
 }

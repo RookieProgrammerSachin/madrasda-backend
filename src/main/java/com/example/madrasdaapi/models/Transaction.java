@@ -46,6 +46,8 @@ public class Transaction {
      @Column(columnDefinition = "bit(1) default b'0'")
      private Boolean cancelRequested = false;
 
+     private BigDecimal shippingCharge;
+
      @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
      @JoinColumn(name = "customer_id")
      private Customer shippingAddress;//
