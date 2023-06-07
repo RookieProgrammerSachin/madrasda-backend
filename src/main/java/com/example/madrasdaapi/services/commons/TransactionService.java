@@ -61,6 +61,7 @@ public class TransactionService {
     public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
+        transaction.setOrderTotal(orderRequest.getOrderTotal()); //Getting rounded order total from front end
         transaction.getShippingAddress().setUser(transaction.getBillingUser());
         transaction.getShippingAddress().setName(orderRequest.getShippingAddress().getName());
         if (!orderRequest.getBillingIsShipping()) {
@@ -86,7 +87,7 @@ public class TransactionService {
     private PaymentLink createRazorPayLink(Transaction transaction, String pincode) throws RazorpayException, IOException {
         JSONObject options = new JSONObject();
         options.put("amount", transaction.getOrderTotal() //with deduction
-                .multiply(BigDecimal.valueOf(((double) 105) / 100))
+//                .multiply(BigDecimal.valueOf(((double) 105) / 100)) // removed tax for client
                 .add(BigDecimal.valueOf(calculateShippingCharges(pincode)))
                 .multiply(new BigDecimal(100)));
         options.put("currency", "INR");
@@ -215,7 +216,10 @@ public class TransactionService {
         order.setShipping_charges(shippingCharges);
         order.setShippingIsBilling(transaction.getBillingIsShipping());
         order.setPaymentMethod("PREPAID");
-        transaction.setOrderTotal((transaction.getOrderTotal().multiply(new BigDecimal("1.05"))).add(new BigDecimal(shippingCharges)));
+        transaction.setOrderTotal(
+                (transaction.getOrderTotal().multiply(new BigDecimal("1.05")))
+                        .add(new BigDecimal(shippingCharges))
+        );
         order.setSubTotal(transaction.getOrderTotal().toString()); //with deduction
         order.setOrderItems(orderItems);
         return order;
