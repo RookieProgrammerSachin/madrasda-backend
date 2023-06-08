@@ -64,6 +64,7 @@ public class TransactionService {
     public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
+        transaction.setOrderTotal(orderRequest.getOrderTotal()); // Setting total
         transaction.getShippingAddress().setUser(transaction.getBillingUser());
         transaction.getShippingAddress().setName(orderRequest.getShippingAddress().getName());
         if (!orderRequest.getBillingIsShipping()) {
@@ -145,8 +146,6 @@ public class TransactionService {
             transactionRepository.save(transaction);
             transaction.setPaymentStatus(result.getEvent());
         }
-
-
     }
 
     public void updateShipmentStatus(TrackingData trackingData) {
@@ -164,7 +163,7 @@ public class TransactionService {
         transaction.setShippingCharge(shippingCharges);
         BigDecimal customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
         options.put("amount", transaction.getOrderTotal() //with deduction
-                .multiply(BigDecimal.valueOf(((double) 105) / 100))
+//                .multiply(BigDecimal.valueOf(((double) 105) / 100)) removed tax
                 .add(customerShippingCharge)
                 .setScale(0, RoundingMode.CEILING)
                 .multiply(new BigDecimal(100))
@@ -175,7 +174,8 @@ public class TransactionService {
         customer.put("contact", transaction.getBillingUser().getPhone());
         customer.put("email", transaction.getBillingUser().getEmail());
         options.put("customer", customer);
-        options.put("callback_url", "https://madrasda.com/clientprofile");
+//        options.put("callback_url", "https://madrasda.com/clientprofile");
+        options.put("callback_url", "https://nextjs-madrasda-2f6mra4vwa-em.a.run.app/clientprofile");
         return razorpayClient.paymentLink.create(options);
     }
 
