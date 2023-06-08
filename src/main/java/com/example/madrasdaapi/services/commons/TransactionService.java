@@ -110,7 +110,7 @@ public class TransactionService {
             }
             BigDecimal induvidualShippingCharge = transaction.getShippingCharge().divide(BigDecimal.valueOf(vendors.size()))
                     .setScale(2, RoundingMode.CEILING);
-            if (transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) == 1)
+            if (transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > -1)
                 vendors.forEach((id, vendor) -> vendor.setOutstandingProfit(vendor.getOutstandingProfit().subtract(induvidualShippingCharge)));
 
             transaction.setPaymentStatus(result.getEvent());
