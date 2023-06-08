@@ -64,7 +64,6 @@ public class TransactionService {
     public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
         Transaction transaction = transactionMapper.mapToEntity(orderRequest);
-        transaction.setOrderTotal(orderRequest.getOrderTotal()); // Setting total
         transaction.getShippingAddress().setUser(transaction.getBillingUser());
         transaction.getShippingAddress().setName(orderRequest.getShippingAddress().getName());
         if (!orderRequest.getBillingIsShipping()) {

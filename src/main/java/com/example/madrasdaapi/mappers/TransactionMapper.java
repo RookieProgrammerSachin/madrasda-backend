@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,11 +54,12 @@ public class TransactionMapper {
             orderItem.setSize(sku.getSize());
             orderItem.setColor(sku.getColor());
             orderItems.add(orderItem);
-            orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity())).multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
+            orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity()))
+                    .multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
 
         }
         transaction.setOrderItems(orderItems);
-        transaction.setOrderTotal(orderTotal);
+        transaction.setOrderTotal(orderTotal.setScale(0, RoundingMode.CEILING));
 
         return transaction;
     }
