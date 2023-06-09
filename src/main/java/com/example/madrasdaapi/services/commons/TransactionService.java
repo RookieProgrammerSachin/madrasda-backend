@@ -98,7 +98,6 @@ public class TransactionService {
             throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
         String orderId = String.valueOf(System.currentTimeMillis());
         transaction.setOrderId(orderId.substring(orderId.length() - 10));
-
         if (result.getEvent().equals("payment_link.paid")) {
             HashMap<Long, Vendor> vendors = new HashMap<>();
             //Calculate Vendor profit
@@ -141,7 +140,7 @@ public class TransactionService {
             vendorRepository.saveAll(vendors.values());
             transactionRepository.save(transaction);
         }
-        if (result.getEvent().equals("payment.failed")) {
+        else{
             transactionRepository.save(transaction);
             transaction.setPaymentStatus(result.getEvent());
         }

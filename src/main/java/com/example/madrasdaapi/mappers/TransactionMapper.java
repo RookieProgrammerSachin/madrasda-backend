@@ -55,11 +55,12 @@ public class TransactionMapper {
             orderItem.setColor(sku.getColor());
             orderItems.add(orderItem);
             orderTotal = orderTotal.add(orderItem.getProduct().getTotal().multiply(BigDecimal.valueOf(orderItem.getQuantity()))
-                    .multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)));
+                    .multiply(BigDecimal.valueOf((100 - orderItem.getProduct().getDiscount().doubleValue()) / 100)))
+                    .setScale(0, RoundingMode.CEILING);
 
         }
         transaction.setOrderItems(orderItems);
-        transaction.setOrderTotal(orderTotal.setScale(0, RoundingMode.CEILING));
+        transaction.setOrderTotal(orderTotal);
 
         return transaction;
     }
