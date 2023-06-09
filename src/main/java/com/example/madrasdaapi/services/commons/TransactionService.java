@@ -172,8 +172,7 @@ public class TransactionService {
         customer.put("contact", transaction.getBillingUser().getPhone());
         customer.put("email", transaction.getBillingUser().getEmail());
         options.put("customer", customer);
-//        options.put("callback_url", "https://madrasda.com/clientprofile");
-        options.put("callback_url", "https://nextjs-madrasda-2f6mra4vwa-em.a.run.app/clientprofile");
+       options.put("callback_url", "https://madrasda.com/clientprofile");
         return razorpayClient.paymentLink.create(options);
     }
 
