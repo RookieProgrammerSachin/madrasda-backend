@@ -1,6 +1,7 @@
 package com.example.madrasdaapi.dto.ShipRocketDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.JsonObject;
 import lombok.Data;
 
 import java.util.List;

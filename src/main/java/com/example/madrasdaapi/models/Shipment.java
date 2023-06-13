@@ -1,5 +1,6 @@
 package com.example.madrasdaapi.models;
 
+import com.google.gson.JsonObject;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,9 +54,8 @@ public class Shipment {
      @Column(name = "courier_name")
      private String courierName;
 
-     @OneToMany(cascade = CascadeType.ALL)
-     @JoinColumn(name = "tracking_id")
-     private List<ShipmentTrackActivity> scans = new ArrayList<>();
+     @Column(columnDefinition = "json")
+     private String scans;
 
      @OneToOne
      @ToString.Exclude

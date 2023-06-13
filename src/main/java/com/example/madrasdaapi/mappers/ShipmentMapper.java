@@ -5,6 +5,7 @@ import com.example.madrasdaapi.dto.ShipRocketDTO.ShipmentDTO;
 import com.example.madrasdaapi.dto.ShipRocketDTO.TrackingData;
 import com.example.madrasdaapi.models.Shipment;
 import com.example.madrasdaapi.models.ShipmentTrackActivity;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShipmentMapper {
     private final ModelMapper mapper;
+    private final Gson gson;
     public Shipment mapToShipment(TrackingData trackingData) {
         Shipment shipment = new Shipment();
         shipment.setCourierName(trackingData.getCourierName());
@@ -28,7 +30,7 @@ public class ShipmentMapper {
         shipment.setAwb(trackingData.getAwb());
         shipment.setOrderId(trackingData.getOrderId());
         shipment.setShipmentStatus(trackingData.getShipmentStatus());
-        shipment.setScans(trackingData.getScans().stream().map(this::mapToShipmentTrackActivity).collect(Collectors.toList()));
+        shipment.setScans(gson.toJson(trackingData.getScans()));
         return shipment;
     }
 

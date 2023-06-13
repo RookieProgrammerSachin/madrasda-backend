@@ -11,8 +11,11 @@ import com.example.madrasdaapi.repositories.CartItemRepository;
 import com.example.madrasdaapi.repositories.ProductRepository;
 import com.example.madrasdaapi.repositories.ProductSKUMappingRepository;
 import com.example.madrasdaapi.repositories.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -27,10 +30,10 @@ import java.util.stream.Collectors;
 public class TransactionMapper {
     private final ModelMapper mapper;
     private final MockupMapper mockupMapper;
+    private final Gson gson;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductSKUMappingRepository productSKUMappingRepository;
-    private final CartItemRepository cartItemRepository;
 
 
     public Transaction mapToEntity(TransactionDTO transactionDTO) {
@@ -109,8 +112,8 @@ public class TransactionMapper {
             );
         }
         if (transaction.getShipment() != null) {
-            transactionDTO.setShipmentActivity(transaction.getShipment().getScans().stream().map(item -> mapper.map(item, ShipmentTrackActivityDTO.class)).collect(Collectors.toList()));
-            transactionDTO.setStatus(ShipmentStatus.getNameByCode(transaction.getShipment().getCurrentStatusId()));
+            transactionDTO.setShipmentActivity(gson.fromJson(transaction.getShipment().getScans(), new TypeToken<List<ShipmentTrackActivityDTO>>() {}.getType()));
+            transactionDTO.setStatus(transaction.getShipment().getCurrentStatus());
         }
 
         return transactionDTO;

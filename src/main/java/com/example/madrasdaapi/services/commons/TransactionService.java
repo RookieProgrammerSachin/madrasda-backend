@@ -130,7 +130,6 @@ public class TransactionService {
             trackingData.setCourierName(data.getCourierName());
             trackingData.setOrderId(data.getOrderId());
 //            transaction.setOrderId(data.getOrderId());
-            trackingData.setScans(new ArrayList<>());
             response.close();
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
             shipment.setTransaction(transaction);
@@ -150,6 +149,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
         Shipment shipment = shipmentMapper.mapToShipment(trackingData);
+        shipment.setId(transaction.getShipment().getId());
         transaction.setShipment(shipment);
         shipment.setTransaction(transaction);
         transactionRepository.save(transaction);
