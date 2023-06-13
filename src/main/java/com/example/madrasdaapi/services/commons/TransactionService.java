@@ -286,25 +286,6 @@ public class TransactionService {
         throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
     }
 
-    public Double calculateShippingCharges(List<OrderItem> cart, String pincode, boolean isCustomer) throws IOException {
-
-        Float height = 0.0F;
-        Float length = 0.0F;
-        Float breadth = 0.0F;
-        Float weight = 0.0F;
-        Float subtotal = 0.0f;
-        for (OrderItem item : cart) {
-            height += item.getProduct().getHeight() * item.getQuantity();
-            weight += item.getProduct().getWeight() * item.getQuantity();
-            breadth = Math.max(item.getProduct().getBreadth(), breadth);
-            length = Math.max(item.getProduct().getLength(), length);
-            subtotal += item.getProduct().getTotal().floatValue();
-        }
-        if (isCustomer && subtotal > 500) return 0.0;
-
-        return requestFreightCharges(pincode, height, length, breadth, weight);
-    }
-
     public Double calculateShippingCharges(String pincode, boolean isCustomer) throws IOException {
         String phone = AuthContext.getCurrentUser();
         Float height = 0.0F;
@@ -319,7 +300,7 @@ public class TransactionService {
             weight += item.getProduct().getWeight() * item.getQuantity();
             breadth = Math.max(item.getProduct().getBreadth(), breadth);
             length = Math.max(item.getProduct().getLength(), length);
-            total += item.getProduct().getTotal().floatValue();
+            total += item.getProduct().getTotal().floatValue() * item.getQuantity();
         }
         if (isCustomer && total > 500) return 0.0d;
 
