@@ -75,7 +75,8 @@ public class TransactionService {
         String shortLink = null;
         //Create payment option
         try {
-            PaymentLink link = createRazorPayLink(transaction, orderRequest.getShippingAddress().getPostalCode());
+            PaymentLink link = createRazorPayLink(transaction,
+                    orderRequest.getShippingAddress().getPostalCode());
             transaction.setPaymentId(link.get("id"));
             transactionRepository.save(transaction);
             shortLink = link.get("short_url");
@@ -159,7 +160,11 @@ public class TransactionService {
         JSONObject options = new JSONObject();
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
-        BigDecimal customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
+        BigDecimal customerShippingCharge;
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
+            customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
+        else
+            customerShippingCharge = shippingCharges;
         options.put("amount", transaction.getOrderTotal() //with deduction
 //                .multiply(BigDecimal.valueOf(((double) 105) / 100)) removed tax
                 .add(customerShippingCharge)
