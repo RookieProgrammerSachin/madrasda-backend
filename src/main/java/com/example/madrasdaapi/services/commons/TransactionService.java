@@ -72,7 +72,8 @@ public class TransactionService {
         String shortLink = null;
         //Create payment option
         try {
-            PaymentLink link = createRazorPayLink(transaction, orderRequest.getShippingAddress().getPostalCode());
+            PaymentLink link = createRazorPayLink(transaction,
+                    orderRequest.getShippingAddress().getPostalCode());
             transaction.setPaymentId(link.get("id"));
             transactionRepository.save(transaction);
             shortLink = link.get("short_url");
@@ -156,7 +157,11 @@ public class TransactionService {
         JSONObject options = new JSONObject();
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
-        BigDecimal customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
+        BigDecimal customerShippingCharge;
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
+            customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
+        else
+            customerShippingCharge = shippingCharges;
         options.put("amount", transaction.getOrderTotal() //with deduction
 //                .multiply(BigDecimal.valueOf(((double) 105) / 100)) removed tax
                 .add(customerShippingCharge)
@@ -278,25 +283,6 @@ public class TransactionService {
         throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
     }
 
-    public Double calculateShippingCharges(List<OrderItem> cart, String pincode, boolean isCustomer) throws IOException {
-
-        Float height = 0.0F;
-        Float length = 0.0F;
-        Float breadth = 0.0F;
-        Float weight = 0.0F;
-        Float subtotal = 0.0f;
-        for (OrderItem item : cart) {
-            height += item.getProduct().getHeight() * item.getQuantity();
-            weight += item.getProduct().getWeight() * item.getQuantity();
-            breadth = Math.max(item.getProduct().getBreadth(), breadth);
-            length = Math.max(item.getProduct().getLength(), length);
-            subtotal += item.getProduct().getTotal().floatValue();
-        }
-        if (isCustomer && subtotal > 500) return 0.0;
-
-        return requestFreightCharges(pincode, height, length, breadth, weight);
-    }
-
     public Double calculateShippingCharges(String pincode, boolean isCustomer) throws IOException {
         String phone = AuthContext.getCurrentUser();
         Float height = 0.0F;
@@ -311,7 +297,7 @@ public class TransactionService {
             weight += item.getProduct().getWeight() * item.getQuantity();
             breadth = Math.max(item.getProduct().getBreadth(), breadth);
             length = Math.max(item.getProduct().getLength(), length);
-            total += item.getProduct().getTotal().floatValue();
+            total += item.getProduct().getTotal().floatValue() * item.getQuantity();
         }
         if (isCustomer && total > 500) return 0.0d;
 
