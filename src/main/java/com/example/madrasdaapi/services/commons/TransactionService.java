@@ -55,11 +55,7 @@ public class TransactionService {
     private final RazorpayClient razorpayClient;
     private final OkHttpClient okHttpClient;
     private final ShipRocketProperties shiprocket;
-    private final Gson gson;
-    @Value("${razorpay.keySecret}")
-    private String SECRET_KEY;
-    @Value("${razorpay.keyId}")
-    private String SECRET_ID;
+
 
     public String initiateTransaction(TransactionDTO orderRequest) {
         //Total payable amount is calculated here
@@ -148,7 +144,7 @@ public class TransactionService {
 
     public void updateShipmentStatus(TrackingData trackingData) {
         Transaction transaction = transactionRepository.findByOrderId(trackingData.getOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", trackingData.getOrderId()));
+                .orElseThrow(() -> new APIException("Order Not found", HttpStatus.OK));
         Shipment shipment = shipmentMapper.mapToShipment(trackingData);
         shipment.setId(transaction.getShipment().getId());
         transaction.setShipment(shipment);
@@ -181,7 +177,7 @@ public class TransactionService {
         return razorpayClient.paymentLink.create(options);
     }
 
-    private NewOrder createShiprocketOrder(Transaction transaction) throws RazorpayException, IOException {
+    private NewOrder createShiprocketOrder(Transaction transaction)  {
         NewOrder order = new NewOrder();
         order.setOrderId(transaction.getOrderId());
         order.setOrderDate(transaction.getOrderDate().toString());
@@ -262,7 +258,6 @@ public class TransactionService {
     }
 
     private Double requestFreightCharges(String pincode, Float height, Float length, Float breadth, Float weight) throws IOException {
-        MediaType mediaType = MediaType.parse("application/json");
         Request request = new Request.Builder().url("https://apiv2.shiprocket.in/v1/external/courier/serviceability?pickup_postcode=600087" +
                         "&height=" + height + "&weight=" + weight + "&breadth=" + breadth + "&length=" + length +
                         "&delivery_postcode=" + pincode + "&cod=0")
