@@ -31,7 +31,7 @@ public class ProcedureCaller {
 
         for (Object[] result : results) {
             Long id = (Long) result[0];
-            BigDecimal totalSales = (BigDecimal) result[1];
+            BigDecimal totalSales = BigDecimal.valueOf((Long) result[1]);
             Product p = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
             ProductLadderItem item = new ProductLadderItem();
             modelMapper.map(p, item);
