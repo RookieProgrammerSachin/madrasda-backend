@@ -188,18 +188,13 @@ public class TransactionService {
             ShipRocketOrderItem orderItem = new ShipRocketOrderItem();
             Product product = item.getProduct();
             orderItem.setName(product.getName());
-            orderItem.setTax(product.getTax());
+            orderItem.setTax(BigDecimal.ZERO);
             orderItem.setDiscount(product.getTotal()
-                    .multiply(product.getDiscount().divide(BigDecimal.valueOf(100)))
-                    .multiply(product.getTax().add(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(100))));
+                    .multiply(product.getDiscount().divide(BigDecimal.valueOf(100), RoundingMode.CEILING)));
             orderItem.setHsn(product.getHsn());
             orderItem.setUnits(item.getQuantity());
             orderItem.setSku(item.getSku() + "-" + product.getVendor().getId() + "-" + product.getId());
-            orderItem.setSellingPrice(product.getTotal()
-                    .multiply(product.getTax()
-                            .add(BigDecimal.valueOf(100L))
-                            .divide(BigDecimal.valueOf(100L))).toString());
-
+            orderItem.setSellingPrice(product.getTotal().toString());
             height += product.getHeight() * item.getQuantity();
             weight += product.getWeight() * item.getQuantity();
             breadth = Math.max(product.getBreadth(), breadth);
@@ -231,8 +226,7 @@ public class TransactionService {
         order.setLength(length);
         order.setShipping_charges(shippingCharges);
         order.setShippingIsBilling(transaction.getBillingIsShipping());
-        order.setPaymentMethod("PREPAID");
-        transaction.setOrderTotal((transaction.getOrderTotal().multiply(new BigDecimal("1.05"))).add(new BigDecimal(shippingCharges)));
+        order.setPaymentMethod("PREPAID");;
         order.setSubTotal(transaction.getOrderTotal().toString()); //with deduction
         order.setOrderItems(orderItems);
         return order;
