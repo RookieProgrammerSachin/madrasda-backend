@@ -294,8 +294,7 @@ public class TransactionService {
             total += item.getProduct().getTotal().floatValue() * item.getQuantity();
         }
         if (isCustomer && total > 500) return 0.0d;
-
-        return (requestFreightCharges(pincode, height, length, breadth, weight));
+        return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
     public void cancelOrder(CancelRequestDTO cancelRequestDTO) {
