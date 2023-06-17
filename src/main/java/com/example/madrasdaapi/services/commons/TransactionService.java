@@ -28,7 +28,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -81,7 +80,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void updateTransactionStatus(PaymentLinkResult result) throws RazorpayException, IOException {
+    public void updateTransactionStatus(PaymentLinkResult result) throws IOException {
 //        JSONObject payload = new JSONObject(result.getPayload());
 //        Utils.verifyPaymentLink(payload, "BraveHeart");
         String paymentId = result.getPayload().getPaymentLink().getEntity().getId();
@@ -271,7 +270,7 @@ public class TransactionService {
         List<AvailableCourierCompaniesItem> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
         for (AvailableCourierCompaniesItem company : companies) {
             if (courierId.equals(company.getCourierCompanyId())) {
-                return company.getFreightCharge();
+                return Math.ceil(company.getFreightCharge());
             }
         }
         response.close();
@@ -296,15 +295,16 @@ public class TransactionService {
         }
         if (isCustomer && total > 500) return 0.0d;
 
-        return requestFreightCharges(pincode, height, length, breadth, weight);
+        return (requestFreightCharges(pincode, height, length, breadth, weight));
     }
 
     public void cancelOrder(CancelRequestDTO cancelRequestDTO) {
         Transaction transaction = transactionRepository.findById(cancelRequestDTO.getTransaction().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", cancelRequestDTO.getTransaction().getId().toString()));
         long diffInMillis = new Date().getTime() - transaction.getOrderDate().getTime();
-        if (diffInMillis > 5 * 60 * 1000L)
-            throw new APIException("5 Minutes Time Limit Exceeded", HttpStatus.CONFLICT);
+        if (diffInMillis > 5 * 60 * 1000L) {
+            throw new APIException("5 Minutes Time Limit Exceeded by " + diffInMillis + "ms", HttpStatus.CONFLICT);
+        }
         CancelRequest request = new CancelRequest();
         request.setTransaction(transaction);
         request.setReason(cancelRequestDTO.getReason());
