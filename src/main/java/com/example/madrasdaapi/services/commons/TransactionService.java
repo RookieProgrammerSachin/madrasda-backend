@@ -153,15 +153,14 @@ public class TransactionService {
         JSONObject options = new JSONObject();
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
-        BigDecimal customerShippingCharge;
-        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
-            customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
-        else
-            customerShippingCharge = shippingCharges;
+        BigDecimal customerShippingCharge = BigDecimal.valueOf(0);
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) < 0)
+            transaction.setOrderTotal(
+                    transaction.getOrderTotal().add(transaction.getShippingCharge())
+            );
         options.put("amount", transaction.getOrderTotal() //with deduction
 //                .multiply(BigDecimal.valueOf(((double) 105) / 100)) removed tax
-                .add(customerShippingCharge)
-                .setScale(0, RoundingMode.CEILING)
+//                .setScale(0, RoundingMode.CEILING)
                 .multiply(new BigDecimal(100))
                 .longValueExact());
         options.put("currency", "INR");
@@ -295,7 +294,6 @@ public class TransactionService {
             total += item.getProduct().getTotal().floatValue() * item.getQuantity();
         }
         if (isCustomer && total > 500) return 0.0d;
-
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
