@@ -153,6 +153,7 @@ public class TransactionService {
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
         BigDecimal customerShippingCharge;
+
         if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) >= 0)
             customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
         else
