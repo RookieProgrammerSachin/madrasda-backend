@@ -77,6 +77,7 @@ public class TransactionMapper {
 
     public TransactionDTO mapToDTO(Transaction transaction) {
         TransactionDTO transactionDTO = mapper.map(transaction, TransactionDTO.class);
+        transactionDTO.setOrderTotal(transaction.getOrderTotal().add(transaction.getShippingCharge()));
         List<OrderItemDTO> items = new ArrayList<>();
         HashMap<Long, ColorDTO> imageDTOHashMap = new HashMap<>();
         HashMap<Long, Mockup> productMockups = new HashMap<>();
