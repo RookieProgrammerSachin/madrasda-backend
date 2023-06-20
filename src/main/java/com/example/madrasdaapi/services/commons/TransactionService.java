@@ -122,7 +122,7 @@ public class TransactionService {
             trackingData.setCurrentStatusId(data.getStatusCode());
             trackingData.setCourierName(data.getCourierName());
             trackingData.setOrderId(data.getOrderId());
-//            transaction.setOrderId(data.getOrderId());
+            transaction.setOrderId(data.getOrderId());
             response.close();
             Shipment shipment = shipmentMapper.mapToShipment(trackingData);
             shipment.setTransaction(transaction);
@@ -152,11 +152,10 @@ public class TransactionService {
         JSONObject options = new JSONObject();
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
-        BigDecimal customerShippingCharge;
-        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
-            customerShippingCharge = BigDecimal.ZERO.min(shippingCharges);
-        else
-            customerShippingCharge = shippingCharges;
+        BigDecimal customerShippingCharge = shippingCharges;
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) >= 0)
+            customerShippingCharge = BigDecimal.ZERO;
+
         options.put("amount", transaction.getOrderTotal() //with deduction
 //                .multiply(BigDecimal.valueOf(((double) 105) / 100)) removed tax
                 .add(customerShippingCharge)
