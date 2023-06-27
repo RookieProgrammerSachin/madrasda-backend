@@ -20,6 +20,8 @@ import com.example.madrasdaapi.models.*;
 import com.example.madrasdaapi.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
@@ -28,12 +30,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.json.JSONObject;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -255,18 +259,20 @@ public class TransactionService {
 
         Response response = okHttpClient.newCall(request).execute();
         String json = response.body().string();
+        response.close();
         JsonObject data = new Gson().fromJson(json, JsonObject.class);
-        Integer code = data.get("status").getAsInt();
+        int code = data.get("status").getAsInt();
         if (code != 200) throw new APIException(data.get("message").getAsString(), HttpStatus.OK);
-        ServiceableCourierData serviceabilityResponse = new ObjectMapper().readValue(json.getBytes(), ServiceableCourierData.class);
-        Integer courierId = serviceabilityResponse.getData().getRecommendedCourierCompanyId();
-        List<AvailableCourierCompaniesItem> companies = serviceabilityResponse.getData().getAvailableCourierCompanies();
-        for (AvailableCourierCompaniesItem company : companies) {
-            if (courierId.equals(company.getCourierCompanyId())) {
-                return Math.ceil(company.getFreightCharge());
+        Integer courierId = data.getAsJsonObject("data").get("recommended_courier_company_id").getAsInt();
+        Type listType = new TypeToken<List<AvailableCourierCompaniesItem>>(){}.getType();
+        JsonArray companies = data.getAsJsonObject("data").getAsJsonArray("available_courier_companies");
+
+        for (JsonElement company : companies) {
+            if (courierId.equals(company.getAsJsonObject().get("courier_company_id").getAsInt())) {
+                return Math.ceil(company.getAsJsonObject().get("freight_charge").getAsDouble());
             }
         }
-        response.close();
+
         throw new APIException("No eligible couriers found", HttpStatus.BAD_REQUEST);
     }
 
@@ -276,17 +282,23 @@ public class TransactionService {
         Float length = 0.0F;
         Float breadth = 0.0F;
         Float weight = 0.0F;
-        Float total = 0.0f;
+        Float totalCost = 0.0f;
         List<CartItem> cart = cartItemRepository.findByCustomer_Phone(phone);
         if (cart.size() == 0) throw new APIException("Cart is Empty", HttpStatus.CONFLICT);
         for (CartItem item : cart) {
-            height += item.getProduct().getHeight() * item.getQuantity();
-            weight += item.getProduct().getWeight() * item.getQuantity();
-            breadth = Math.max(item.getProduct().getBreadth(), breadth);
-            length = Math.max(item.getProduct().getLength(), length);
-            total += item.getProduct().getTotal().floatValue() * item.getQuantity();
+            Product product = item.getProduct();
+            int quantity = item.getQuantity();
+            BigDecimal total = product.getTotal();
+            BigDecimal discount = product.getDiscount();
+            BigDecimal discountedTotal = total.subtract(total.multiply(discount).divide(BigDecimal.valueOf(100)));
+            height += product.getHeight() * quantity;
+            weight += product.getWeight() * quantity;
+            breadth = Math.max(product.getBreadth(), breadth);
+            length = Math.max(product.getLength(), length);
+            totalCost += quantity * discountedTotal.floatValue();
         }
-        if (isCustomer && total > 500) return 0.0d;
+
+        if (isCustomer && totalCost > 500) return 0.0d;
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
