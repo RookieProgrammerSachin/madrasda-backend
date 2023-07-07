@@ -89,7 +89,7 @@ public class TransactionService {
 //        Utils.verifyPaymentLink(payload, "BraveHeart");
         String paymentId = result.getPayload().getPaymentLink().getEntity().getId();
         Transaction transaction = transactionRepository.findByPaymentId(paymentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", paymentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "paymentId", paymentId));
 
         if (transaction.getPaymentStatus() != null && transaction.getPaymentStatus().equals("payment_link.paid"))
             throw new APIException("Payment already accepted", HttpStatus.CONFLICT);
@@ -104,10 +104,11 @@ public class TransactionService {
                         .add(item.getProduct().getProfit().multiply(BigDecimal.valueOf(item.getQuantity()))));
                 vendors.put(item.getProduct().getId(), vendor);
             }
-            BigDecimal induvidualShippingCharge = transaction.getShippingCharge().divide(BigDecimal.valueOf(vendors.size()))
+            BigDecimal individualShippingCharge = transaction.getShippingCharge().divide(BigDecimal.valueOf(vendors.size()))
                     .setScale(2, RoundingMode.CEILING);
-            if (transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > -1)
-                vendors.forEach((id, vendor) -> vendor.setOutstandingProfit(vendor.getOutstandingProfit().subtract(induvidualShippingCharge)));
+            if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
+                vendors.forEach((id, vendor) -> vendor.
+                        setOutstandingProfit(vendor.getOutstandingProfit().subtract(individualShippingCharge)));
 
             transaction.setPaymentStatus(result.getEvent());
             NewOrder order = createShiprocketOrder(transaction);
@@ -157,7 +158,7 @@ public class TransactionService {
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
         BigDecimal customerShippingCharge = shippingCharges;
-        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) >= 0)
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
             customerShippingCharge = BigDecimal.ZERO;
 
         options.put("amount", transaction.getOrderTotal() //with deduction
