@@ -299,7 +299,7 @@ public class TransactionService {
             totalCost += quantity * discountedTotal.floatValue();
         }
 
-        if (isCustomer && totalCost > 500) return 0.0d;
+        if (isCustomer && totalCost >= 500) return 0.0d;
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
