@@ -298,8 +298,8 @@ public class TransactionService {
             length = Math.max(product.getLength(), length);
             totalCost += quantity * discountedTotal.floatValue();
         }
-
-        if (isCustomer && totalCost >= 500) return 0.0d;
+        totalCost = (float) Math.round(totalCost); //499.5 will be rounded off to 500
+        if (isCustomer && totalCost >= 500) return 0.00d;
         return requestFreightCharges(pincode, height, length, breadth, weight);
     }
 
