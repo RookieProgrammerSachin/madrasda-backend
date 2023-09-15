@@ -158,7 +158,7 @@ public class TransactionService {
         BigDecimal shippingCharges = BigDecimal.valueOf(calculateShippingCharges(pincode, false));
         transaction.setShippingCharge(shippingCharges);
         BigDecimal customerShippingCharge = shippingCharges;
-        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) > 0)
+        if(transaction.getOrderTotal().compareTo(BigDecimal.valueOf(500)) >= 0)
             customerShippingCharge = BigDecimal.ZERO;
 
         options.put("amount", transaction.getOrderTotal() //with deduction
