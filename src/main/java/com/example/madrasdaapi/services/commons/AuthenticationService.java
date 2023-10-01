@@ -75,7 +75,7 @@ public class AuthenticationService {
         return new JwtDTO(jwtToken);
     }
     public JwtDTO authenticateCustomer(LoginDTO loginDTO) throws Exception {
-        User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
+        User user = userRepository.findByEmailOrPhone(loginDTO.getEmail(), loginDTO.getEmail()).orElseThrow(
                 () -> new APIException("Customer not found", HttpStatus.BAD_REQUEST)
         );
         if(!user.getRole().equals("ROLE_CUSTOMER"))
