@@ -92,6 +92,7 @@ public class AuthenticationService {
         user.setName(registerDTO.getName());
         user.setEmail(registerDTO.getEmail());
         user.setPassword(registerDTO.getPassword());
+        user.setPhone(registerDTO.getPhone());
         user.setRole("ROLE_CUSTOMER");
         user = userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
