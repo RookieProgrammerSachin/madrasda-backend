@@ -91,7 +91,7 @@ public class AuthenticationService {
         User user = new User();
         user.setName(registerDTO.getName());
         user.setEmail(registerDTO.getEmail());
-        user.setPassword(registerDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setPhone(registerDTO.getPhone());
         user.setRole("ROLE_CUSTOMER");
         user = userRepository.save(user);
