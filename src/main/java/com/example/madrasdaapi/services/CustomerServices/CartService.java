@@ -28,7 +28,7 @@ public class CartService {
     private final ProductSKUMappingRepository productSKUMappingRepository;
 
     public CartDTO getCartForCustomer(String phone) {
-        User user = userRepository.findByPhone(phone)
+        User user = userRepository.findByEmailOrPhone(phone, phone)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "phone", phone));
 
         return new CartDTO(user.getId(), user.getCart()
@@ -48,9 +48,9 @@ public class CartService {
     }
 
     public void addToCart(String phone, ProductDTO productDTO) {
-        User customer = userRepository.findByPhone(phone)
+        User customer = userRepository.findByEmailOrPhone(phone, phone)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "phone", phone));
-        Optional<CartItem> item = cartItemRepository.findByCustomer_PhoneAndProduct_IdAndSku_Sku(phone, productDTO.getId(), productDTO.getColors().get(0).getSizes().get(0).getSku());
+        Optional<CartItem> item = cartItemRepository.findByCustomer_EmailOrCustomer_PhoneAndProduct_IdAndSku_Sku(phone, phone, productDTO.getId(), productDTO.getColors().get(0).getSizes().get(0).getSku());
 
         CartItem cartItem;
         if (item.isPresent()) {

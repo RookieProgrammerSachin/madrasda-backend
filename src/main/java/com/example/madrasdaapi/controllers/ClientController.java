@@ -2,11 +2,13 @@ package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
+import com.example.madrasdaapi.dto.commons.UserDTO;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,5 +56,9 @@ public class ClientController {
     @GetMapping("getAllVendors")
     public List<VendorMenuItemDTO> getAllVendors() {
         return vendorService.getAllEnabledVendors();
+    }
+    @PutMapping("editProfile")
+    public ResponseEntity<String> editProfile(@RequestBody UserDTO newDetails){
+        return ResponseEntity.ok("Edited profile");
     }
 }

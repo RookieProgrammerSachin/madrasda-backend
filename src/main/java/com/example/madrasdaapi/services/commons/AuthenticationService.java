@@ -127,7 +127,7 @@ public class AuthenticationService {
         } catch (Exception e) {
             throw new APIException("Invalid OTP", HttpStatus.BAD_REQUEST); //OTP invalid
         }
-        Optional<User> user = userRepository.findByPhone(phone);
+        Optional<User> user = userRepository.findByEmailOrPhone(phone, phone);
         if (user.isPresent()) {
             jwtToken = jwtService.generateToken(user.get());
         } else {

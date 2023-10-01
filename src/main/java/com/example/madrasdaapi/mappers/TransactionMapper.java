@@ -40,7 +40,7 @@ public class TransactionMapper {
         Transaction transaction = new Transaction();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         mapper.map(transactionDTO, transaction);
-        User user = userRepository.findByPhone(AuthContext.getCurrentUser()).get();
+        User user = userRepository.findByEmailOrPhone(AuthContext.getCurrentUser(), AuthContext.getCurrentUser()).get();
         transaction.setBillingUser(user);
         Customer shippingAddress = mapper.map(transactionDTO.getShippingAddress(), Customer.class);
         transaction.setShippingAddress(shippingAddress);
