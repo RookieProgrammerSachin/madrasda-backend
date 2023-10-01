@@ -1,10 +1,12 @@
 package com.example.madrasdaapi.controllers;
 
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.UserDTO;
 import com.example.madrasdaapi.services.AdminServices.AdminService;
+import com.example.madrasdaapi.services.CustomerServices.CustomerService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +26,7 @@ public class ClientController {
     private final VendorService vendorService;
     private final AdminService adminService;
     private final ProductService productService;
+    private final CustomerService customerService;
 
     @GetMapping("/allProducts")
     public Page<ProductDTO> getAllProducts(
@@ -64,5 +67,14 @@ public class ClientController {
     public ResponseEntity<String> updatePassword(@RequestBody LoginDTO request){
         adminService.updatePassword(request.getPassword());
         return ResponseEntity.ok("Updated Password");
+    }
+    @PutMapping("updateProfile")
+    public ResponseEntity<String> updateProfile(@RequestBody RegisterDTO request){
+        customerService.updateProfile(request);
+        return ResponseEntity.ok("Updated Profile");
+    }
+    @GetMapping("myProfile")
+    public UserDTO getProfile(){
+        return customerService.getUserProfile();
     }
 }
