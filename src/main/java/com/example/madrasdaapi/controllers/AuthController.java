@@ -26,6 +26,14 @@ public class AuthController {
     public ResponseEntity<JwtDTO> authenticateVendor(@RequestBody LoginDTO request) throws Exception {
         return ResponseEntity.ok(authService.authenticateVendor(request));
     }
+    @PostMapping("/authenticateClient")
+    public ResponseEntity<JwtDTO> authenticateClient(@RequestBody LoginDTO request) throws Exception {
+        return ResponseEntity.ok(authService.authenticateCustomer(request));
+    }
+    @PostMapping("/registerClient")
+    public ResponseEntity<JwtDTO> registerClient(@RequestBody RegisterDTO request) throws Exception {
+        return ResponseEntity.ok(authService.registerCustomer(request));
+    }
     @PostMapping("/loginAdmin")
     public ResponseEntity<JwtDTO> authenticateAdmin(@RequestBody LoginDTO request) throws Exception {
         return ResponseEntity.ok(authService.authenticateAdmin(request));

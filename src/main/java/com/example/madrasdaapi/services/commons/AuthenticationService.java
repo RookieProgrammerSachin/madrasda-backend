@@ -3,6 +3,7 @@ package com.example.madrasdaapi.services.commons;
 
 import com.example.madrasdaapi.dto.AuthDTO.JwtDTO;
 import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
+import com.example.madrasdaapi.dto.AuthDTO.RegisterDTO;
 import com.example.madrasdaapi.exception.APIException;
 import com.example.madrasdaapi.exception.ResourceNotFoundException;
 import com.example.madrasdaapi.models.User;
@@ -71,6 +72,29 @@ public class AuthenticationService {
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwtToken = jwtService.generateToken(auth);
+        return new JwtDTO(jwtToken);
+    }
+    public JwtDTO authenticateCustomer(LoginDTO loginDTO) throws Exception {
+        User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
+                () -> new APIException("Customer not found", HttpStatus.BAD_REQUEST)
+        );
+        if(!user.getRole().equals("ROLE_CUSTOMER"))
+            throw new BadCredentialsException("Invalid Email or Password");
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDTO.getEmail(),
+                (loginDTO.getPassword())));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String jwtToken = jwtService.generateToken(auth);
+        return new JwtDTO(jwtToken);
+    }
+    public JwtDTO registerCustomer(RegisterDTO registerDTO) throws Exception {
+        User user = new User();
+        user.setName(registerDTO.getName());
+        user.setEmail(registerDTO.getEmail());
+        user.setPassword(registerDTO.getPassword());
+        user.setRole("ROLE_CUSTOMER");
+        user = userRepository.save(user);
+        String jwtToken = jwtService.generateToken(user);
         return new JwtDTO(jwtToken);
     }
 
