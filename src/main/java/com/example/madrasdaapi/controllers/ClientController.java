@@ -1,8 +1,10 @@
 package com.example.madrasdaapi.controllers;
 
+import com.example.madrasdaapi.dto.AuthDTO.LoginDTO;
 import com.example.madrasdaapi.dto.VendorDTO.VendorMenuItemDTO;
 import com.example.madrasdaapi.dto.commons.ProductDTO;
 import com.example.madrasdaapi.dto.commons.UserDTO;
+import com.example.madrasdaapi.services.AdminServices.AdminService;
 import com.example.madrasdaapi.services.VendorServices.VendorService;
 import com.example.madrasdaapi.services.commons.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientController {
     private final VendorService vendorService;
+    private final AdminService adminService;
     private final ProductService productService;
 
     @GetMapping("/allProducts")
@@ -57,8 +60,9 @@ public class ClientController {
     public List<VendorMenuItemDTO> getAllVendors() {
         return vendorService.getAllEnabledVendors();
     }
-    @PutMapping("editProfile")
-    public ResponseEntity<String> editProfile(@RequestBody UserDTO newDetails){
-        return ResponseEntity.ok("Edited profile");
+    @PutMapping("updatePassword")
+    public ResponseEntity<String> updatePassword(@RequestBody LoginDTO request){
+        adminService.updatePassword(request.getPassword());
+        return ResponseEntity.ok("Updated Password");
     }
 }

@@ -119,7 +119,7 @@ public class AdminService {
     }
 
     public void updatePassword(String newPassword) {
-        User user = userRepository.findByEmail(AuthContext.getCurrentUser()).orElseThrow();
+        User user = userRepository.findByEmailOrPhone(AuthContext.getCurrentUser(), AuthContext.getCurrentUser()).orElseThrow();
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
     }
