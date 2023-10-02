@@ -88,6 +88,10 @@ public class AuthenticationService {
         return new JwtDTO(jwtToken);
     }
     public JwtDTO registerCustomer(RegisterDTO registerDTO) throws Exception {
+        Optional<User> check = userRepository.findByEmailOrPhone(registerDTO.getEmail(), registerDTO.getPhone());
+        if(check.isPresent()){
+            throw new APIException("Account already exists", HttpStatus.BAD_REQUEST);
+        }
         User user = new User();
         user.setName(registerDTO.getName());
         user.setEmail(registerDTO.getEmail());
